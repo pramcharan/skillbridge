@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillBridge — Find World-Class Talent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════════════════════════
+           RESET & ROOT
+        ═══════════════════════════════════════════════════════════════ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+          --bg:        #060D1A;
+          --bg2:       #0B1425;
+          --bg3:       #0F1D35;
+          --card:      #0D1829;
+          --card2:     #111f38;
+          --teal:      #00C9A7;
+          --teal-dk:   #00A389;
+          --teal-lt:   #00C9A715;
+          --gold:      #F5A623;
+          --gold-lt:   #F5A62318;
+          --purple:    #7B61FF;
+          --rose:      #FF6B8A;
+          --text:      #E8F0FE;
+          --text2:     #8BA3C7;
+          --text3:     #4A6080;
+          --border:    #1A2D4A;
+          --border2:   #243650;
+          --radius:    14px;
+          --radius-lg: 22px;
+          --shadow:    0 8px 32px rgba(0,0,0,0.4);
+          --shadow-teal: 0 8px 30px rgba(0,201,167,0.2);
+        }
+        html { scroll-behavior: smooth; }
+        body {
+          font-family: 'DM Sans', sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          line-height: 1.6;
+          overflow-x: hidden;
+        }
+        a { text-decoration: none; color: inherit; }
+        img { display: block; max-width: 100%; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           SCROLLBAR
+        ═══════════════════════════════════════════════════════════════ */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           NAVBAR
+        ═══════════════════════════════════════════════════════════════ */
+        nav {
+          position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 0 5%; height: 68px;
+          background: rgba(6,13,26,0.85);
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid var(--border);
+          transition: all 0.3s;
+        }
+        nav.scrolled { box-shadow: 0 4px 40px rgba(0,0,0,0.5); }
+        .nav-logo {
+          font-family: 'Syne', sans-serif;
+          font-weight: 800; font-size: 1.4rem;
+          background: linear-gradient(135deg, var(--teal), var(--gold));
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          letter-spacing: -0.02em;
+        }
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a {
+          font-size: 0.9rem; font-weight: 500; color: var(--text2);
+          transition: color 0.2s; letter-spacing: 0.01em;
+        }
+        .nav-links a:hover { color: var(--teal); }
+        .nav-cta { display: flex; gap: 0.75rem; }
+        .btn-outline {
+          padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.9rem;
+          font-weight: 600; border: 1.5px solid var(--border2);
+          color: var(--text2); cursor: pointer; transition: all 0.2s;
+          background: transparent; font-family: 'DM Sans', sans-serif;
+        }
+        .btn-outline:hover { border-color: var(--teal); color: var(--teal); }
+        .btn-primary {
+          padding: 0.5rem 1.4rem; border-radius: 8px; font-size: 0.9rem;
+          font-weight: 600; border: none; cursor: pointer; transition: all 0.25s;
+          background: linear-gradient(135deg, var(--teal), var(--teal-dk));
+          color: #fff; font-family: 'DM Sans', sans-serif;
+          box-shadow: 0 4px 15px rgba(0,201,167,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,201,167,0.4); }
+
+        /* ═══════════════════════════════════════════════════════════════
+           HERO
+        ═══════════════════════════════════════════════════════════════ */
+        #hero {
+          min-height: 100vh; display: flex; align-items: center;
+          position: relative; overflow: hidden;
+          padding: 100px 5% 60px;
+        }
+        .hero-bg {
+          position: absolute; inset: 0; z-index: 0;
+          background:
+            radial-gradient(ellipse 80% 60% at 60% 40%, rgba(0,201,167,0.07) 0%, transparent 60%),
+            radial-gradient(ellipse 50% 50% at 20% 80%, rgba(123,97,255,0.06) 0%, transparent 50%),
+            radial-gradient(ellipse 40% 40% at 80% 10%, rgba(245,166,35,0.05) 0%, transparent 40%);
+        }
+        .hero-grid {
+          position: absolute; inset: 0;
+          background-image:
+            linear-gradient(var(--border) 1px, transparent 1px),
+            linear-gradient(90deg, var(--border) 1px, transparent 1px);
+          background-size: 60px 60px;
+          opacity: 0.25;
+          mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
+        }
+        .hero-content { position: relative; z-index: 1; max-width: 680px; }
+        .hero-badge {
+          display: inline-flex; align-items: center; gap: 0.5rem;
+          padding: 0.4rem 1rem; border-radius: 99px;
+          border: 1px solid rgba(0,201,167,0.3);
+          background: rgba(0,201,167,0.08);
+          font-size: 0.82rem; font-weight: 500; color: var(--teal);
+          margin-bottom: 1.5rem; letter-spacing: 0.02em;
+        }
+        .hero-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+        .hero-title {
+          font-family: 'Syne', sans-serif;
+          font-size: clamp(2.8rem, 6vw, 5rem);
+          font-weight: 800; line-height: 1.08; letter-spacing: -0.03em;
+          margin-bottom: 1.5rem; color: var(--text);
+        }
+        .hero-title .accent {
+          background: linear-gradient(135deg, var(--teal) 0%, var(--gold) 100%);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-sub {
+          font-size: 1.1rem; color: var(--text2); max-width: 520px;
+          margin-bottom: 2.5rem; line-height: 1.7; font-weight: 300;
+        }
+        .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
+        .btn-hero {
+          padding: 0.85rem 2rem; border-radius: 10px; font-size: 1rem;
+          font-weight: 600; cursor: pointer; transition: all 0.25s;
+          font-family: 'DM Sans', sans-serif;
+        }
+        .btn-hero-primary {
+          background: linear-gradient(135deg, var(--teal), var(--teal-dk));
+          color: #fff; border: none;
+          box-shadow: 0 6px 24px rgba(0,201,167,0.35);
+        }
+        .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(0,201,167,0.45); }
+        .btn-hero-secondary {
+          background: transparent; color: var(--text);
+          border: 1.5px solid var(--border2);
+        }
+        .btn-hero-secondary:hover { border-color: var(--teal); color: var(--teal); }
+        .hero-trust {
+          display: flex; align-items: center; gap: 1.5rem;
+          flex-wrap: wrap;
+        }
+        .trust-avatars { display: flex; }
+        .trust-avatars .av {
+          width: 36px; height: 36px; border-radius: 50%;
+          border: 2px solid var(--bg); overflow: hidden; margin-left: -10px;
+          background: linear-gradient(135deg, var(--teal), var(--purple));
+          display: flex; align-items: center; justify-content: center;
+          font-size: 0.75rem; font-weight: 700; color: #fff;
+        }
+        .trust-avatars .av:first-child { margin-left: 0; }
+        .trust-text { font-size: 0.85rem; color: var(--text2); }
+        .trust-text strong { color: var(--text); }
+        .hero-visual {
+          position: absolute; right: 4%; top: 50%; transform: translateY(-50%);
+          z-index: 1; width: min(480px, 45%);
+        }
+        .hero-card-float {
+          background: var(--card);
+          border: 1px solid var(--border2);
+          border-radius: var(--radius-lg);
+          padding: 1.5rem;
+          box-shadow: var(--shadow);
+        }
+        .hero-card-float .hcf-header {
+          display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.2rem;
+        }
+        .hcf-av {
+          width: 44px; height: 44px; border-radius: 50%;
+          background: linear-gradient(135deg, var(--teal), var(--purple));
+          display: flex; align-items: center; justify-content: center;
+          font-size: 1.1rem; font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+        .hcf-name { font-weight: 600; font-size: 0.95rem; }
+        .hcf-role { font-size: 0.8rem; color: var(--text2); }
+        .hcf-badge {
+          margin-left: auto; background: var(--teal-lt); color: var(--teal);
+          border: 1px solid rgba(0,201,167,0.3);
+          padding: 0.25rem 0.65rem; border-radius: 99px;
+          font-size: 0.78rem; font-weight: 600;
+        }
+        .hcf-skills { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+        .skill-chip {
+          padding: 0.25rem 0.7rem; border-radius: 99px;
+          background: rgba(123,97,255,0.12); border: 1px solid rgba(123,97,255,0.25);
+          color: #A89BFF; font-size: 0.78rem; font-weight: 500;
+        }
+        .hcf-rate { display: flex; align-items: center; justify-content: space-between; }
+        .rate-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--gold); }
+        .stars { color: var(--gold); font-size: 0.85rem; }
+        .float-badge {
+          position: absolute; background: var(--card2);
+          border: 1px solid var(--border2); border-radius: 12px;
+          padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.6rem;
+          box-shadow: var(--shadow); font-size: 0.82rem; font-weight: 600;
+        }
+        .float-badge .fb-icon { font-size: 1.2rem; }
+        .fb1 { top: -5%; left: -12%; animation: float1 4s ease-in-out infinite; }
+        .fb2 { bottom: 5%; right: -10%; animation: float2 5s ease-in-out infinite; }
+        @keyframes float1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        @keyframes float2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+
+        /* ═══════════════════════════════════════════════════════════════
+           SECTIONS COMMON
+        ═══════════════════════════════════════════════════════════════ */
+        section { padding: 90px 5%; }
+        .section-label {
+          display: inline-block; font-size: 0.78rem; font-weight: 700;
+          letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal);
+          margin-bottom: 0.75rem;
+        }
+        .section-title {
+          font-family: 'Syne', sans-serif;
+          font-size: clamp(1.9rem, 4vw, 3rem);
+          font-weight: 800; letter-spacing: -0.03em; line-height: 1.15;
+          color: var(--text); margin-bottom: 1rem;
+        }
+        .section-sub {
+          font-size: 1rem; color: var(--text2); max-width: 560px; line-height: 1.7;
+        }
+        .section-head { text-align: center; margin-bottom: 3.5rem; }
+        .section-head .section-sub { margin: 0 auto; }
+        .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: none; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           STATS STRIP
+        ═══════════════════════════════════════════════════════════════ */
+        #stats {
+          padding: 50px 5%;
+          background: linear-gradient(135deg, var(--bg2), var(--bg3));
+          border-top: 1px solid var(--border);
+          border-bottom: 1px solid var(--border);
+        }
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 2rem; text-align: center;
+        }
+        .stat-item { }
+        .stat-number {
+          font-family: 'Syne', sans-serif; font-weight: 800;
+          font-size: clamp(2rem, 4vw, 3rem);
+          background: linear-gradient(135deg, var(--teal), var(--gold));
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          line-height: 1; margin-bottom: 0.4rem;
+        }
+        .stat-label { font-size: 0.9rem; color: var(--text2); font-weight: 400; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           FLIP CARDS — CATEGORIES
+        ═══════════════════════════════════════════════════════════════ */
+        #categories { background: var(--bg); }
+        .flip-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+          gap: 1.5rem;
+        }
+        .flip-card { height: 300px; perspective: 1200px; cursor: pointer; }
+        .flip-card-inner {
+          width: 100%; height: 100%; position: relative;
+          transform-style: preserve-3d;
+          transition: transform 0.65s cubic-bezier(0.4,0.2,0.2,1);
+        }
+        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
+          position: absolute; inset: 0;
+          backface-visibility: hidden; -webkit-backface-visibility: hidden;
+          border-radius: var(--radius-lg); overflow: hidden;
+          display: flex; flex-direction: column;
+        }
+        .flip-card-front {
+          background: var(--card);
+          border: 1px solid var(--border2);
+        }
+        .flip-card-back {
+          transform: rotateY(180deg);
+          justify-content: center; align-items: center;
+          padding: 2rem; text-align: center;
+        }
+        .card-svg-wrap {
+          flex: 1; display: flex; align-items: center; justify-content: center;
+          padding: 1.5rem 1.5rem 0.5rem;
+        }
+        .card-svg-wrap svg { width: 100%; height: auto; max-height: 190px; }
+        .card-front-info {
+          padding: 0.75rem 1.5rem 1.25rem;
+          border-top: 1px solid var(--border);
+        }
+        .card-front-title {
+          font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem;
+          color: var(--text); margin-bottom: 0.2rem;
+        }
+        .card-front-count {
+          font-size: 0.82rem; color: var(--text2); font-weight: 400;
+        }
+        .card-front-count span {
+          font-weight: 700; color: var(--teal);
+        }
+        /* Back cards per category color */
+        .fc-1 .flip-card-back { background: linear-gradient(135deg, #0D2137, #0A3050); border: 1px solid rgba(0,201,167,0.25); }
+        .fc-2 .flip-card-back { background: linear-gradient(135deg, #1A1030, #2A0D35); border: 1px solid rgba(123,97,255,0.25); }
+        .fc-3 .flip-card-back { background: linear-gradient(135deg, #1A2010, #0F3020); border: 1px solid rgba(0,210,100,0.2); }
+        .fc-4 .flip-card-back { background: linear-gradient(135deg, #201A00, #302800); border: 1px solid rgba(245,166,35,0.25); }
+        .fc-5 .flip-card-back { background: linear-gradient(135deg, #1E0A14, #380A14); border: 1px solid rgba(255,107,138,0.25); }
+        .fc-6 .flip-card-back { background: linear-gradient(135deg, #0A1E30, #0A2040); border: 1px solid rgba(56,182,255,0.2); }
+        .back-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+        .back-title {
+          font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.15rem;
+          color: var(--text); margin-bottom: 0.4rem;
+        }
+        .back-desc { font-size: 0.88rem; color: var(--text2); margin-bottom: 1.2rem; line-height: 1.5; }
+        .back-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin-bottom: 1.2rem; }
+        .back-tag {
+          padding: 0.2rem 0.65rem; border-radius: 99px;
+          font-size: 0.75rem; font-weight: 600;
+          background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+          color: rgba(255,255,255,0.8);
+        }
+        .back-btn {
+          display: inline-block; padding: 0.55rem 1.4rem; border-radius: 8px;
+          font-size: 0.88rem; font-weight: 700; cursor: pointer;
+          background: rgba(255,255,255,0.12); color: #fff;
+          border: 1px solid rgba(255,255,255,0.2);
+          transition: all 0.2s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* ═══════════════════════════════════════════════════════════════
+           HOW IT WORKS
+        ═══════════════════════════════════════════════════════════════ */
+        #how-it-works { background: var(--bg2); }
+        .steps-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 2rem; position: relative;
+        }
+        .step-card {
+          background: var(--card); border: 1px solid var(--border2);
+          border-radius: var(--radius-lg); padding: 2rem;
+          position: relative; transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .step-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+        .step-num {
+          font-family: 'Syne', sans-serif; font-weight: 800;
+          font-size: 3.5rem; line-height: 1;
+          background: linear-gradient(135deg, var(--teal), transparent);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          margin-bottom: 1rem; opacity: 0.6;
+        }
+        .step-icon {
+          width: 52px; height: 52px; border-radius: 12px;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 1.5rem; margin-bottom: 1rem;
+        }
+        .step-title {
+          font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem;
+          color: var(--text); margin-bottom: 0.5rem;
+        }
+        .step-desc { font-size: 0.9rem; color: var(--text2); line-height: 1.6; }
+        .step-connector {
+          position: absolute; top: 45px; right: -1rem;
+          width: 2rem; height: 2px;
+          background: linear-gradient(90deg, var(--border2), transparent);
+          z-index: 1;
+        }
+        .steps-grid .step-card:last-child .step-connector { display: none; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           FEATURED FREELANCERS
+        ═══════════════════════════════════════════════════════════════ */
+        #featured-freelancers { background: var(--bg); }
+        .freelancers-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+          gap: 1.5rem;
+        }
+        .freelancer-card {
+          background: var(--card); border: 1px solid var(--border2);
+          border-radius: var(--radius-lg); padding: 1.75rem;
+          transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .freelancer-card::before {
+          content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+          background: linear-gradient(90deg, var(--teal), var(--purple));
+          opacity: 0; transition: opacity 0.3s;
+        }
+        .freelancer-card:hover { transform: translateY(-4px); box-shadow: 0 16px 50px rgba(0,0,0,0.4); }
+        .freelancer-card:hover::before { opacity: 1; }
+        .fc-head { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1rem; }
+        .fc-avatar {
+          width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 1.2rem; font-weight: 800; color: #fff;
+          position: relative;
+        }
+        .online-dot {
+          position: absolute; bottom: 1px; right: 1px;
+          width: 11px; height: 11px; border-radius: 50%;
+          background: var(--teal); border: 2px solid var(--card);
+        }
+        .fc-name { font-weight: 700; font-size: 0.95rem; }
+        .fc-role { font-size: 0.8rem; color: var(--text2); }
+        .fc-rating { display: flex; align-items: center; gap: 0.3rem; margin-left: auto; }
+        .fc-rating .stars { font-size: 0.75rem; color: var(--gold); }
+        .fc-rating .score { font-size: 0.82rem; font-weight: 700; color: var(--text); }
+        .fc-skills { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1rem; }
+        .fc-skill {
+          padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.76rem; font-weight: 500;
+          background: rgba(0,201,167,0.1); border: 1px solid rgba(0,201,167,0.2); color: var(--teal);
+        }
+        .fc-footer { display: flex; align-items: center; justify-content: space-between; }
+        .fc-rate { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--gold); }
+        .fc-hire {
+          padding: 0.4rem 1rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+          background: var(--teal-lt); border: 1px solid rgba(0,201,167,0.3); color: var(--teal);
+          cursor: pointer; transition: all 0.2s;
+        }
+        .fc-hire:hover { background: rgba(0,201,167,0.2); }
+        .placeholder-note {
+          grid-column: 1/-1; text-align: center; padding: 2rem;
+          color: var(--text3); font-size: 0.9rem;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           FEATURED SERVICES
+        ═══════════════════════════════════════════════════════════════ */
+        #featured-services { background: var(--bg2); }
+        .services-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 1.5rem;
+        }
+        .service-card {
+          background: var(--card); border: 1px solid var(--border2);
+          border-radius: var(--radius-lg); overflow: hidden;
+          transition: all 0.3s;
+        }
+        .service-card:hover { transform: translateY(-4px); box-shadow: 0 16px 50px rgba(0,0,0,0.4); }
+        .service-thumb {
+          height: 160px; overflow: hidden; display: flex;
+          align-items: center; justify-content: center;
+          position: relative;
+        }
+        .service-body { padding: 1.25rem; }
+        .service-seller { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.75rem; }
+        .ss-av {
+          width: 28px; height: 28px; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 0.7rem; font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+        .ss-name { font-size: 0.82rem; font-weight: 600; color: var(--text2); }
+        .service-title {
+          font-size: 0.95rem; font-weight: 600; color: var(--text);
+          margin-bottom: 0.5rem; line-height: 1.4;
+        }
+        .service-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+        .service-rating { display: flex; align-items: center; gap: 0.3rem; font-size: 0.82rem; }
+        .service-rating .stars { color: var(--gold); font-size: 0.75rem; }
+        .review-count { color: var(--text3); }
+        .service-price { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--text); }
+        .service-price span { font-size: 0.75rem; font-weight: 400; color: var(--text3); }
+
+        /* ═══════════════════════════════════════════════════════════════
+           WHY CHOOSE US
+        ═══════════════════════════════════════════════════════════════ */
+        #why-us { background: var(--bg); }
+        .why-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 4rem; align-items: center;
+        }
+        .why-visual { position: relative; }
+        .why-big-card {
+          background: var(--card); border: 1px solid var(--border2);
+          border-radius: var(--radius-lg); padding: 2.5rem;
+          box-shadow: var(--shadow);
+        }
+        .why-big-card .big-icon {
+          width: 64px; height: 64px; border-radius: 16px;
+          background: linear-gradient(135deg, rgba(0,201,167,0.15), rgba(0,201,167,0.05));
+          border: 1px solid rgba(0,201,167,0.2);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 1.8rem; margin-bottom: 1.25rem;
+        }
+        .why-big-card h3 {
+          font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem;
+          margin-bottom: 0.5rem;
+        }
+        .why-big-card p { font-size: 0.9rem; color: var(--text2); line-height: 1.6; }
+        .why-floating-stat {
+          position: absolute; bottom: -20px; right: -20px;
+          background: var(--card2); border: 1px solid var(--border2);
+          border-radius: 14px; padding: 1rem 1.5rem;
+          box-shadow: var(--shadow);
+        }
+        .wfs-num {
+          font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.8rem;
+          background: linear-gradient(135deg, var(--gold), var(--rose));
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .wfs-label { font-size: 0.8rem; color: var(--text2); margin-top: 0.1rem; }
+        .features-list { display: flex; flex-direction: column; gap: 1.5rem; }
+        .feature-item { display: flex; gap: 1rem; align-items: flex-start; }
+        .fi-icon {
+          width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+          display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .fi-title { font-weight: 700; font-size: 0.95rem; color: var(--text); margin-bottom: 0.25rem; }
+        .fi-desc { font-size: 0.88rem; color: var(--text2); line-height: 1.5; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           TESTIMONIALS
+        ═══════════════════════════════════════════════════════════════ */
+        #testimonials { background: var(--bg2); }
+        .test-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 1.5rem;
+        }
+        .test-card {
+          background: var(--card); border: 1px solid var(--border2);
+          border-radius: var(--radius-lg); padding: 2rem;
+          position: relative; transition: all 0.3s;
+        }
+        .test-card:hover { border-color: var(--teal); box-shadow: 0 0 0 1px rgba(0,201,167,0.15), var(--shadow); }
+        .test-quote {
+          font-size: 2.5rem; line-height: 1; color: var(--teal);
+          margin-bottom: 1rem; opacity: 0.6;
+          font-family: Georgia, serif;
+        }
+        .test-text {
+          font-size: 0.92rem; color: var(--text2); line-height: 1.7;
+          margin-bottom: 1.5rem; font-style: italic;
+        }
+        .test-author { display: flex; align-items: center; gap: 0.75rem; }
+        .ta-av {
+          width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 0.9rem; font-weight: 700; color: #fff;
+        }
+        .ta-name { font-weight: 700; font-size: 0.9rem; }
+        .ta-role { font-size: 0.78rem; color: var(--text3); }
+        .ta-stars { margin-left: auto; color: var(--gold); font-size: 0.82rem; }
+        .real-only-note {
+          grid-column: 1/-1; text-align: center;
+          padding: 2rem; color: var(--text3); font-size: 0.88rem;
+          border: 1px dashed var(--border); border-radius: var(--radius-lg);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           CTA
+        ═══════════════════════════════════════════════════════════════ */
+        #cta {
+          background: linear-gradient(135deg, var(--bg3) 0%, #0D2240 50%, var(--bg2) 100%);
+          border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+          text-align: center; position: relative; overflow: hidden;
+        }
+        .cta-glow {
+          position: absolute; width: 600px; height: 600px;
+          background: radial-gradient(circle, rgba(0,201,167,0.08) 0%, transparent 60%);
+          top: 50%; left: 50%; transform: translate(-50%,-50%);
+          pointer-events: none;
+        }
+        .cta-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+        .cta-title {
+          font-family: 'Syne', sans-serif; font-weight: 800;
+          font-size: clamp(2rem, 5vw, 3.5rem);
+          letter-spacing: -0.03em; margin-bottom: 1rem; color: var(--text);
+          line-height: 1.1;
+        }
+        .cta-sub { font-size: 1.05rem; color: var(--text2); margin-bottom: 2.5rem; line-height: 1.7; }
+        .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn-cta-main {
+          padding: 0.9rem 2.5rem; border-radius: 10px; font-size: 1rem; font-weight: 700;
+          background: linear-gradient(135deg, var(--teal), var(--teal-dk));
+          color: #fff; border: none; cursor: pointer;
+          box-shadow: 0 6px 30px rgba(0,201,167,0.4);
+          transition: all 0.25s; font-family: 'DM Sans', sans-serif;
+        }
+        .btn-cta-main:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(0,201,167,0.5); }
+        .btn-cta-sec {
+          padding: 0.9rem 2.5rem; border-radius: 10px; font-size: 1rem; font-weight: 700;
+          background: transparent; color: var(--text);
+          border: 1.5px solid var(--border2); cursor: pointer;
+          transition: all 0.25s; font-family: 'DM Sans', sans-serif;
+        }
+        .btn-cta-sec:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* ═══════════════════════════════════════════════════════════════
+           FOOTER
+        ═══════════════════════════════════════════════════════════════ */
+        footer {
+          background: #040A14; padding: 60px 5% 30px;
+          border-top: 1px solid var(--border);
+        }
+        .footer-grid {
+          display: grid;
+          grid-template-columns: 2fr 1fr 1fr 1fr;
+          gap: 3rem; margin-bottom: 3rem;
+        }
+        .footer-brand .logo {
+          font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem;
+          background: linear-gradient(135deg, var(--teal), var(--gold));
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          margin-bottom: 0.75rem;
+        }
+        .footer-brand p { font-size: 0.88rem; color: var(--text3); line-height: 1.7; max-width: 280px; margin-bottom: 1.25rem; }
+        .social-links { display: flex; gap: 0.6rem; }
+        .social-link {
+          width: 36px; height: 36px; border-radius: 8px;
+          background: var(--card); border: 1px solid var(--border2);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 0.9rem; cursor: pointer; transition: all 0.2s; color: var(--text2);
+        }
+        .social-link:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-lt); }
+        .footer-col h4 {
+          font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.88rem;
+          color: var(--text); margin-bottom: 1rem; letter-spacing: 0.04em; text-transform: uppercase;
+        }
+        .footer-col a {
+          display: block; font-size: 0.88rem; color: var(--text3);
+          margin-bottom: 0.6rem; transition: color 0.2s;
+        }
+        .footer-col a:hover { color: var(--teal); }
+        .footer-bottom {
+          padding-top: 2rem; border-top: 1px solid var(--border);
+          display: flex; align-items: center; justify-content: space-between;
+          flex-wrap: wrap; gap: 1rem;
+        }
+        .footer-bottom p { font-size: 0.82rem; color: var(--text3); }
+        .footer-legal { display: flex; gap: 1.5rem; }
+        .footer-legal a { font-size: 0.82rem; color: var(--text3); transition: color 0.2s; }
+        .footer-legal a:hover { color: var(--teal); }
+
+        /* ═══════════════════════════════════════════════════════════════
+           RESPONSIVE
+        ═══════════════════════════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+          .hero-visual { display: none; }
+          .why-grid { grid-template-columns: 1fr; }
+          .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+          nav .nav-links { display: none; }
+          .flip-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+          .footer-grid { grid-template-columns: 1fr; }
+          .footer-bottom { flex-direction: column; text-align: center; }
+          .stats-grid { grid-template-columns: repeat(2, 1fr); }
+          .why-floating-stat { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══ NAVBAR ═══════════════════════════════════════════════════════ -->
+<nav id="navbar">
+    <a href="/" class="nav-logo">SkillBridge</a>
+    <div class="nav-links">
+        <a href="#categories">Browse</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#featured-freelancers">Freelancers</a>
+        <a href="#featured-services">Services</a>
+    </div>
+    <div class="nav-cta">
+        <a href="/login.html"><button class="btn-outline">Login</button></a>
+        <a href="/register.html"><button class="btn-primary">Get Started</button></a>
+    </div>
+</nav>
+
+<!-- ═══ HERO ═════════════════════════════════════════════════════════ -->
+<section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span></span> AI-Powered Talent Matching — Now Live
+        </div>
+        <h1 class="hero-title">
+            Bridge the Gap Between<br>
+            <span class="accent">Talent & Opportunity</span>
+        </h1>
+        <p class="hero-sub">
+            SkillBridge connects world-class freelancers with ambitious clients.
+            Our AI scores every match instantly — so you spend time building, not browsing.
+        </p>
+        <div class="hero-actions">
+            <a href="/register.html"><button class="btn-hero btn-hero-primary">Start Hiring Free →</button></a>
+            <a href="/register.html?role=freelancer"><button class="btn-hero btn-hero-secondary">Join as Freelancer</button></a>
+        </div>
+        <div class="hero-trust">
+            <div class="trust-avatars">
+                <div class="av" style="background:linear-gradient(135deg,#00C9A7,#0082a5)">R</div>
+                <div class="av" style="background:linear-gradient(135deg,#7B61FF,#5234c7)">A</div>
+                <div class="av" style="background:linear-gradient(135deg,#F5A623,#d97706)">S</div>
+                <div class="av" style="background:linear-gradient(135deg,#FF6B8A,#c2185b)">M</div>
+                <div class="av" style="background:linear-gradient(135deg,#38bdf8,#0369a1)">+</div>
+            </div>
+            <div class="trust-text">
+                <strong id="hero-member-count">Join thousands</strong> of professionals already on SkillBridge
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating card visual -->
+    <div class="hero-visual">
+        <div style="position:relative;">
+            <div class="hero-card-float">
+                <div class="hcf-header">
+                    <div class="hcf-av">R</div>
+                    <div>
+                        <div class="hcf-name">Riya Sharma</div>
+                        <div class="hcf-role">Full-Stack Developer</div>
+                    </div>
+                    <div class="hcf-badge">AI Matched</div>
+                </div>
+                <div class="hcf-skills">
+                    <span class="skill-chip">React</span>
+                    <span class="skill-chip">Spring Boot</span>
+                    <span class="skill-chip">MySQL</span>
+                    <span class="skill-chip">AWS</span>
+                </div>
+                <div class="hcf-rate">
+                    <div>
+                        <div class="rate-val">$65 / hr</div>
+                        <div class="stars">★★★★★ <span style="color:var(--text2);font-size:0.8rem;">4.9 (48 reviews)</span></div>
+                    </div>
+                    <a href="/login.html"><button class="btn-primary" style="font-size:0.85rem;padding:0.5rem 1rem;">Hire Now</button></a>
+                </div>
+            </div>
+            <div class="float-badge fb1">
+                <span class="fb-icon">⚡</span>
+                <div>
+                    <div style="font-size:0.75rem;color:var(--text2)">AI Match Score</div>
+                    <div style="color:var(--teal);font-size:1rem;font-weight:800;">94%</div>
+                </div>
+            </div>
+            <div class="float-badge fb2">
+                <span class="fb-icon">🎯</span>
+                <div>
+                    <div style="font-size:0.75rem;color:var(--text2)">Project Completed</div>
+                    <div style="color:var(--gold);font-size:0.9rem;font-weight:700;">Just now</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ STATS ═════════════════════════════════════════════════════════ -->
+<div id="stats">
+    <div class="stats-grid">
+        <div class="stat-item reveal">
+            <div class="stat-number" id="stat-freelancers">—</div>
+            <div class="stat-label">Registered Freelancers</div>
+        </div>
+        <div class="stat-item reveal">
+            <div class="stat-number" id="stat-jobs">—</div>
+            <div class="stat-label">Jobs Posted</div>
+        </div>
+        <div class="stat-item reveal">
+            <div class="stat-number" id="stat-projects">—</div>
+            <div class="stat-label">Projects Completed</div>
+        </div>
+        <div class="stat-item reveal">
+            <div class="stat-number" id="stat-rating">—</div>
+            <div class="stat-label">Average Rating</div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ CATEGORIES ════════════════════════════════════════════════════ -->
+<section id="categories">
+    <div class="section-head reveal">
+        <div class="section-label">Browse Categories</div>
+        <h2 class="section-title">Explore Popular Skills</h2>
+        <p class="section-sub">From code to creativity — every skill category you need, powered by AI matching.</p>
+    </div>
+    <div class="flip-grid">
+
+        <!-- Card 1 — IT & Software -->
+        <div class="flip-card fc-1 reveal">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <div class="card-svg-wrap">
+                        <svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="g1a" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#00C9A7" stop-opacity="0.15"/>
+                                    <stop offset="100%" stop-color="#0082a5" stop-opacity="0.05"/>
+                                </linearGradient>
+                                <linearGradient id="g1b" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#1A3A5C"/>
+                                    <stop offset="100%" stop-color="#0D2137"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Monitor -->
+                            <rect x="30" y="20" width="200" height="135" rx="10" fill="url(#g1b)" stroke="#00C9A7" stroke-width="1.5" stroke-opacity="0.4"/>
+                            <rect x="38" y="28" width="184" height="119" rx="6" fill="#040D1A"/>
+                            <!-- Code lines -->
+                            <rect x="48" y="40" width="50" height="5" rx="2.5" fill="#7B61FF" opacity="0.9"/>
+                            <rect x="48" y="52" width="80" height="5" rx="2.5" fill="#00C9A7" opacity="0.8"/>
+                            <rect x="60" y="64" width="60" height="5" rx="2.5" fill="#FF6B8A" opacity="0.8"/>
+                            <rect x="60" y="76" width="95" height="5" rx="2.5" fill="#F5A623" opacity="0.7"/>
+                            <rect x="48" y="88" width="40" height="5" rx="2.5" fill="#7B61FF" opacity="0.9"/>
+                            <rect x="48" y="100" width="70" height="5" rx="2.5" fill="#00C9A7" opacity="0.6"/>
+                            <rect x="60" y="112" width="50" height="5" rx="2.5" fill="#38bdf8" opacity="0.7"/>
+                            <rect x="48" y="124" width="85" height="5" rx="2.5" fill="#FF6B8A" opacity="0.5"/>
+                            <!-- Cursor blink -->
+                            <rect x="145" y="124" width="2.5" height="10" rx="1" fill="#00C9A7" opacity="0.9">
+                                <animate attributeName="opacity" values="0.9;0;0.9" dur="1.2s" repeatCount="indefinite"/>
+                            </rect>
+                            <!-- Glow line on right side -->
+                            <rect x="160" y="40" width="60" height="90" rx="4" fill="#00C9A7" fill-opacity="0.03"/>
+                            <!-- Stand -->
+                            <rect x="115" y="155" width="30" height="10" rx="2" fill="#1A3A5C"/>
+                            <rect x="100" y="165" width="60" height="6" rx="3" fill="#1A3A5C"/>
+                            <!-- Green dot indicator -->
+                            <circle cx="210" cy="38" r="4" fill="#00C9A7">
+                                <animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite"/>
+                            </circle>
+                        </svg>
+                    </div>
+                    <div class="card-front-info">
+                        <div class="card-front-title">IT &amp; Software</div>
+                        <div class="card-front-count"><span id="cat-count-TECHNOLOGY">—</span> open jobs</div>
+                    </div>
+                </div>
+                <div class="flip-card-back">
+                    <div class="back-icon">💻</div>
+                    <div class="back-title">IT &amp; Software</div>
+                    <div class="back-desc">Web, mobile, cloud, AI/ML and everything in between. The largest category on SkillBridge.</div>
+                    <div class="back-tags">
+                        <span class="back-tag">React</span><span class="back-tag">Spring Boot</span>
+                        <span class="back-tag">Python</span><span class="back-tag">DevOps</span>
+                        <span class="back-tag">AI/ML</span>
+                    </div>
+                    <a href="/login.html"><span class="back-btn">Browse Jobs →</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2 — Photography -->
+        <div class="flip-card fc-2 reveal">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <div class="card-svg-wrap">
+                        <svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="g2a" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#7B61FF"/>
+                                    <stop offset="100%" stop-color="#A855F7"/>
+                                </linearGradient>
+                                <radialGradient id="g2b" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#E0D7FF" stop-opacity="0.15"/>
+                                    <stop offset="100%" stop-color="#7B61FF" stop-opacity="0"/>
+                                </radialGradient>
+                            </defs>
+                            <!-- Camera body -->
+                            <rect x="40" y="55" width="180" height="115" rx="16" fill="#1A1035" stroke="#7B61FF" stroke-width="1.5" stroke-opacity="0.5"/>
+                            <!-- Lens mount circle outer -->
+                            <circle cx="130" cy="113" r="52" fill="#0D0A20" stroke="#7B61FF" stroke-width="1" stroke-opacity="0.3"/>
+                            <!-- Lens glass rings -->
+                            <circle cx="130" cy="113" r="44" fill="#0A0818" stroke="#A89BFF" stroke-width="1" stroke-opacity="0.25"/>
+                            <circle cx="130" cy="113" r="35" fill="#080614" stroke="#7B61FF" stroke-width="1.5" stroke-opacity="0.4"/>
+                            <circle cx="130" cy="113" r="26" fill="#040310" stroke="#A89BFF" stroke-width="1" stroke-opacity="0.5"/>
+                            <!-- Lens centre glass -->
+                            <circle cx="130" cy="113" r="18" fill="url(#g2b)"/>
+                            <circle cx="130" cy="113" r="18" fill="#7B61FF" fill-opacity="0.12"/>
+                            <!-- Lens reflection -->
+                            <ellipse cx="122" cy="106" rx="5" ry="3.5" fill="white" fill-opacity="0.12" transform="rotate(-30 122 106)"/>
+                            <!-- Top ridge -->
+                            <rect x="70" y="40" width="120" height="20" rx="8" fill="#130E28" stroke="#7B61FF" stroke-width="1" stroke-opacity="0.3"/>
+                            <!-- Shutter button -->
+                            <circle cx="90" cy="50" r="10" fill="url(#g2a)" opacity="0.8"/>
+                            <circle cx="90" cy="50" r="6" fill="#5234C7"/>
+                            <!-- Mode dial -->
+                            <circle cx="175" cy="50" r="12" fill="#1A1035" stroke="#A89BFF" stroke-width="1" stroke-opacity="0.4"/>
+                            <line x1="175" y1="40" x2="175" y2="44" stroke="#A89BFF" stroke-width="1.5"/>
+                            <line x1="183" y1="50" x2="179" y2="50" stroke="#A89BFF" stroke-width="1.5"/>
+                            <!-- Flash indicator -->
+                            <rect x="50" y="62" width="16" height="10" rx="3" fill="#7B61FF" fill-opacity="0.4"/>
+                            <!-- Sparkle stars -->
+                            <text x="205" y="75" font-size="12" fill="#F5A623" opacity="0.8">✦</text>
+                            <text x="30" y="100" font-size="8" fill="#A89BFF" opacity="0.6">✦</text>
+                        </svg>
+                    </div>
+                    <div class="card-front-info">
+                        <div class="card-front-title">Photography</div>
+                        <div class="card-front-count"><span id="cat-count-PHOTOGRAPHY">—</span> open jobs</div>
+                    </div>
+                </div>
+                <div class="flip-card-back">
+                    <div class="back-icon">📸</div>
+                    <div class="back-title">Photography</div>
+                    <div class="back-desc">Product shoots, portraits, events, and editing. Capture every moment beautifully.</div>
+                    <div class="back-tags">
+                        <span class="back-tag">Product</span><span class="back-tag">Portrait</span>
+                        <span class="back-tag">Events</span><span class="back-tag">Photo Edit</span>
+                        <span class="back-tag">Drone</span>
+                    </div>
+                    <a href="/login.html"><span class="back-btn">Browse Jobs →</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3 — Writing & Content -->
+        <div class="flip-card fc-3 reveal">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <div class="card-svg-wrap">
+                        <svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="g3a" x1="0%" y1="100%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#00C96E"/>
+                                    <stop offset="100%" stop-color="#00E5A0"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Paper stack back -->
+                            <rect x="70" y="35" width="140" height="165" rx="8" fill="#0A1E14" stroke="#00C96E" stroke-width="1" stroke-opacity="0.2" transform="rotate(6 140 117)"/>
+                            <!-- Paper main -->
+                            <rect x="55" y="25" width="145" height="165" rx="8" fill="#091A0F" stroke="#00C96E" stroke-width="1.5" stroke-opacity="0.4"/>
+                            <!-- Lines -->
+                            <line x1="75" y1="55" x2="180" y2="55" stroke="#00C96E" stroke-width="1" stroke-opacity="0.3"/>
+                            <line x1="75" y1="70" x2="185" y2="70" stroke="#00C96E" stroke-width="1" stroke-opacity="0.25"/>
+                            <line x1="75" y1="85" x2="160" y2="85" stroke="#00C96E" stroke-width="1" stroke-opacity="0.2"/>
+                            <line x1="75" y1="100" x2="178" y2="100" stroke="#00C96E" stroke-width="1" stroke-opacity="0.2"/>
+                            <line x1="75" y1="115" x2="152" y2="115" stroke="#00C96E" stroke-width="1" stroke-opacity="0.15"/>
+                            <line x1="75" y1="130" x2="183" y2="130" stroke="#00C96E" stroke-width="1" stroke-opacity="0.15"/>
+                            <!-- Pen -->
+                            <g transform="translate(155, 100) rotate(-45)">
+                                <rect x="-6" y="-55" width="12" height="50" rx="3" fill="url(#g3a)"/>
+                                <polygon points="-6,0 6,0 0,18" fill="#009952"/>
+                                <rect x="-6" y="-68" width="12" height="14" rx="3" fill="#D4A843"/>
+                                <rect x="-6" y="-55" width="12" height="4" fill="#B8913A"/>
+                            </g>
+                            <!-- Highlighted text -->
+                            <rect x="75" y="62" width="70" height="7" rx="3" fill="#00C96E" fill-opacity="0.2"/>
+                            <!-- Cursor -->
+                            <rect x="75" y="125" width="2" height="12" rx="1" fill="#00C96E">
+                                <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+                            </rect>
+                            <!-- Stars -->
+                            <text x="30" y="60" font-size="10" fill="#00C96E" opacity="0.5">✦</text>
+                            <text x="210" y="160" font-size="8" fill="#00C96E" opacity="0.4">✦</text>
+                        </svg>
+                    </div>
+                    <div class="card-front-info">
+                        <div class="card-front-title">Writing &amp; Content</div>
+                        <div class="card-front-count"><span id="cat-count-WRITING">—</span> open jobs</div>
+                    </div>
+                </div>
+                <div class="flip-card-back">
+                    <div class="back-icon">✍️</div>
+                    <div class="back-title">Writing &amp; Content</div>
+                    <div class="back-desc">Blog posts, copywriting, SEO content, and brand storytelling that converts.</div>
+                    <div class="back-tags">
+                        <span class="back-tag">Copywriting</span><span class="back-tag">SEO</span>
+                        <span class="back-tag">Blog</span><span class="back-tag">UX Writing</span>
+                        <span class="back-tag">Technical</span>
+                    </div>
+                    <a href="/login.html"><span class="back-btn">Browse Jobs →</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4 — Digital Marketing -->
+        <div class="flip-card fc-4 reveal">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <div class="card-svg-wrap">
+                        <svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="g4a" x1="0%" y1="100%" x2="0%" y2="0%">
+                                    <stop offset="0%" stop-color="#F5A623" stop-opacity="0.8"/>
+                                    <stop offset="100%" stop-color="#F5A623" stop-opacity="0.2"/>
+                                </linearGradient>
+                                <linearGradient id="g4b" x1="0%" y1="100%" x2="0%" y2="0%">
+                                    <stop offset="0%" stop-color="#FF6B8A" stop-opacity="0.8"/>
+                                    <stop offset="100%" stop-color="#FF6B8A" stop-opacity="0.2"/>
+                                </linearGradient>
+                                <linearGradient id="g4c" x1="0%" y1="100%" x2="0%" y2="0%">
+                                    <stop offset="0%" stop-color="#00C9A7" stop-opacity="0.8"/>
+                                    <stop offset="100%" stop-color="#00C9A7" stop-opacity="0.2"/>
+                                </linearGradient>
+                                <linearGradient id="g4d" x1="0%" y1="100%" x2="0%" y2="0%">
+                                    <stop offset="0%" stop-color="#7B61FF" stop-opacity="0.8"/>
+                                    <stop offset="100%" stop-color="#7B61FF" stop-opacity="0.2"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Grid lines -->
+                            <line x1="35" y1="170" x2="235" y2="170" stroke="#302000" stroke-width="1"/>
+                            <line x1="35" y1="140" x2="235" y2="140" stroke="#302000" stroke-width="0.5"/>
+                            <line x1="35" y1="110" x2="235" y2="110" stroke="#302000" stroke-width="0.5"/>
+                            <line x1="35" y1="80"  x2="235" y2="80"  stroke="#302000" stroke-width="0.5"/>
+                            <line x1="35" y1="50"  x2="235" y2="50"  stroke="#302000" stroke-width="0.5"/>
+                            <!-- Bars -->
+                            <rect x="45"  y="110" width="30" height="60" rx="4" fill="url(#g4a)"/>
+                            <rect x="85"  y="80"  width="30" height="90" rx="4" fill="url(#g4b)"/>
+                            <rect x="125" y="55"  width="30" height="115" rx="4" fill="url(#g4c)"/>
+                            <rect x="165" y="40"  width="30" height="130" rx="4" fill="url(#g4d)"/>
+                            <!-- Trend line -->
+                            <polyline points="60,108 100,78 140,52 180,38" fill="none" stroke="#F5A623" stroke-width="2" stroke-dasharray="5,3"/>
+                            <!-- Arrow at end -->
+                            <polygon points="180,38 190,32 185,44" fill="#F5A623"/>
+                            <!-- Labels -->
+                            <text x="50"  y="185" font-size="8" fill="#8B6000" font-family="DM Sans, sans-serif">Jan</text>
+                            <text x="90"  y="185" font-size="8" fill="#8B6000" font-family="DM Sans, sans-serif">Feb</text>
+                            <text x="130" y="185" font-size="8" fill="#8B6000" font-family="DM Sans, sans-serif">Mar</text>
+                            <text x="170" y="185" font-size="8" fill="#8B6000" font-family="DM Sans, sans-serif">Apr</text>
+                            <!-- Value tooltip -->
+                            <rect x="160" y="20" width="60" height="22" rx="5" fill="#302000" stroke="#F5A623" stroke-width="1" stroke-opacity="0.5"/>
+                            <text x="190" y="34" font-size="9" fill="#F5A623" font-family="DM Sans, sans-serif" text-anchor="middle" font-weight="700">+247%</text>
+                            <!-- Social icons -->
+                            <circle cx="210" cy="85" r="10" fill="#1877F2" fill-opacity="0.2" stroke="#1877F2" stroke-width="1" stroke-opacity="0.4"/>
+                            <text x="210" y="89" font-size="9" fill="#1877F2" text-anchor="middle">f</text>
+                            <circle cx="210" cy="110" r="10" fill="#E1306C" fill-opacity="0.2" stroke="#E1306C" stroke-width="1" stroke-opacity="0.4"/>
+                            <text x="210" y="114" font-size="8" fill="#E1306C" text-anchor="middle">ig</text>
+                        </svg>
+                    </div>
+                    <div class="card-front-info">
+                        <div class="card-front-title">Digital Marketing</div>
+                        <div class="card-front-count"><span id="cat-count-MARKETING">—</span> open jobs</div>
+                    </div>
+                </div>
+                <div class="flip-card-back">
+                    <div class="back-icon">📣</div>
+                    <div class="back-title">Digital Marketing</div>
+                    <div class="back-desc">SEO, paid ads, social media and growth strategies that actually move the needle.</div>
+                    <div class="back-tags">
+                        <span class="back-tag">SEO/SEM</span><span class="back-tag">Social Media</span>
+                        <span class="back-tag">PPC Ads</span><span class="back-tag">Email</span>
+                        <span class="back-tag">Analytics</span>
+                    </div>
+                    <a href="/login.html"><span class="back-btn">Browse Jobs →</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 5 — Video & Animation -->
+        <div class="flip-card fc-5 reveal">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <div class="card-svg-wrap">
+                        <svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="g5a" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#FF6B8A"/>
+                                    <stop offset="100%" stop-color="#C2185B"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Clapperboard body -->
+                            <rect x="35" y="65" width="190" height="125" rx="10" fill="#1A0A10" stroke="#FF6B8A" stroke-width="1.5" stroke-opacity="0.4"/>
+                            <!-- Clapperboard top slate -->
+                            <rect x="35" y="40" width="190" height="32" rx="8" fill="#2A0D1A" stroke="#FF6B8A" stroke-width="1.5" stroke-opacity="0.5"/>
+                            <!-- Stripe pattern on top -->
+                            <clipPath id="slateClip">
+                                <rect x="35" y="40" width="190" height="32" rx="8"/>
+                            </clipPath>
+                            <g clip-path="url(#slateClip)">
+                                <rect x="35" y="40" width="25" height="32" fill="#FF6B8A" fill-opacity="0.7"/>
+                                <rect x="85" y="40" width="25" height="32" fill="#FF6B8A" fill-opacity="0.7"/>
+                                <rect x="135" y="40" width="25" height="32" fill="#FF6B8A" fill-opacity="0.7"/>
+                                <rect x="185" y="40" width="25" height="32" fill="#FF6B8A" fill-opacity="0.7"/>
+                            </g>
+                            <!-- Hinge line -->
+                            <line x1="35" y1="72" x2="225" y2="72" stroke="#FF6B8A" stroke-width="1.5" stroke-opacity="0.5"/>
+                            <!-- Screen content -->
+                            <rect x="50" y="82" width="160" height="95" rx="6" fill="#0A0408" stroke="#FF6B8A" stroke-width="0.5" stroke-opacity="0.2"/>
+                            <!-- Play button -->
+                            <circle cx="130" cy="129" r="28" fill="#FF6B8A" fill-opacity="0.15" stroke="#FF6B8A" stroke-width="1.5"/>
+                            <polygon points="121,117 121,142 148,129" fill="#FF6B8A" fill-opacity="0.9"/>
+                            <!-- Timeline bar -->
+                            <rect x="55" y="165" width="150" height="5" rx="2.5" fill="#2A0D1A"/>
+                            <rect x="55" y="165" width="80" height="5" rx="2.5" fill="url(#g5a)"/>
+                            <circle cx="135" cy="167.5" r="5" fill="#FF6B8A" stroke="#fff" stroke-width="1.5"/>
+                            <!-- Label -->
+                            <text x="50" y="97" font-size="7" fill="#FF6B8A" fill-opacity="0.5" font-family="DM Sans,sans-serif">SCENE 1 · TAKE 3</text>
+                        </svg>
+                    </div>
+                    <div class="card-front-info">
+                        <div class="card-front-title">Video &amp; Animation</div>
+                        <div class="card-front-count"><span id="cat-count-VIDEO">—</span> open jobs</div>
+                    </div>
+                </div>
+                <div class="flip-card-back">
+                    <div class="back-icon">🎬</div>
+                    <div class="back-title">Video &amp; Animation</div>
+                    <div class="back-desc">Explainer videos, motion graphics, reels and cinematic edits that tell your story.</div>
+                    <div class="back-tags">
+                        <span class="back-tag">Motion Graphics</span><span class="back-tag">Editing</span>
+                        <span class="back-tag">3D Anim</span><span class="back-tag">Reels</span>
+                        <span class="back-tag">VFX</span>
+                    </div>
+                    <a href="/login.html"><span class="back-btn">Browse Jobs →</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 6 — Education & Tutoring -->
+        <div class="flip-card fc-6 reveal">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <div class="card-svg-wrap">
+                        <svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="g6a" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#38bdf8"/>
+                                    <stop offset="100%" stop-color="#0369a1"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Graduation cap base -->
+                            <ellipse cx="130" cy="105" rx="80" ry="18" fill="#0A1E30" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.3"/>
+                            <!-- Cap top board -->
+                            <polygon points="50,95 130,60 210,95 130,130" fill="#0D2540" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.5"/>
+                            <!-- Cap top sheen -->
+                            <polygon points="50,95 130,60 210,95 130,75" fill="#38bdf8" fill-opacity="0.06"/>
+                            <!-- Top button -->
+                            <circle cx="130" cy="60" r="7" fill="#38bdf8" fill-opacity="0.4" stroke="#38bdf8" stroke-width="1.5"/>
+                            <!-- Tassel string -->
+                            <line x1="130" y1="67" x2="185" y2="95" stroke="#F5A623" stroke-width="2"/>
+                            <!-- Tassel end -->
+                            <circle cx="185" cy="95" r="5" fill="#F5A623" fill-opacity="0.8"/>
+                            <line x1="185" y1="100" x2="178" y2="118" stroke="#F5A623" stroke-width="1.5"/>
+                            <line x1="185" y1="100" x2="185" y2="120" stroke="#F5A623" stroke-width="1.5"/>
+                            <line x1="185" y1="100" x2="192" y2="118" stroke="#F5A623" stroke-width="1.5"/>
+                            <!-- Open book below -->
+                            <rect x="60" y="130" width="140" height="48" rx="4" fill="#0A1E30" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.25"/>
+                            <!-- Book spine -->
+                            <line x1="130" y1="130" x2="130" y2="178" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.4"/>
+                            <!-- Book lines left -->
+                            <line x1="70" y1="143" x2="122" y2="143" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.3"/>
+                            <line x1="70" y1="152" x2="118" y2="152" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.25"/>
+                            <line x1="70" y1="161" x2="122" y2="161" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.2"/>
+                            <line x1="70" y1="170" x2="115" y2="170" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.2"/>
+                            <!-- Book lines right -->
+                            <line x1="138" y1="143" x2="190" y2="143" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.3"/>
+                            <line x1="138" y1="152" x2="186" y2="152" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.25"/>
+                            <line x1="138" y1="161" x2="190" y2="161" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.2"/>
+                            <line x1="138" y1="170" x2="183" y2="170" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.2"/>
+                            <!-- Stars floating -->
+                            <text x="30"  y="75" font-size="12" fill="#F5A623" opacity="0.7">★</text>
+                            <text x="215" y="70" font-size="10" fill="#38bdf8" opacity="0.6">✦</text>
+                            <text x="40"  y="150" font-size="8" fill="#38bdf8" opacity="0.4">✦</text>
+                        </svg>
+                    </div>
+                    <div class="card-front-info">
+                        <div class="card-front-title">Education &amp; Tutoring</div>
+                        <div class="card-front-count"><span id="cat-count-TEACHING">—</span> open jobs</div>
+                    </div>
+                </div>
+                <div class="flip-card-back">
+                    <div class="back-icon">📚</div>
+                    <div class="back-title">Education &amp; Tutoring</div>
+                    <div class="back-desc">Online tutors, course creators, language coaches and academic mentors.</div>
+                    <div class="back-tags">
+                        <span class="back-tag">Math</span><span class="back-tag">Languages</span>
+                        <span class="back-tag">Coding</span><span class="back-tag">Exam Prep</span>
+                        <span class="back-tag">Music</span>
+                    </div>
+                    <a href="/login.html"><span class="back-btn">Browse Jobs →</span></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══════════════════════════════════════════════════ -->
+<section id="how-it-works">
+    <div class="section-head reveal">
+        <div class="section-label">Process</div>
+        <h2 class="section-title">How SkillBridge Works</h2>
+        <p class="section-sub">From posting a job to receiving world-class work — in just four steps.</p>
+    </div>
+    <div class="steps-grid">
+        <div class="step-card reveal">
+            <div class="step-num">01</div>
+            <div class="step-icon" style="background:rgba(0,201,167,0.1);border:1px solid rgba(0,201,167,0.2)">📝</div>
+            <div class="step-title">Post Your Job</div>
+            <div class="step-desc">Describe your project, set your budget and required skills. Takes less than 3 minutes.</div>
+            <div class="step-connector"></div>
+        </div>
+        <div class="step-card reveal">
+            <div class="step-num">02</div>
+            <div class="step-icon" style="background:rgba(123,97,255,0.1);border:1px solid rgba(123,97,255,0.2)">⚡</div>
+            <div class="step-title">AI Matches Talent</div>
+            <div class="step-desc">Our AI engine scores every proposal instantly — so the best candidates rise to the top automatically.</div>
+            <div class="step-connector"></div>
+        </div>
+        <div class="step-card reveal">
+            <div class="step-num">03</div>
+            <div class="step-icon" style="background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.2)">🤝</div>
+            <div class="step-title">Hire with Confidence</div>
+            <div class="step-desc">Review AI-ranked proposals, chat with candidates, and hire the perfect match in hours — not days.</div>
+            <div class="step-connector"></div>
+        </div>
+        <div class="step-card reveal">
+            <div class="step-num">04</div>
+            <div class="step-icon" style="background:rgba(255,107,138,0.1);border:1px solid rgba(255,107,138,0.2)">🚀</div>
+            <div class="step-title">Get Great Work Done</div>
+            <div class="step-desc">Collaborate in real-time, share files, and mark milestones. Release payment only when you're satisfied.</div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FEATURED FREELANCERS ══════════════════════════════════════════ -->
+<section id="featured-freelancers">
+    <div class="section-head reveal">
+        <div class="section-label">Top Talent</div>
+        <h2 class="section-title">Featured Freelancers</h2>
+        <p class="section-sub">Real professionals. Ratings only shown once earned. Join to see the full directory.</p>
+    </div>
+    <div class="freelancers-grid" id="freelancers-grid">
+        <div class="placeholder-note">
+            ⭐ Freelancer profiles appear here once members join and complete their profiles.<br>
+            <a href="/register.html" style="color:var(--teal);font-weight:600;">Be the first to join SkillBridge →</a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FEATURED SERVICES ═════════════════════════════════════════════ -->
+<section id="featured-services">
+    <div class="section-head reveal">
+        <div class="section-label">Top Services</div>
+        <h2 class="section-title">Featured Services</h2>
+        <p class="section-sub">Browse services offered by verified freelancers. Every price is real. Every review is earned.</p>
+    </div>
+    <div class="services-grid" id="services-grid">
+        <div class="placeholder-note" style="background:var(--card);border-radius:var(--radius-lg);border:1px solid var(--border);">
+            🎯 Services will appear here once freelancers start listing their offerings.<br>
+            <a href="/register.html?role=freelancer" style="color:var(--teal);font-weight:600;">List your service now →</a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ WHY CHOOSE US ═════════════════════════════════════════════════ -->
+<section id="why-us">
+    <div class="why-grid">
+        <div class="why-visual reveal">
+            <div class="why-big-card">
+                <div class="big-icon">🤖</div>
+                <h3>AI-Powered Matching — Not Just Filtering</h3>
+                <p>Most platforms let you sort by price or rating. SkillBridge's AI reads job requirements and freelancer skills, then scores every application using a hybrid Jaccard + TF-IDF algorithm — so the best fit floats to the top automatically.</p>
+                <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border);">
+                    <div style="display:flex;gap:1.5rem;">
+                        <div>
+                            <div style="font-family:Syne,sans-serif;font-weight:800;font-size:1.5rem;color:var(--teal)">94%</div>
+                            <div style="font-size:0.78rem;color:var(--text2)">Match Accuracy</div>
+                        </div>
+                        <div>
+                            <div style="font-family:Syne,sans-serif;font-weight:800;font-size:1.5rem;color:var(--gold)">3x</div>
+                            <div style="font-size:0.78rem;color:var(--text2)">Faster Hiring</div>
+                        </div>
+                        <div>
+                            <div style="font-family:Syne,sans-serif;font-weight:800;font-size:1.5rem;color:var(--rose)">80%</div>
+                            <div style="font-size:0.78rem;color:var(--text2)">Less Screening</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="why-floating-stat">
+                <div class="wfs-num" id="wfs-projects">—</div>
+                <div class="wfs-label">Projects completed</div>
+            </div>
+        </div>
+        <div class="reveal">
+            <div class="section-label">Why SkillBridge</div>
+            <h2 class="section-title" style="margin-bottom:2rem">Built for Real Work,<br>Not Just Browsing</h2>
+            <div class="features-list">
+                <div class="feature-item">
+                    <div class="fi-icon" style="background:rgba(0,201,167,0.1);border:1px solid rgba(0,201,167,0.15)">⚡</div>
+                    <div>
+                        <div class="fi-title">Instant AI Score on Every Proposal</div>
+                        <div class="fi-desc">The moment a freelancer applies, our AI scores their match against your job requirements. No waiting. No manual filtering.</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="fi-icon" style="background:rgba(123,97,255,0.1);border:1px solid rgba(123,97,255,0.15)">🔒</div>
+                    <div>
+                        <div class="fi-title">Secure Payments & Milestone Protection</div>
+                        <div class="fi-desc">Funds are only released when you approve the work. Built-in dispute resolution keeps both parties protected.</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="fi-icon" style="background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.15)">💬</div>
+                    <div>
+                        <div class="fi-title">Real-Time Project Chat</div>
+                        <div class="fi-desc">Message your freelancer, share files, and track progress — all inside SkillBridge. No external tools needed.</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="fi-icon" style="background:rgba(255,107,138,0.1);border:1px solid rgba(255,107,138,0.15)">🌍</div>
+                    <div>
+                        <div class="fi-title">Every Skill. Every Industry.</div>
+                        <div class="fi-desc">Not just developers. Writers, designers, marketers, educators, photographers — SkillBridge covers every profession.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══════════════════════════════════════════════════ -->
+<section id="testimonials">
+    <div class="section-head reveal">
+        <div class="section-label">Reviews</div>
+        <h2 class="section-title">What Our Community Says</h2>
+        <p class="section-sub">Only real reviews from verified users — no fake testimonials, ever.</p>
+    </div>
+    <div class="test-grid" id="testimonials-grid">
+        <div class="real-only-note">
+            💬 Testimonials will appear here once members complete projects and leave reviews.<br>
+            Every review you see on SkillBridge is from a verified, completed project.<br>
+            <a href="/register.html" style="color:var(--teal);font-weight:600;">Join and be part of the story →</a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ CTA ════════════════════════════════════════════════════════════ -->
+<section id="cta">
+    <div class="cta-glow"></div>
+    <div class="cta-content reveal">
+        <div class="section-label" style="display:block;margin-bottom:1rem;">Get Started Today</div>
+        <h2 class="cta-title">Your Next Great<br><span style="background:linear-gradient(135deg,var(--teal),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Opportunity Awaits</span></h2>
+        <p class="cta-sub">Join SkillBridge free. Post your first job in minutes, or list your skills and start earning today.</p>
+        <div class="cta-actions">
+            <a href="/register.html"><button class="btn-cta-main">Post a Job — It's Free</button></a>
+            <a href="/register.html?role=freelancer"><button class="btn-cta-sec">Join as Freelancer →</button></a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════════════ -->
+<footer>
+    <div class="footer-grid">
+        <div class="footer-brand">
+            <div class="logo">SkillBridge</div>
+            <p>AI-powered freelance marketplace connecting world-class talent with ambitious clients — across every industry.</p>
+            <div class="social-links">
+                <a class="social-link" href="#" title="Twitter">𝕏</a>
+                <a class="social-link" href="#" title="LinkedIn">in</a>
+                <a class="social-link" href="#" title="GitHub">⌥</a>
+                <a class="social-link" href="#" title="Instagram">◎</a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h4>Platform</h4>
+            <a href="/login.html">Browse Jobs</a>
+            <a href="/register.html?role=freelancer">Become a Freelancer</a>
+            <a href="/register.html">Post a Job</a>
+            <a href="#how-it-works">How It Works</a>
+        </div>
+        <div class="footer-col">
+            <h4>Categories</h4>
+            <a href="/login.html">IT &amp; Software</a>
+            <a href="/login.html">Photography</a>
+            <a href="/login.html">Writing &amp; Content</a>
+            <a href="/login.html">Digital Marketing</a>
+            <a href="/login.html">Video &amp; Animation</a>
+            <a href="/login.html">Education</a>
+        </div>
+        <div class="footer-col">
+            <h4>Company</h4>
+            <a href="#">About Us</a>
+            <a href="#">Blog</a>
+            <a href="#">Careers</a>
+            <a href="#">Contact</a>
+            <a href="/privacy.html">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 SkillBridge. All rights reserved.</p>
+        <div class="footer-legal">
+            <a href="/privacy.html">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Cookies</a>
+        </div>
+    </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════════════ -->
+<script>
+    // ── Navbar scroll effect ─────────────────────────────────────────
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // ── Scroll reveal ────────────────────────────────────────────────
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          e.target.style.transitionDelay = (e.target.dataset.delay || 0) + 'ms';
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach((el, i) => {
+      el.dataset.delay = (i % 4) * 80;
+      observer.observe(el);
+    });
+
+    // ── Animated counter ─────────────────────────────────────────────
+    function animateCount(el, target, suffix = '') {
+      let start = 0;
+      const dur = 1600;
+      const step = 16;
+      const increment = target / (dur / step);
+      const timer = setInterval(() => {
+        start += increment;
+        if (start >= target) { start = target; clearInterval(timer); }
+        el.textContent = Math.floor(start).toLocaleString() + suffix;
+      }, step);
+    }
+
+    // ── Load stats from API ──────────────────────────────────────────
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/v1/stats/public');
+        if (!res.ok) throw new Error('API not ready');
+        const d = await res.json();
+
+        // Animate stats strip
+        const el = (id) => document.getElementById(id);
+        if (d.freelancers > 0) animateCount(el('stat-freelancers'), d.freelancers);
+        else el('stat-freelancers').textContent = '0';
+
+        if (d.jobs > 0) animateCount(el('stat-jobs'), d.jobs);
+        else el('stat-jobs').textContent = '0';
+
+        if (d.projects > 0) animateCount(el('stat-projects'), d.projects);
+        else el('stat-projects').textContent = '0';
+
+        if (d.avgRating > 0) el('stat-rating').textContent = d.avgRating.toFixed(1) + '★';
+        else el('stat-rating').textContent = '—';
+
+        // Hero trust text
+        const total = (d.freelancers || 0) + (d.clients || 0);
+        if (total > 0) {
+          document.getElementById('hero-member-count').textContent =
+            total.toLocaleString() + ' members already';
+        }
+
+        // Why us floating stat
+        if (d.projects > 0) {
+          document.getElementById('wfs-projects').textContent = d.projects.toLocaleString();
+          document.getElementById('stat-projects').textContent = d.projects.toLocaleString();
+        }
+
+        // Category counts
+        if (d.jobsByCategory) {
+          d.jobsByCategory.forEach(item => {
+            const el2 = document.getElementById('cat-count-' + item.category);
+            if (el2) el2.textContent = item.count;
+          });
+        }
+      } catch (e) {
+        // API not ready yet — show zeros gracefully
+        ['stat-freelancers','stat-jobs','stat-projects'].forEach(id => {
+          document.getElementById(id).textContent = '0';
+        });
+        document.getElementById('stat-rating').textContent = '—';
+        document.getElementById('wfs-projects').textContent = '0';
+        // Leave category counts as —
+      }
+    }
+
+    // ── Load featured freelancers ─────────────────────────────────────
+    async function loadFeaturedFreelancers() {
+      try {
+        const res = await fetch('/api/v1/stats/top-freelancers');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data || data.length === 0) return;
+
+        const colors = [
+          'linear-gradient(135deg,#00C9A7,#0082a5)',
+          'linear-gradient(135deg,#7B61FF,#5234c7)',
+          'linear-gradient(135deg,#F5A623,#d97706)',
+          'linear-gradient(135deg,#FF6B8A,#c2185b)',
+        ];
+
+        const grid = document.getElementById('freelancers-grid');
+        grid.innerHTML = data.map((f, i) => `
+          <div class="freelancer-card reveal">
+            <div class="fc-head">
+              <div class="fc-avatar" style="background:${colors[i % colors.length]}">
+                ${f.name ? f.name.charAt(0).toUpperCase() : '?'}
+                ${f.isOnline ? '<div class="online-dot"></div>' : ''}
+              </div>
+              <div>
+                <div class="fc-name">${escHtml(f.name)}</div>
+                <div class="fc-role">${escHtml(f.category || f.topSkill || 'Freelancer')}</div>
+              </div>
+              ${f.avgRating && f.reviewCount > 0 ? `
+              <div class="fc-rating">
+                <span class="stars">${'★'.repeat(Math.round(f.avgRating))}</span>
+                <span class="score">${f.avgRating.toFixed(1)}</span>
+              </div>` : ''}
+            </div>
+            ${f.skills && f.skills.length > 0 ? `
+            <div class="fc-skills">
+              ${f.skills.slice(0,4).map(s => `<span class="fc-skill">${escHtml(s)}</span>`).join('')}
+            </div>` : ''}
+            <div class="fc-footer">
+              <div class="fc-rate">${f.hourlyRate ? '$' + f.hourlyRate + '/hr' : 'Rate TBD'}</div>
+              <a href="/login.html"><button class="fc-hire">View Profile</button></a>
+            </div>
+          </div>
+        `).join('');
+        // Re-observe new cards
+        grid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      } catch (e) { /* keep placeholder */ }
+    }
+
+    // ── Load testimonials ─────────────────────────────────────────────
+    async function loadTestimonials() {
+      try {
+        const res = await fetch('/api/v1/stats/reviews');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data || data.length === 0) return;
+
+        const colors = ['linear-gradient(135deg,#00C9A7,#005f50)','linear-gradient(135deg,#7B61FF,#4a35cc)','linear-gradient(135deg,#F5A623,#b37500)'];
+        const grid = document.getElementById('testimonials-grid');
+        grid.innerHTML = data.map((r, i) => `
+          <div class="test-card reveal">
+            <div class="test-quote">"</div>
+            <div class="test-text">${escHtml(r.comment)}</div>
+            <div class="test-author">
+              <div class="ta-av" style="background:${colors[i % colors.length]}">${r.reviewerName.charAt(0)}</div>
+              <div>
+                <div class="ta-name">${escHtml(r.reviewerName)}</div>
+                <div class="ta-role">${escHtml(r.reviewerRole || 'Client')}</div>
+              </div>
+              <div class="ta-stars">${'★'.repeat(r.rating)}</div>
+            </div>
+          </div>
+        `).join('');
+        grid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      } catch (e) { /* keep placeholder */ }
+    }
+
+    // ── XSS protection ────────────────────────────────────────────────
+    function escHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────
+    loadStats();
+    loadFeaturedFreelancers();
+    loadTestimonials();
+</script>
+</body>
+</html>

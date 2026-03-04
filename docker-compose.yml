@@ -1,0 +1,19 @@
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: skillbridge-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: skillbridge_db
+      MYSQL_USER: sbuser
+      MYSQL_PASSWORD: sbpassword
+    ports:
+      - "3307:3306"
+    volumes:
+      - skillbridge_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+volumes:
+  skillbridge_data:
