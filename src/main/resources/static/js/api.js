@@ -15,13 +15,18 @@ async function apiFetch(path, options = {}) {
 
   const response = await fetch(path, { ...options, headers });
 
-  // Auto-logout on 401 (token expired or revoked)
   if (response.status === 401) {
-    if (typeof getToken === 'function' && getToken()) {
-      // Only redirect if we had a token (not a public endpoint)
-      localStorage.clear();
-      window.location.href = '/login.html';
-      return;
+    // Only redirect if we had a token (not a public endpoint call)
+    if (token) {
+      // Clear FIRST, then redirect — prevents login.html from looping back
+      localStorage.removeItem('sb_jwt');
+      localStorage.removeItem('sb_role');
+      localStorage.removeItem('sb_user');
+      // Small delay so any pending operations finish
+      setTimeout(() => {
+        window.location.replace('/login.html');
+      }, 50);
+      return response; // Return so calling code doesn't crash
     }
   }
 

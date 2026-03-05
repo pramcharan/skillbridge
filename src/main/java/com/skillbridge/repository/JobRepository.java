@@ -14,18 +14,28 @@ import java.time.Instant;
 import java.util.List;
 
 public interface JobRepository extends JpaRepository<Job, Long> {
-    Page<Job> findByStatus(JobStatus status, Pageable pageable);
-    Page<Job> findByStatusAndCategory(JobStatus status, JobCategory category, Pageable pageable);
-    Page<Job> findByClient(User client, Pageable pageable);
+
+    @Query("SELECT j FROM Job j JOIN FETCH j.client WHERE j.status = :status")
+    Page<Job> findByStatus(@Param("status") JobStatus status, Pageable pageable);
+
+    @Query("SELECT j FROM Job j JOIN FETCH j.client WHERE j.status = :status AND j.category = :category")
+    Page<Job> findByStatusAndCategory(@Param("status") JobStatus status,
+                                      @Param("category") JobCategory category,
+                                      Pageable pageable);
+
+    @Query("SELECT j FROM Job j JOIN FETCH j.client WHERE j.client = :client")
+    Page<Job> findByClient(@Param("client") User client, Pageable pageable);
+
     List<Job> findByStatusAndAutoExpireAtBefore(JobStatus status, Instant now);
 
-    @Query("SELECT j FROM Job j WHERE j.status = 'OPEN' AND " +
+    @Query("SELECT j FROM Job j JOIN FETCH j.client WHERE j.status = 'OPEN' AND " +
             "(LOWER(j.title) LIKE LOWER(CONCAT('%',:kw,'%')) OR " +
             " LOWER(j.description) LIKE LOWER(CONCAT('%',:kw,'%')) OR " +
             " LOWER(j.requiredSkills) LIKE LOWER(CONCAT('%',:kw,'%')))")
     Page<Job> searchByKeyword(@Param("kw") String keyword, Pageable pageable);
 
-    @Query("SELECT j FROM Job j WHERE j.status = 'OPEN' AND j.category = :category AND " +
+    @Query("SELECT j FROM Job j JOIN FETCH j.client WHERE j.status = 'OPEN' AND " +
+            "j.category = :category AND " +
             "LOWER(j.requiredSkills) LIKE LOWER(CONCAT('%',:skill,'%')) AND j.id != :excludeId")
     List<Job> findSimilarJobs(@Param("category") JobCategory category,
                               @Param("skill") String skill,

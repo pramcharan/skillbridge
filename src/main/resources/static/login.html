@@ -2,8 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- ── Redirect already-logged-in users immediately ── -->
+    <script>
+        (function() {
+          var token = localStorage.getItem('sb_jwt');
+          var role  = localStorage.getItem('sb_role');
+          if (token && role) {
+            if      (role === 'FREELANCER') window.location.replace('/dashboard-freelancer.html');
+            else if (role === 'CLIENT')     window.location.replace('/dashboard-client.html');
+            else if (role === 'ADMIN')      window.location.replace('/admin.html');
+          }
+        })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login — SkillBridge</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌉</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -418,13 +431,6 @@
       }
     });
 
-    // If already logged in, redirect away from login page
-    if (getToken && getToken()) {
-      const role = getRole ? getRole() : null;
-      if (role === 'FREELANCER') window.location.href = '/dashboard-freelancer.html';
-      else if (role === 'CLIENT') window.location.href = '/dashboard-client.html';
-      else if (role === 'ADMIN')  window.location.href = '/admin.html';
-    }
 </script>
 </body>
 </html>

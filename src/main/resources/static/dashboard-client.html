@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard — SkillBridge</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌉</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        :root {
+          --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
+          --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623; --purple:#7B61FF;
+          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
+          --border:#1A2D4A; --border2:#243650;
+        }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+        nav {
+          display:flex; align-items:center; justify-content:space-between;
+          padding:0 5%; height:64px; background:rgba(6,13,26,0.95);
+          border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;
+        }
+        .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.35rem;
+          background:linear-gradient(135deg,var(--teal),var(--gold));
+          -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .nav-links { display:flex; gap:1.5rem; align-items:center; }
+        .nav-links a { font-size:0.88rem; color:var(--text2); text-decoration:none; transition:color 0.2s; }
+        .nav-links a:hover { color:var(--teal); }
+        .user-av {
+          width:36px; height:36px; border-radius:50%;
+          background:linear-gradient(135deg,var(--gold),var(--rose));
+          display:flex; align-items:center; justify-content:center;
+          font-weight:700; font-size:0.85rem; color:#fff;
+        }
+        .btn-sm { padding:0.4rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+        .btn-logout { background:transparent; border:1px solid var(--border2); color:var(--text2); transition:all 0.2s; }
+        .btn-logout:hover { border-color:var(--rose); color:var(--rose); }
+        .btn-primary { background:linear-gradient(135deg,var(--teal),var(--teal-dk)); border:none; color:#fff; }
+        main { max-width:1200px; margin:0 auto; padding:2rem 5%; }
+        .welcome-banner {
+          background:linear-gradient(135deg,var(--card),var(--card2));
+          border:1px solid var(--border2); border-radius:16px;
+          padding:2rem; margin-bottom:2rem;
+          display:flex; align-items:center; justify-content:space-between;
+        }
+        .wb-left h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:1.6rem; margin-bottom:0.35rem; }
+        .wb-left p { color:var(--text2); font-size:0.9rem; }
+        .stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:2rem; }
+        .stat-card { background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:1.25rem; text-align:center; }
+        .stat-card .num { font-family:'Syne',sans-serif; font-weight:800; font-size:1.8rem; color:var(--gold); }
+        .stat-card .lbl { font-size:0.8rem; color:var(--text2); margin-top:0.25rem; }
+        .section-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+        .section-hdr h2 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; }
+        .job-list { display:flex; flex-direction:column; gap:0.75rem; }
+        .job-row {
+          background:var(--card); border:1px solid var(--border2); border-radius:12px;
+          padding:1rem 1.25rem; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+        }
+        .jr-title { font-weight:700; font-size:0.95rem; }
+        .jr-meta { font-size:0.8rem; color:var(--text2); margin-top:0.2rem; }
+        .jr-status {
+          padding:0.25rem 0.7rem; border-radius:99px; font-size:0.75rem; font-weight:700;
+        }
+        .status-open     { background:rgba(0,201,167,0.1); color:var(--teal); border:1px solid rgba(0,201,167,0.2); }
+        .status-closed   { background:rgba(100,116,139,0.1); color:var(--text3); border:1px solid var(--border2); }
+        .status-expired  { background:rgba(220,38,38,0.1); color:var(--rose); border:1px solid rgba(220,38,38,0.2); }
+        .jr-actions { display:flex; gap:0.5rem; }
+        .btn-xs {
+          padding:0.3rem 0.8rem; border-radius:8px; font-size:0.8rem; font-weight:600;
+          cursor:pointer; font-family:'DM Sans',sans-serif; text-decoration:none; transition:all 0.2s;
+        }
+        .btn-view { background:var(--card2); border:1px solid var(--border2); color:var(--text2); }
+        .btn-view:hover { border-color:var(--teal); color:var(--teal); }
+        .empty-state { text-align:center; padding:3rem; color:var(--text3); }
+        .empty-icon { font-size:2.5rem; margin-bottom:0.75rem; }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="nav-logo">SkillBridge</a>
+    <div class="nav-links">
+        <a href="/post-job.html">Post a Job</a>
+        <a href="/profile.html">Profile</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+        <div class="user-av" id="user-av">?</div>
+        <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<main>
+    <div class="welcome-banner">
+        <div class="wb-left">
+            <h1>Welcome back, <span id="user-name">...</span>! 🏢</h1>
+            <p>Manage your jobs and find the best talent with AI matching.</p>
+        </div>
+        <a href="/post-job.html"><button class="btn-sm btn-primary">+ Post a Job</button></a>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="num" id="stat-jobs">0</div>
+            <div class="lbl">Jobs Posted</div>
+        </div>
+        <div class="stat-card">
+            <div class="num" id="stat-proposals">0</div>
+            <div class="lbl">Total Proposals</div>
+        </div>
+        <div class="stat-card">
+            <div class="num" id="stat-active">0</div>
+            <div class="lbl">Active Projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="num" id="stat-completed">0</div>
+            <div class="lbl">Completed</div>
+        </div>
+    </div>
+
+    <div class="section-hdr">
+        <h2>Your Posted Jobs</h2>
+        <a href="/post-job.html" style="color:var(--teal);text-decoration:none;font-size:0.85rem;">+ Post new job →</a>
+    </div>
+    <div class="job-list" id="job-list">
+        <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <p>Loading your jobs…</p>
+        </div>
+    </div>
+</main>
+
+<script src="/js/utils.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+    requireAuth('CLIENT');
+
+    async function loadDashboard() {
+      try {
+        const res  = await api.get('/api/v1/profile');
+        const user = await res.json();
+        document.getElementById('user-name').textContent = user.name || 'Client';
+        document.getElementById('user-av').textContent   = (user.name || 'C').charAt(0).toUpperCase();
+      } catch(e) {}
+
+      try {
+        const res  = await api.get('/api/v1/jobs/my-jobs?size=20');
+        const data = await res.json();
+        const jobs = data.content || [];
+        document.getElementById('stat-jobs').textContent = data.totalElements || 0;
+
+        const list = document.getElementById('job-list');
+        if (jobs.length === 0) {
+          list.innerHTML = `<div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>No jobs posted yet.</p>
+            <a href="/post-job.html" style="color:var(--teal);font-weight:600;">Post your first job →</a>
+          </div>`;
+          return;
+        }
+
+        let totalProposals = 0;
+        list.innerHTML = jobs.map(j => {
+          totalProposals += j.proposalCount || 0;
+          const statusClass = 'status-' + (j.status || 'open').toLowerCase();
+          return `
+            <div class="job-row">
+              <div>
+                <div class="jr-title">${escHtml(j.title)}</div>
+                <div class="jr-meta">${j.category} · ${j.proposalCount || 0} proposals · Posted ${formatDate(j.createdAt)}</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:1rem;">
+                <span class="jr-status ${statusClass}">${j.status}</span>
+                <div class="jr-actions">
+                  <a href="/proposals-client.html?jobId=${j.id}" class="btn-xs btn-view">Proposals</a>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+        document.getElementById('stat-proposals').textContent = totalProposals;
+      } catch(e) { console.error(e); }
+    }
+
+    loadDashboard();
+</script>
+</body>
+</html>

@@ -42,15 +42,22 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // ── Public static files ──────────────────────────────
+                        // ── All HTML pages — JS handles auth on the client side ──────
                         .requestMatchers(
                                 "/", "/index.html", "/login.html", "/register.html",
-                                "/privacy.html", "/role-select.html"
+                                "/privacy.html", "/role-select.html",
+                                "/dashboard-freelancer.html", "/dashboard-client.html",
+                                "/admin.html", "/jobs.html", "/job-detail.html",
+                                "/post-job.html", "/profile.html",
+                                "/community-chat.html", "/proposals-client.html",
+                                "/reset-password.html"
                         ).permitAll()
+
+                        // ── Static assets ─────────────────────────────────────────────
                         .requestMatchers("/css/**", "/js/**", "/lib/**",
                                 "/images/**", "/favicon.ico").permitAll()
 
-                        // ── Public API endpoints ─────────────────────────────
+                        // ── Public API endpoints ──────────────────────────────────────
                         .requestMatchers(
                                 "/api/v1/auth/**",
                                 "/api/v1/stats/public",
@@ -59,23 +66,14 @@ public class SecurityConfig {
                                 "/api/v1/stats/reviews"
                         ).permitAll()
 
-                        // ── OAuth2 endpoints ─────────────────────────────────
+                        // ── OAuth2 + WebSocket ────────────────────────────────────────
                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
-
-                        // ── WebSocket handshake ──────────────────────────────
                         .requestMatchers("/ws/**").permitAll()
 
-                        // ── Admin only ───────────────────────────────────────
-                        .requestMatchers("/admin.html").hasRole("ADMIN")
+                        // ── Admin API only ────────────────────────────────────────────
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
 
-                        // ── Client only ──────────────────────────────────────
-                        .requestMatchers("/dashboard-client.html").hasRole("CLIENT")
-
-                        // ── Freelancer only ──────────────────────────────────
-                        .requestMatchers("/dashboard-freelancer.html").hasRole("FREELANCER")
-
-                        // ── Everything else requires authentication ──────────
+                        // ── Everything else (all other /api/** routes) ────────────────
                         .anyRequest().authenticated()
                 )
 

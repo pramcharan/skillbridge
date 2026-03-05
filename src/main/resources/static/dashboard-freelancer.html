@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — SkillBridge</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌉</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+          --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
+          --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623; --purple:#7B61FF;
+          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
+          --border:#1A2D4A; --border2:#243650;
+        }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+        nav {
+          display:flex; align-items:center; justify-content:space-between;
+          padding:0 5%; height:64px; background:rgba(6,13,26,0.95);
+          border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;
+        }
+        .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.35rem;
+          background:linear-gradient(135deg,var(--teal),var(--gold));
+          -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .nav-links { display:flex; gap:1.5rem; align-items:center; }
+        .nav-links a { font-size:0.88rem; color:var(--text2); text-decoration:none; transition:color 0.2s; }
+        .nav-links a:hover { color:var(--teal); }
+        .nav-user { display:flex; align-items:center; gap:0.75rem; }
+        .user-av {
+          width:36px; height:36px; border-radius:50%;
+          background:linear-gradient(135deg,var(--teal),var(--purple));
+          display:flex; align-items:center; justify-content:center;
+          font-weight:700; font-size:0.85rem; color:#fff; cursor:pointer;
+        }
+        .btn-sm {
+          padding:0.4rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600;
+          cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s;
+        }
+        .btn-logout { background:transparent; border:1px solid var(--border2); color:var(--text2); }
+        .btn-logout:hover { border-color:var(--rose); color:var(--rose); }
+        .btn-primary { background:linear-gradient(135deg,var(--teal),var(--teal-dk)); border:none; color:#fff; }
+        .btn-primary:hover { opacity:0.9; }
+
+        main { max-width:1200px; margin:0 auto; padding:2rem 5%; }
+
+        /* Welcome banner */
+        .welcome-banner {
+          background:linear-gradient(135deg,var(--card),var(--card2));
+          border:1px solid var(--border2); border-radius:16px;
+          padding:2rem; margin-bottom:2rem;
+          display:flex; align-items:center; justify-content:space-between; gap:1rem;
+        }
+        .wb-left h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:1.6rem; margin-bottom:0.35rem; }
+        .wb-left p { font-size:0.9rem; color:var(--text2); }
+        .wb-badge {
+          padding:0.3rem 0.8rem; border-radius:99px; font-size:0.78rem; font-weight:600;
+          background:rgba(0,201,167,0.1); border:1px solid rgba(0,201,167,0.25); color:var(--teal);
+          margin-left:0.5rem;
+        }
+
+        /* Profile completion */
+        .completion-card {
+          background:var(--card); border:1px solid var(--border2); border-radius:14px;
+          padding:1.5rem; margin-bottom:2rem;
+        }
+        .completion-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+        .completion-title { font-weight:700; font-size:0.95rem; }
+        .completion-pct { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; color:var(--teal); }
+        .progress-track { height:8px; background:var(--border); border-radius:99px; overflow:hidden; }
+        .progress-fill {
+          height:100%; border-radius:99px;
+          background:linear-gradient(90deg,var(--teal),var(--gold));
+          transition:width 0.8s ease;
+        }
+        .completion-tips { display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.75rem; }
+        .tip-chip {
+          padding:0.25rem 0.65rem; border-radius:99px; font-size:0.78rem;
+          background:rgba(245,166,35,0.1); border:1px solid rgba(245,166,35,0.2); color:var(--gold);
+        }
+
+        /* Stats grid */
+        .stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:2rem; }
+        .stat-card {
+          background:var(--card); border:1px solid var(--border2); border-radius:14px;
+          padding:1.25rem; text-align:center;
+        }
+        .stat-card .num { font-family:'Syne',sans-serif; font-weight:800; font-size:1.8rem; color:var(--teal); }
+        .stat-card .lbl { font-size:0.8rem; color:var(--text2); margin-top:0.25rem; }
+
+        /* Section headers */
+        .section-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+        .section-hdr h2 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; }
+        .section-hdr a { font-size:0.85rem; color:var(--teal); text-decoration:none; }
+
+        /* Job cards */
+        .jobs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-bottom:2rem; }
+        .job-card {
+          background:var(--card); border:1px solid var(--border2); border-radius:14px;
+          padding:1.25rem; transition:all 0.2s;
+        }
+        .job-card:hover { transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,0,0,0.3); }
+        .jc-title { font-weight:700; font-size:0.95rem; margin-bottom:0.35rem; }
+        .jc-meta { font-size:0.8rem; color:var(--text2); margin-bottom:0.75rem; }
+        .jc-skills { display:flex; flex-wrap:wrap; gap:0.3rem; margin-bottom:0.75rem; }
+        .skill-tag {
+          padding:0.18rem 0.55rem; border-radius:99px; font-size:0.75rem; font-weight:500;
+          background:rgba(0,201,167,0.08); border:1px solid rgba(0,201,167,0.18); color:var(--teal);
+        }
+        .jc-footer { display:flex; align-items:center; justify-content:space-between; }
+        .jc-budget { font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; color:var(--gold); }
+        .jc-apply {
+          padding:0.35rem 0.9rem; border-radius:8px; font-size:0.82rem; font-weight:600;
+          background:var(--teal-lt,rgba(0,201,167,0.08)); border:1px solid rgba(0,201,167,0.25);
+          color:var(--teal); cursor:pointer; text-decoration:none; transition:all 0.2s;
+        }
+        .jc-apply:hover { background:rgba(0,201,167,0.18); }
+
+        /* Badge */
+        .ai-badge {
+          display:inline-flex; align-items:center; gap:0.3rem;
+          padding:0.2rem 0.6rem; border-radius:99px; font-size:0.75rem; font-weight:700;
+        }
+        .badge-green { background:#dcfce7; color:#16a34a; border:1px solid #86efac; }
+        .badge-amber { background:#fef3c7; color:#d97706; border:1px solid #fcd34d; }
+        .badge-red   { background:#fee2e2; color:#dc2626; border:1px solid #fca5a5; }
+
+        .empty-state { text-align:center; padding:3rem; color:var(--text3); font-size:0.9rem; }
+        .empty-state .empty-icon { font-size:2.5rem; margin-bottom:0.75rem; }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="nav-logo">SkillBridge</a>
+    <div class="nav-links">
+        <a href="/jobs.html">Browse Jobs</a>
+        <a href="/community-chat.html">Community</a>
+        <a href="/profile.html">Profile</a>
+    </div>
+    <div class="nav-user">
+        <div class="user-av" id="user-av">?</div>
+        <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<main>
+    <!-- Welcome -->
+    <div class="welcome-banner">
+        <div class="wb-left">
+            <h1>Welcome back, <span id="user-name">...</span>! 👋
+                <span class="wb-badge" id="role-badge">FREELANCER</span>
+            </h1>
+            <p>Here's what's happening on SkillBridge today.</p>
+        </div>
+        <a href="/jobs.html"><button class="btn-sm btn-primary">Browse Jobs →</button></a>
+    </div>
+
+    <!-- Profile Completion -->
+    <div class="completion-card">
+        <div class="completion-header">
+            <span class="completion-title">Profile Completion</span>
+            <span class="completion-pct" id="completion-pct">0%</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+        <div class="completion-tips" id="completion-tips"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="num" id="stat-applications">0</div>
+            <div class="lbl">Applications Sent</div>
+        </div>
+        <div class="stat-card">
+            <div class="num" id="stat-active">0</div>
+            <div class="lbl">Active Projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="num" id="stat-completed">0</div>
+            <div class="lbl">Completed</div>
+        </div>
+        <div class="stat-card">
+            <div class="num" id="stat-rating">—</div>
+            <div class="lbl">Your Rating</div>
+        </div>
+    </div>
+
+    <!-- Recommended Jobs -->
+    <div class="section-hdr">
+        <h2>Recommended Jobs</h2>
+        <a href="/jobs.html">View all →</a>
+    </div>
+    <div class="jobs-grid" id="jobs-grid">
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <p>Loading recommended jobs…</p>
+        </div>
+    </div>
+</main>
+
+<script src="/js/utils.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+    requireAuth('FREELANCER');
+
+    async function loadDashboard() {
+      try {
+        // Load profile
+        const res  = await api.get('/api/v1/profile');
+        const user = await res.json();
+
+        document.getElementById('user-name').textContent     = user.name || 'Freelancer';
+        document.getElementById('user-av').textContent       = (user.name || 'F').charAt(0).toUpperCase();
+        document.getElementById('completion-pct').textContent= (user.profileCompletionPct || 0) + '%';
+        document.getElementById('progress-fill').style.width = (user.profileCompletionPct || 0) + '%';
+
+        // Completion tips
+        const tips = [];
+        const skills = user.skills && user.skills.length > 0;
+        if (!user.bio)        tips.push('Add a bio');
+        if (!skills)          tips.push('Add your skills');
+        if (!user.hourlyRate) tips.push('Set your hourly rate');
+        if (!user.avatarUrl)  tips.push('Upload a photo');
+        const tipsEl = document.getElementById('completion-tips');
+        tipsEl.innerHTML = tips.map(t =>
+          `<span class="tip-chip">+ ${t}</span>`).join('');
+
+        // Rating
+        if (user.avgRating && user.reviewCount > 0) {
+          document.getElementById('stat-rating').textContent =
+            user.avgRating.toFixed(1) + '★';
+        }
+      } catch (e) { console.error('Profile load error', e); }
+
+      // Load recommended jobs
+      try {
+        const res  = await api.get('/api/v1/jobs?size=6');
+        const data = await res.json();
+        const jobs = data.content || [];
+        const grid = document.getElementById('jobs-grid');
+
+        if (jobs.length === 0) {
+          grid.innerHTML = `<div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>No open jobs yet. Check back soon!</p>
+          </div>`;
+          return;
+        }
+
+        grid.innerHTML = jobs.map(j => `
+          <div class="job-card">
+            <div class="jc-title">${escHtml(j.title)}</div>
+            <div class="jc-meta">${j.category} · ${j.clientName || 'Client'}</div>
+            <div class="jc-skills">
+              ${(j.requiredSkills || []).slice(0,3).map(s =>
+                `<span class="skill-tag">${escHtml(s)}</span>`).join('')}
+            </div>
+            <div class="jc-footer">
+              <span class="jc-budget">${j.budget ? '$'+j.budget.toLocaleString() : 'Negotiable'}</span>
+              <a href="/job-detail.html?id=${j.id}" class="jc-apply">View →</a>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) { console.error('Jobs load error', e); }
+    }
+
+    loadDashboard();
+</script>
+</body>
+</html>
