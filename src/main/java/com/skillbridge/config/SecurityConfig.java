@@ -3,6 +3,7 @@ package com.skillbridge.config;
 import com.skillbridge.security.JwtAuthFilter;
 import com.skillbridge.security.OAuth2SuccessHandler;
 import com.skillbridge.security.UserDetailsServiceImpl;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -77,6 +79,32 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
+                // ── Return JSON errors for API routes ────────────────────
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            // API routes → return JSON, never redirect to OAuth login
+                            String path = request.getRequestURI();
+                            if (path.startsWith("/api/")) {
+                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                response.setContentType("application/json");
+                                response.getWriter().write(
+                                        "{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}"
+                                );
+                            } else {
+                                // Non-API routes → redirect to login page
+                                response.sendRedirect("/login.html");
+                            }
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            // 403 for authenticated users without the right role
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    "{\"code\":\"FORBIDDEN\",\"message\":\"You do not have permission to perform this action\"}"
+                            );
+                        })
+                )
+
                 // ── OAuth2 login ─────────────────────────────────────────
                 .oauth2Login(oauth -> oauth
                         .successHandler(oAuth2SuccessHandler)
@@ -107,5 +135,16 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint apiAuthenticationEntryPoint() {
+        return (request, response, authException) -> {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write(
+                    "{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}"
+            );
+        };
     }
 }
