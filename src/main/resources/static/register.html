@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account — SkillBridge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+          --bg: #060D1A; --bg2: #0B1425; --card: #0D1829; --card2: #111f38;
+          --teal: #00C9A7; --teal-dk: #00A389; --gold: #F5A623; --purple: #7B61FF;
+          --rose: #FF6B8A; --text: #E8F0FE; --text2: #8BA3C7; --text3: #4A6080;
+          --border: #1A2D4A; --border2: #243650; --radius: 12px;
+        }
+        body {
+          font-family: 'DM Sans', sans-serif; background: var(--bg);
+          color: var(--text); min-height: 100vh; display: flex; flex-direction: column;
+        }
+        .page-bg {
+          position: fixed; inset: 0; z-index: 0; pointer-events: none;
+          background:
+            radial-gradient(ellipse 60% 50% at 80% 20%, rgba(123,97,255,0.06) 0%, transparent 60%),
+            radial-gradient(ellipse 50% 40% at 20% 80%, rgba(0,201,167,0.05) 0%, transparent 60%);
+        }
+        nav {
+          position: relative; z-index: 10;
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 0 5%; height: 64px;
+          border-bottom: 1px solid var(--border);
+          background: rgba(6,13,26,0.8); backdrop-filter: blur(16px);
+        }
+        .nav-logo {
+          font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.35rem;
+          background: linear-gradient(135deg, var(--teal), var(--gold));
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .nav-link { font-size: 0.88rem; color: var(--text2); }
+        .nav-link a { color: inherit; text-decoration: none; transition: color 0.2s; }
+        .nav-link a:hover { color: var(--teal); }
+        main {
+          position: relative; z-index: 1; flex: 1;
+          display: flex; align-items: center; justify-content: center;
+          padding: 2.5rem 1.5rem;
+        }
+        .register-card {
+          width: 100%; max-width: 480px; background: var(--card);
+          border: 1px solid var(--border2); border-radius: 20px;
+          padding: 2.5rem; box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+        }
+        .card-title {
+          font-family: 'Syne', sans-serif; font-weight: 800;
+          font-size: 1.6rem; letter-spacing: -0.02em;
+          color: var(--text); margin-bottom: 0.35rem;
+        }
+        .card-sub { font-size: 0.9rem; color: var(--text2); margin-bottom: 1.5rem; }
+
+        /* Role selector */
+        .role-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; }
+        .role-option { display: none; }
+        .role-label {
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+          gap: 0.4rem; padding: 1rem; border-radius: 12px; cursor: pointer;
+          border: 1.5px solid var(--border2); background: var(--bg2);
+          transition: all 0.2s; text-align: center;
+        }
+        .role-label .role-icon { font-size: 1.6rem; }
+        .role-label .role-name { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+        .role-label .role-desc { font-size: 0.75rem; color: var(--text3); line-height: 1.3; }
+        .role-option:checked + .role-label {
+          border-color: var(--teal); background: rgba(0,201,167,0.08);
+          box-shadow: 0 0 0 3px rgba(0,201,167,0.1);
+        }
+        .role-option:checked + .role-label .role-name { color: var(--teal); }
+
+        /* Form elements */
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+          display: block; font-size: 0.85rem; font-weight: 600;
+          color: var(--text2); margin-bottom: 0.4rem;
+        }
+        .form-control {
+          width: 100%; padding: 0.7rem 1rem;
+          background: var(--bg2); border: 1.5px solid var(--border2);
+          border-radius: 10px; font-size: 0.95rem; color: var(--text);
+          outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+          font-family: 'DM Sans', sans-serif;
+        }
+        .form-control::placeholder { color: var(--text3); }
+        .form-control:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,201,167,0.1); }
+        .form-control.error { border-color: var(--rose); }
+
+        /* Password strength */
+        .pwd-strength { height: 3px; border-radius: 99px; margin-top: 0.4rem; background: var(--border2); overflow: hidden; }
+        .pwd-strength-fill { height: 100%; border-radius: 99px; transition: width 0.3s, background 0.3s; width: 0; }
+        .pwd-hint { font-size: 0.75rem; margin-top: 0.3rem; }
+
+        /* Buttons */
+        .btn-register {
+          width: 100%; padding: 0.85rem; margin-top: 0.5rem;
+          background: linear-gradient(135deg, var(--teal), var(--teal-dk));
+          color: #fff; border: none; border-radius: 10px;
+          font-size: 1rem; font-weight: 700; cursor: pointer;
+          transition: all 0.25s; font-family: 'DM Sans', sans-serif;
+          box-shadow: 0 4px 20px rgba(0,201,167,0.3);
+          display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        .btn-register:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(0,201,167,0.4); }
+        .btn-register:disabled { opacity: 0.65; transform: none; cursor: not-allowed; }
+        .spinner {
+          width: 16px; height: 16px; border-radius: 50%;
+          border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff;
+          animation: spin 0.7s linear infinite; display: none;
+        }
+        .btn-register.loading .spinner { display: block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .divider { display: flex; align-items: center; gap: 1rem; margin: 1.25rem 0; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border2); }
+        .divider span { font-size: 0.8rem; color: var(--text3); }
+
+        .oauth-btns { display: flex; gap: 0.65rem; }
+        .btn-oauth {
+          flex: 1; padding: 0.72rem; background: var(--bg2);
+          border: 1.5px solid var(--border2); border-radius: 10px;
+          font-size: 0.85rem; font-weight: 600; color: var(--text2);
+          cursor: pointer; transition: all 0.2s;
+          display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+          font-family: 'DM Sans', sans-serif; text-decoration: none;
+        }
+        .btn-oauth:hover { border-color: var(--teal); color: var(--text); }
+
+        .alert { padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.88rem; font-weight: 500; margin-bottom: 1rem; }
+        .alert-error   { background: rgba(255,107,138,0.1); color: var(--rose); border: 1px solid rgba(255,107,138,0.2); }
+        .alert-success { background: rgba(0,201,167,0.1);   color: var(--teal); border: 1px solid rgba(0,201,167,0.2); }
+
+        .card-footer-link { text-align: center; margin-top: 1.25rem; font-size: 0.88rem; color: var(--text3); }
+        .card-footer-link a { color: var(--teal); font-weight: 700; text-decoration: none; }
+
+        .page-footer {
+          position: relative; z-index: 1; text-align: center;
+          padding: 1.25rem; border-top: 1px solid var(--border);
+          font-size: 0.8rem; color: var(--text3);
+        }
+        .page-footer a { color: var(--text3); text-decoration: none; }
+        .page-footer a:hover { color: var(--teal); }
+    </style>
+</head>
+<body>
+<div class="page-bg"></div>
+<nav>
+    <a href="/" class="nav-logo">SkillBridge</a>
+    <div class="nav-link">Already have an account? <a href="/login.html">Sign in →</a></div>
+</nav>
+
+<main>
+    <div class="register-card">
+        <h1 class="card-title">Create Account</h1>
+        <p class="card-sub">Join SkillBridge free — no credit card required</p>
+
+        <div id="alert-area"></div>
+
+        <!-- Role selection -->
+        <div class="role-selector">
+            <input type="radio" name="role" id="role-freelancer"
+                   class="role-option" value="FREELANCER" checked>
+            <label for="role-freelancer" class="role-label">
+                <span class="role-icon">💼</span>
+                <span class="role-name">I'm a Freelancer</span>
+                <span class="role-desc">I want to find work and clients</span>
+            </label>
+
+            <input type="radio" name="role" id="role-client"
+                   class="role-option" value="CLIENT">
+            <label for="role-client" class="role-label">
+                <span class="role-icon">🏢</span>
+                <span class="role-name">I'm a Client</span>
+                <span class="role-desc">I want to hire talent</span>
+            </label>
+        </div>
+
+        <!-- Name -->
+        <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" class="form-control"
+                   placeholder="Arjun Sharma" autocomplete="name">
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" class="form-control"
+                   placeholder="you@example.com" autocomplete="email">
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control"
+                   placeholder="Min. 8 characters" autocomplete="new-password">
+            <div class="pwd-strength">
+                <div class="pwd-strength-fill" id="pwd-bar"></div>
+            </div>
+            <div class="pwd-hint" id="pwd-hint"></div>
+        </div>
+
+        <button class="btn-register" id="register-btn">
+            <div class="spinner"></div>
+            <span class="btn-text">Create Account</span>
+        </button>
+
+        <div class="divider"><span>or sign up with</span></div>
+
+        <div class="oauth-btns">
+            <a href="/oauth2/authorization/google" class="btn-oauth">
+                <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+                    <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+                    <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+                    <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+                    <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+                </svg>
+                Google
+            </a>
+            <a href="/oauth2/authorization/github" class="btn-oauth">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                </svg>
+                GitHub
+            </a>
+        </div>
+
+        <div class="card-footer-link">
+            Already have an account? <a href="/login.html">Sign in →</a>
+        </div>
+    </div>
+</main>
+
+<div class="page-footer">
+    <p>© 2026 SkillBridge &nbsp;·&nbsp; <a href="/privacy.html">Privacy Policy</a></p>
+</div>
+
+<script src="/js/utils.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+    // ── Password strength indicator ──────────────────────────────────
+    document.getElementById('password').addEventListener('input', function () {
+      const val = this.value;
+      const bar  = document.getElementById('pwd-bar');
+      const hint = document.getElementById('pwd-hint');
+      let strength = 0;
+      let label = '', color = '';
+
+      if (val.length >= 8)               strength++;
+      if (/[A-Z]/.test(val))             strength++;
+      if (/[0-9]/.test(val))             strength++;
+      if (/[^A-Za-z0-9]/.test(val))      strength++;
+
+      switch (strength) {
+        case 0: case 1:
+          label = 'Too weak'; color = '#FF6B8A'; bar.style.width = '25%'; break;
+        case 2:
+          label = 'Fair';     color = '#F5A623'; bar.style.width = '50%'; break;
+        case 3:
+          label = 'Good';     color = '#00C9A7'; bar.style.width = '75%'; break;
+        case 4:
+          label = 'Strong ✓'; color = '#16a34a'; bar.style.width = '100%'; break;
+      }
+      bar.style.background = color;
+      hint.textContent  = val.length > 0 ? label : '';
+      hint.style.color  = color;
+    });
+
+    // ── Register form submit ──────────────────────────────────────────
+    document.getElementById('register-btn').addEventListener('click', async () => {
+      const name     = document.getElementById('name').value.trim();
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const role     = document.querySelector('input[name="role"]:checked').value;
+      const btn      = document.getElementById('register-btn');
+      const alertEl  = document.getElementById('alert-area');
+
+      alertEl.innerHTML = '';
+
+      // Client-side validation
+      if (!name)               return alertEl.innerHTML = '<div class="alert alert-error">⚠ Please enter your name.</div>';
+      if (!email)              return alertEl.innerHTML = '<div class="alert alert-error">⚠ Please enter your email.</div>';
+      if (password.length < 8) return alertEl.innerHTML = '<div class="alert alert-error">⚠ Password must be at least 8 characters.</div>';
+
+      btn.disabled = true;
+      btn.classList.add('loading');
+
+      try {
+        const res  = await apiFetch('/api/v1/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({ name, email, password, role })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          alertEl.innerHTML = `<div class="alert alert-error">⚠ ${data.message || 'Registration failed.'}</div>`;
+          return;
+        }
+
+        // Save auth and redirect
+        saveAuth(data.token, data.role, data.userId);
+        alertEl.innerHTML = '<div class="alert alert-success">✓ Account created! Redirecting…</div>';
+
+        setTimeout(() => {
+          if (data.role === 'FREELANCER') window.location.href = '/dashboard-freelancer.html';
+          else                            window.location.href = '/dashboard-client.html';
+        }, 800);
+
+      } catch (err) {
+        alertEl.innerHTML = '<div class="alert alert-error">⚠ Could not connect. Please try again.</div>';
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+      }
+    });
+
+    // Allow Enter key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('register-btn').click();
+    });
+
+    // ── Handle OAuth redirect with token ─────────────────────────────
+    // When OAuth2SuccessHandler redirects back with ?token=...
+    const params = new URLSearchParams(window.location.search);
+    const oauthToken = params.get('token');
+    if (oauthToken) {
+      // Decode role from token (it's in the JWT payload)
+      try {
+        const payload = JSON.parse(atob(oauthToken.split('.')[1]));
+        saveAuth(oauthToken, payload.role, payload.userId);
+        window.location.href = payload.role === 'FREELANCER'
+          ? '/dashboard-freelancer.html'
+          : '/dashboard-client.html';
+      } catch(e) {
+        console.error('OAuth token parse error', e);
+      }
+    }
+</script>
+</body>
+</html>
