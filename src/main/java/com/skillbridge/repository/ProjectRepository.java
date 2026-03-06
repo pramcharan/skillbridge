@@ -23,4 +23,27 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findInactiveProjects(@Param("cutoff") Instant cutoff);
 
     long countByStatus(ProjectStatus status);
+
+    @Query("SELECT p FROM Project p " +
+            "JOIN FETCH p.client " +
+            "JOIN FETCH p.freelancer " +
+            "WHERE p.client.id = :clientId " +
+            "ORDER BY p.createdAt DESC")
+    Page<Project> findByClientId(
+            @Param("clientId") Long clientId, Pageable pageable);
+
+    @Query("SELECT p FROM Project p " +
+            "JOIN FETCH p.client " +
+            "JOIN FETCH p.freelancer " +
+            "WHERE p.freelancer.id = :freelancerId " +
+            "ORDER BY p.createdAt DESC")
+    Page<Project> findByFreelancerId(
+            @Param("freelancerId") Long freelancerId, Pageable pageable);
+
+    List<Project> findByStatusAndLastMessageAtBefore(
+            ProjectStatus status, Instant cutoff);
+
+    int countByClientIdAndStatus(Long clientId, ProjectStatus status);
+
+    int countByFreelancerIdAndStatus(Long freelancerId, ProjectStatus status);
 }

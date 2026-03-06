@@ -21,6 +21,8 @@ import org.springframework.data.domain.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -128,14 +130,20 @@ public class JobService {
                 ? baseScore.getMissingSkills() : List.of());
 
         // Step 2 — async Ollama enrichment (updates DB when done)
-        aiScoringOrchestrator.scoreAsync(freelancer, job, enrichedResult -> {
-            // Save enriched explanation to proposal if freelancer already applied
-            // For now just log it — Day 7 will persist it to proposals
-            log.info("AI enrichment complete for job {} freelancer {} — score: {} badge: {}",
-                    jobId, freelancerEmail,
-                    enrichedResult.getFinalScore(),
-                    enrichedResult.getBadge());
-        });
+        // Step 2 — async Ollama enrichment after method returns
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        aiScoringOrchestrator.scoreAsync(freelancer, job, enrichedResult ->
+                                log.info("AI enrichment complete for job {} — score: {} badge: {}",
+                                        jobId,
+                                        enrichedResult.getFinalScore(),
+                                        enrichedResult.getBadge())
+                        );
+                    }
+                }
+        );
 
         return response;
     }
