@@ -39,14 +39,18 @@ public class JobController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) JobCategory category,
             @RequestParam(defaultValue = "0")  int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(jobService.getJobs(keyword, category, page, size));
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal String email) {
+        return ResponseEntity.ok(
+                jobService.getJobs(keyword, category, page, size, email));
     }
 
     // ── GET single job by ID ─────────────────────────────────────────
     @GetMapping("/{id}")
-    public ResponseEntity<JobDetailResponse> getJobById(@PathVariable Long id) {
-        return ResponseEntity.ok(jobService.getJobById(id));
+    public ResponseEntity<JobDetailResponse> getJobById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal String email) {
+        return ResponseEntity.ok(jobService.getJobById(id, email));
     }
 
     // ── GET jobs posted by current client ────────────────────────────
