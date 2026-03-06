@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard — SkillBridge</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -127,6 +128,14 @@
 
         .empty-state { text-align:center; padding:3rem; color:var(--text3); font-size:0.9rem; }
         .empty-state .empty-icon { font-size:2.5rem; margin-bottom:0.75rem; }
+
+        .job-row {
+            background:var(--card); border:1px solid var(--border2); border-radius:12px;
+            padding:1rem 1.25rem; display:flex; align-items:center;
+            justify-content:space-between; gap:1rem;
+        }
+        .jr-title { font-weight:700; font-size:0.95rem; }
+        .jr-meta  { font-size:0.8rem; color:var(--text2); margin-top:0.2rem; }
     </style>
 </head>
 <body>
@@ -138,6 +147,19 @@
         <a href="/profile.html">Profile</a>
     </div>
     <div class="nav-user">
+        <!-- Notification bell -->
+        <div style="position:relative;cursor:pointer;" onclick="openNotifications()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                 stroke="var(--text2)" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span id="notif-badge" style="
+      display:none;position:absolute;top:-4px;right:-4px;
+      background:var(--rose);color:#fff;border-radius:99px;
+      font-size:0.65rem;font-weight:700;padding:0.1rem 0.35rem;
+      min-width:16px;text-align:center;">0</span>
+        </div>
         <div class="user-av" id="user-av">?</div>
         <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
     </div>
@@ -208,34 +230,59 @@
 
     async function loadDashboard() {
       try {
-        // Load profile
-        const res  = await api.get('/api/v1/profile');
-        const user = await res.json();
+        // Load profile + stats in parallel
+        const [profileRes, statsRes, notifRes] = await Promise.all([
+          api.get('/api/v1/profile'),
+          api.get('/api/v1/dashboard/freelancer/stats'),
+          api.get('/api/v1/notifications/unread-count')
+        ]);
 
-        document.getElementById('user-name').textContent     = user.name || 'Freelancer';
-        document.getElementById('user-av').textContent       = (user.name || 'F').charAt(0).toUpperCase();
-        document.getElementById('completion-pct').textContent= (user.profileCompletionPct || 0) + '%';
-        document.getElementById('progress-fill').style.width = (user.profileCompletionPct || 0) + '%';
+        const profile = await profileRes.json();
+        const stats   = await statsRes.json();
+        const notif   = await notifRes.json();
 
-        // Completion tips
-        const tips = [];
-        const skills = user.skills && user.skills.length > 0;
-        if (!user.bio)        tips.push('Add a bio');
-        if (!skills)          tips.push('Add your skills');
-        if (!user.hourlyRate) tips.push('Set your hourly rate');
-        if (!user.avatarUrl)  tips.push('Upload a photo');
-        const tipsEl = document.getElementById('completion-tips');
-        tipsEl.innerHTML = tips.map(t =>
-          `<span class="tip-chip">+ ${t}</span>`).join('');
+        updateNotifBadge(notif.count);
 
-        // Rating
-        if (user.avgRating && user.reviewCount > 0) {
-          document.getElementById('stat-rating').textContent =
-            user.avgRating.toFixed(1) + '★';
+        // ── Profile ───────────────────────────────────────────────────────
+        document.getElementById('user-name').textContent     = profile.name || 'Freelancer';
+        document.getElementById('user-av').textContent       = (profile.name||'F')[0].toUpperCase();
+        document.getElementById('completion-pct').textContent= (profile.profileCompletionPct||0)+'%';
+        document.getElementById('progress-fill').style.width = (profile.profileCompletionPct||0)+'%';
+
+        // ── Notification badge ────────────────────────────────────────────
+        if (notif.count > 0) {
+          document.getElementById('user-av').style.outline = '2px solid var(--rose)';
+          document.title = `(${notif.count}) Dashboard — SkillBridge`;
         }
-      } catch (e) { console.error('Profile load error', e); }
 
-      // Load recommended jobs
+        // ── Stats ─────────────────────────────────────────────────────────
+        document.getElementById('stat-applications').textContent = stats.totalApplications || 0;
+        document.getElementById('stat-active').textContent       = stats.activeProjects     || 0;
+        document.getElementById('stat-completed').textContent    = stats.completedProjects  || 0;
+        document.getElementById('stat-rating').textContent       =
+            (stats.avgRating && stats.reviewCount > 0)
+                ? stats.avgRating.toFixed(1) + '★'
+                : '—';
+
+        // ── Availability badge ────────────────────────────────────────────
+        const avail = stats.availabilityStatus || 'UNKNOWN';
+        document.getElementById('role-badge').textContent =
+            avail === 'AVAILABLE' ? '🟢 AVAILABLE' :
+            avail === 'OPEN_TO_OFFERS' ? '🟡 OPEN' : '🔴 BUSY';
+
+        // ── Profile completion tips ────────────────────────────────────────
+        const tips   = [];
+        const skills = profile.skills && profile.skills.length > 0;
+        if (!profile.bio)        tips.push('Add a bio');
+        if (!skills)             tips.push('Add your skills');
+        if (!profile.hourlyRate) tips.push('Set your hourly rate');
+        if (!profile.avatarUrl)  tips.push('Upload a photo');
+        document.getElementById('completion-tips').innerHTML =
+            tips.map(t => `<span class="tip-chip">+ ${t}</span>`).join('');
+
+      } catch (e) { console.error('Profile/stats error', e); }
+
+      // ── Recommended jobs ──────────────────────────────────────────────
       try {
         const res  = await api.get('/api/v1/jobs?size=6');
         const data = await res.json();
@@ -252,10 +299,14 @@
 
         grid.innerHTML = jobs.map(j => `
           <div class="job-card">
-            <div class="jc-title">${escHtml(j.title)}</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.35rem;">
+              <div class="jc-title">${escHtml(j.title)}</div>
+              ${j.aiPreviewBadge ? `<span class="ai-badge badge-${j.aiPreviewBadge.toLowerCase()}">
+                ${j.aiPreviewScore?.toFixed(0)}% ${j.aiPreviewBadge}</span>` : ''}
+            </div>
             <div class="jc-meta">${j.category} · ${j.clientName || 'Client'}</div>
             <div class="jc-skills">
-              ${(j.requiredSkills || []).slice(0,3).map(s =>
+              ${(j.requiredSkills||[]).slice(0,3).map(s =>
                 `<span class="skill-tag">${escHtml(s)}</span>`).join('')}
             </div>
             <div class="jc-footer">
@@ -264,8 +315,102 @@
             </div>
           </div>
         `).join('');
-      } catch (e) { console.error('Jobs load error', e); }
+      } catch (e) { console.error('Jobs error', e); }
+
+      // ── My recent proposals ────────────────────────────────────────────
+      loadMyProposals();
     }
+
+    // Update bell badge
+    function updateNotifBadge(count) {
+    const badge = document.getElementById('notif-badge');
+    if (count > 0) {
+        badge.style.display = 'block';
+        badge.textContent   = count > 99 ? '99+' : count;
+    } else {
+        badge.style.display = 'none';
+        }
+    }
+
+    function openNotifications() {
+        // Simple redirect for now — Day 9 will use a dropdown
+        window.location.href = '/notifications.html';
+    }
+
+    async function loadMyProposals() {
+      try {
+        const res  = await api.get('/api/v1/proposals/my-proposals?size=5');
+        const data = await res.json();
+        const proposals = data.content || [];
+
+        // Add proposals section if not exists
+        let section = document.getElementById('proposals-section');
+        if (!section) {
+          const main = document.querySelector('main');
+          section = document.createElement('div');
+          section.id = 'proposals-section';
+          section.innerHTML = `
+            <div class="section-hdr" style="margin-top:2rem;">
+              <h2>My Applications</h2>
+              <span style="font-size:0.85rem;color:var(--text2);">Recent 5</span>
+            </div>
+            <div id="proposals-list"></div>`;
+          main.appendChild(section);
+        }
+
+        const list = document.getElementById('proposals-list');
+        if (proposals.length === 0) {
+          list.innerHTML = `<div class="empty-state">
+            <div class="empty-icon">📝</div>
+            <p>You haven't applied to any jobs yet.</p>
+            <a href="/jobs.html" style="color:var(--teal);font-weight:600;">Browse jobs →</a>
+          </div>`;
+          return;
+        }
+
+        list.innerHTML = proposals.map(p => {
+          const badgeClass =
+              p.aiMatchBadge === 'GREEN' ? 'badge-green' :
+              p.aiMatchBadge === 'AMBER' ? 'badge-amber' : 'badge-red';
+          const statusColor =
+              p.status === 'PENDING'  ? 'var(--text2)' :
+              p.status === 'ACCEPTED' ? 'var(--teal)'  :
+              p.status === 'REJECTED' ? 'var(--rose)'  : 'var(--text3)';
+          return `
+            <div class="job-row" style="margin-bottom:0.75rem;">
+              <div>
+                <div class="jr-title">${escHtml(p.jobTitle || 'Job')}</div>
+                <div class="jr-meta">
+                  ${p.jobCategory || ''} · $${p.expectedRate}/hr ·
+                  Applied ${formatDate(p.createdAt)}
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                ${p.aiMatchScore ? `<span class="ai-badge ${badgeClass}">
+                  ${p.aiMatchScore.toFixed(0)}%</span>` : ''}
+                <span style="font-size:0.82rem;font-weight:700;color:${statusColor};">
+                  ${p.status}</span>
+              </div>
+            </div>`;
+        }).join('');
+      } catch(e) { console.error('Proposals error', e); }
+    }
+
+    // Poll for notifications every 30 seconds
+    setInterval(async () => {
+  try {
+    const res   = await api.get('/api/v1/notifications/unread-count');
+    const notif = await res.json();
+    updateNotifBadge(notif.count);  // ← updates bell badge
+    if (notif.count > 0) {
+      document.getElementById('user-av').style.outline = '2px solid var(--rose)';
+      document.title = `(${notif.count}) Dashboard — SkillBridge`;
+    } else {
+      document.getElementById('user-av').style.outline = 'none';
+      document.title = 'Dashboard — SkillBridge';
+    }
+  } catch(e) {}
+}, 30000);
 
     loadDashboard();
 </script>

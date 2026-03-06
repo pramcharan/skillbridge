@@ -44,4 +44,8 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     @Query("SELECT j.category, COUNT(j) FROM Job j WHERE j.status = 'OPEN' GROUP BY j.category")
     List<Object[]> countByCategory();
+
+    long countByClientId(Long clientId);
+
+    long countByClientIdAndStatus(Long clientId, JobStatus status);
 }

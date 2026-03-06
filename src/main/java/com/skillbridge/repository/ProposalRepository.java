@@ -49,4 +49,29 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
 
     // Proposals by status for a job
     List<Proposal> findByJobIdAndStatus(Long jobId, ProposalStatus status);
+
+    // Count by freelancer
+    long countByFreelancerId(Long freelancerId);
+
+    // Count by freelancer + status
+    long countByFreelancerIdAndStatus(Long freelancerId, ProposalStatus status);
+
+    // Average AI match score for a freelancer
+    @Query("SELECT AVG(p.aiMatchScore) FROM Proposal p " +
+            "WHERE p.freelancer.id = :freelancerId " +
+            "AND p.aiMatchScore IS NOT NULL")
+    java.util.Optional<Double> findAverageMatchScoreByFreelancerId(
+            @Param("freelancerId") Long freelancerId);
+
+    // Total proposals received by client
+    @Query("SELECT COUNT(p) FROM Proposal p " +
+            "WHERE p.job.client.id = :clientId")
+    int countProposalsForClient(@Param("clientId") Long clientId);
+
+    // Unread proposals for client
+    @Query("SELECT COUNT(p) FROM Proposal p " +
+            "WHERE p.job.client.id = :clientId " +
+            "AND p.viewedByClient = false " +
+            "AND p.status = 'PENDING'")
+    int countUnreadProposalsForClient(@Param("clientId") Long clientId);
 }

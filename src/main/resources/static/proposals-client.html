@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposals — SkillBridge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        :root {
+          --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
+          --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623; --purple:#7B61FF;
+          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
+          --border:#1A2D4A; --border2:#243650;
+        }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+        nav {
+          display:flex; align-items:center; justify-content:space-between;
+          padding:0 5%; height:64px; background:rgba(6,13,26,0.95);
+          border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;
+        }
+        .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.35rem;
+          background:linear-gradient(135deg,var(--teal),var(--gold));
+          -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .nav-links { display:flex; gap:1.5rem; align-items:center; }
+        .nav-links a { font-size:0.88rem; color:var(--text2); text-decoration:none; transition:color 0.2s; }
+        .nav-links a:hover { color:var(--teal); }
+        .user-av {
+          width:36px; height:36px; border-radius:50%;
+          background:linear-gradient(135deg,var(--gold),var(--rose));
+          display:flex; align-items:center; justify-content:center;
+          font-weight:700; font-size:0.85rem; color:#fff;
+        }
+        .btn-sm { padding:0.4rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+        .btn-logout { background:transparent; border:1px solid var(--border2); color:var(--text2); transition:all 0.2s; }
+        .btn-logout:hover { border-color:var(--rose); color:var(--rose); }
+        main { max-width:900px; margin:0 auto; padding:2rem 5%; }
+        .page-header { margin-bottom:2rem; }
+        .page-header h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:1.6rem; margin-bottom:0.35rem; }
+        .page-header p { color:var(--text2); font-size:0.9rem; }
+        .back-link { display:inline-flex; align-items:center; gap:0.4rem; color:var(--text2);
+          text-decoration:none; font-size:0.85rem; margin-bottom:1.25rem; transition:color 0.2s; }
+        .back-link:hover { color:var(--teal); }
+        .proposal-card {
+          background:var(--card); border:1px solid var(--border2); border-radius:16px;
+          padding:1.5rem; margin-bottom:1rem; transition:border-color 0.2s;
+        }
+        .proposal-card:hover { border-color:var(--teal); }
+        .pc-top { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
+        .pc-left { display:flex; align-items:center; gap:0.85rem; }
+        .pc-avatar {
+          width:44px; height:44px; border-radius:50%;
+          background:linear-gradient(135deg,var(--purple),var(--teal));
+          display:flex; align-items:center; justify-content:center;
+          font-weight:700; font-size:1rem; color:#fff; flex-shrink:0;
+        }
+        .pc-name { font-weight:700; font-size:1rem; }
+        .pc-meta { font-size:0.8rem; color:var(--text2); margin-top:0.2rem; }
+        .pc-right { display:flex; flex-direction:column; align-items:flex-end; gap:0.4rem; }
+        .ai-badge {
+          padding:0.25rem 0.75rem; border-radius:99px; font-size:0.75rem; font-weight:700;
+        }
+        .badge-green { background:rgba(0,201,167,0.12); color:var(--teal); border:1px solid rgba(0,201,167,0.25); }
+        .badge-amber { background:rgba(245,166,35,0.12); color:var(--gold); border:1px solid rgba(245,166,35,0.25); }
+        .badge-red   { background:rgba(255,107,138,0.12); color:var(--rose); border:1px solid rgba(255,107,138,0.25); }
+        .pc-rate { font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem; color:var(--gold); }
+        .pc-cover {
+          font-size:0.88rem; color:var(--text2); line-height:1.6;
+          background:var(--bg2); border-radius:10px; padding:1rem;
+          margin-bottom:1rem; border:1px solid var(--border);
+        }
+        .pc-ai-reason {
+          font-size:0.82rem; color:var(--text3); line-height:1.5;
+          padding:0.75rem 1rem; border-left:3px solid var(--teal);
+          margin-bottom:1rem; background:rgba(0,201,167,0.03); border-radius:0 8px 8px 0;
+        }
+        .pc-skills { display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:1rem; }
+        .skill-tag {
+          padding:0.2rem 0.6rem; border-radius:99px; font-size:0.75rem;
+          background:rgba(123,97,255,0.1); color:var(--purple); border:1px solid rgba(123,97,255,0.2);
+        }
+        .pc-actions { display:flex; gap:0.75rem; }
+        .btn-accept {
+          padding:0.5rem 1.25rem; border-radius:10px; font-size:0.85rem; font-weight:700;
+          cursor:pointer; font-family:'DM Sans',sans-serif;
+          background:linear-gradient(135deg,var(--teal),var(--teal-dk)); border:none; color:#000;
+          transition:opacity 0.2s;
+        }
+        .btn-accept:hover { opacity:0.85; }
+        .btn-reject {
+          padding:0.5rem 1.25rem; border-radius:10px; font-size:0.85rem; font-weight:700;
+          cursor:pointer; font-family:'DM Sans',sans-serif;
+          background:transparent; border:1px solid var(--rose); color:var(--rose);
+          transition:all 0.2s;
+        }
+        .btn-reject:hover { background:rgba(255,107,138,0.1); }
+        .status-badge {
+          padding:0.3rem 0.85rem; border-radius:99px; font-size:0.8rem; font-weight:700;
+        }
+        .status-accepted { background:rgba(0,201,167,0.1); color:var(--teal); border:1px solid rgba(0,201,167,0.2); }
+        .status-rejected { background:rgba(255,107,138,0.1); color:var(--rose); border:1px solid rgba(255,107,138,0.2); }
+        .status-pending  { background:rgba(245,166,35,0.1); color:var(--gold); border:1px solid rgba(245,166,35,0.2); }
+        .status-withdrawn{ background:rgba(74,96,128,0.1); color:var(--text3); border:1px solid var(--border2); }
+        .empty-state { text-align:center; padding:4rem; color:var(--text3); }
+        .empty-icon { font-size:2.5rem; margin-bottom:0.75rem; }
+        .loading { text-align:center; padding:3rem; color:var(--text3); }
+        .job-info-bar {
+          background:var(--card2); border:1px solid var(--border2); border-radius:12px;
+          padding:1rem 1.25rem; margin-bottom:1.5rem;
+          display:flex; align-items:center; justify-content:space-between;
+        }
+        .job-info-bar .jib-title { font-weight:700; font-size:1rem; }
+        .job-info-bar .jib-meta { font-size:0.8rem; color:var(--text2); margin-top:0.2rem; }
+        .sort-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+        .sort-bar h2 { font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; }
+        .sort-bar span { font-size:0.82rem; color:var(--text3); }
+        .toast {
+          position:fixed; bottom:1.5rem; right:1.5rem; z-index:999;
+          background:var(--card2); border:1px solid var(--teal); border-radius:12px;
+          padding:0.85rem 1.25rem; font-size:0.88rem; color:var(--teal); font-weight:600;
+          display:none; animation:slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="nav-logo">SkillBridge</a>
+    <div class="nav-links">
+        <a href="/dashboard-client.html">← Dashboard</a>
+        <a href="/post-job.html">Post a Job</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+        <div class="user-av" id="user-av">C</div>
+        <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<main>
+    <a href="/dashboard-client.html" class="back-link">← Back to Dashboard</a>
+
+    <div class="page-header">
+        <h1>Proposals <span id="proposal-count" style="color:var(--text3);font-size:1.1rem;"></span></h1>
+        <p id="job-subtitle" style="color:var(--text2);">Loading job details...</p>
+    </div>
+
+    <div id="proposals-container">
+        <div class="loading">Loading proposals...</div>
+    </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="/js/utils.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+    requireAuth('CLIENT');
+
+    const jobId = new URLSearchParams(window.location.search).get('jobId');
+
+    if (!jobId) {
+        window.location.replace('/dashboard-client.html');
+    }
+
+    async function loadProposals() {
+        try {
+            // Load profile + proposals in parallel
+            const [profileRes, proposalsRes] = await Promise.all([
+                api.get('/api/v1/profile'),
+                api.get(`/api/v1/proposals/job/${jobId}`)
+            ]);
+
+            const profile   = await profileRes.json();
+            const proposals = await proposalsRes.json();
+
+            // Set user avatar
+            document.getElementById('user-av').textContent = (profile.name || 'C')[0].toUpperCase();
+
+            // Update header
+            document.getElementById('proposal-count').textContent =
+                `(${proposals.length})`;
+
+            if (proposals.length > 0) {
+                document.getElementById('job-subtitle').textContent =
+                    `For: ${proposals[0].jobTitle} · Sorted by AI match score`;
+            } else {
+                document.getElementById('job-subtitle').textContent =
+                    'No proposals received yet for this job.';
+            }
+
+            renderProposals(proposals);
+
+        } catch(e) {
+            console.error('Error loading proposals:', e);
+            document.getElementById('proposals-container').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">⚠️</div>
+                    <p>Failed to load proposals. Please try again.</p>
+                </div>`;
+        }
+    }
+
+    function renderProposals(proposals) {
+        const container = document.getElementById('proposals-container');
+
+        if (proposals.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <p>No proposals yet for this job.</p>
+                    <p style="margin-top:0.5rem;font-size:0.85rem;">
+                        Share your job to get more applicants.</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = proposals.map(p => {
+            const badgeClass =
+                p.aiMatchBadge === 'GREEN' ? 'badge-green' :
+                p.aiMatchBadge === 'AMBER' ? 'badge-amber' : 'badge-red';
+
+            const statusClass = 'status-' + (p.status || 'pending').toLowerCase();
+            const isPending   = p.status === 'PENDING';
+            const initials    = (p.freelancerName || 'F').split(' ')
+                .map(w => w[0]).join('').toUpperCase().slice(0,2);
+
+            return `
+            <div class="proposal-card" id="proposal-${p.id}">
+                <div class="pc-top">
+                    <div class="pc-left">
+                        <div class="pc-avatar">${initials}</div>
+                        <div>
+                            <div class="pc-name">${escHtml(p.freelancerName || 'Freelancer')}</div>
+                            <div class="pc-meta">
+                                ${p.freelancerRating
+                                    ? `⭐ ${p.freelancerRating.toFixed(1)} · `
+                                    : ''}
+                                Applied ${formatDate(p.createdAt)}
+                                ${!p.viewedByClient ? ' · <span style="color:var(--teal);font-weight:700;">NEW</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pc-right">
+                        ${p.aiMatchScore != null
+                            ? `<span class="ai-badge ${badgeClass}">
+                                 🤖 ${p.aiMatchScore.toFixed(0)}% Match
+                               </span>`
+                            : ''}
+                        <div class="pc-rate">$${p.expectedRate}/hr</div>
+                    </div>
+                </div>
+
+                ${p.freelancerSkills && p.freelancerSkills.length > 0
+                    ? `<div class="pc-skills">
+                         ${p.freelancerSkills.slice(0,6).map(s =>
+                             `<span class="skill-tag">${escHtml(s)}</span>`).join('')}
+                       </div>`
+                    : ''}
+
+                <div class="pc-cover">${escHtml(p.coverLetter)}</div>
+
+                ${p.aiMatchReason
+                    ? `<div class="pc-ai-reason">
+                         🤖 AI Analysis: ${escHtml(p.aiMatchReason)}
+                       </div>`
+                    : ''}
+
+                <div class="pc-actions">
+                    ${isPending
+                        ? `<button class="btn-accept" onclick="updateStatus(${p.id}, 'ACCEPTED')">
+                             ✓ Accept Proposal
+                           </button>
+                           <button class="btn-reject" onclick="updateStatus(${p.id}, 'REJECTED')">
+                             Reject
+                           </button>`
+                        : `<span class="status-badge ${statusClass}">${p.status}</span>`
+                    }
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    async function updateStatus(proposalId, status) {
+        const action = status === 'ACCEPTED' ? 'accept' : 'reject';
+        if (!confirm(`Are you sure you want to ${action} this proposal?`)) return;
+
+        try {
+            const res = await api.patch(`/api/v1/proposals/${proposalId}/status`, { status });
+
+            if (res.ok) {
+                showToast(status === 'ACCEPTED'
+                    ? '🎉 Proposal accepted! Project created.'
+                    : 'Proposal rejected.');
+
+                // Reload to show updated statuses
+                setTimeout(() => loadProposals(), 1000);
+            } else {
+                const err = await res.json();
+                showToast('Error: ' + (err.message || 'Something went wrong'), true);
+            }
+        } catch(e) {
+            showToast('Failed to update proposal.', true);
+        }
+    }
+
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.style.borderColor  = isError ? 'var(--rose)' : 'var(--teal)';
+        toast.style.color        = isError ? 'var(--rose)' : 'var(--teal)';
+        toast.style.display      = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    loadProposals();
+</script>
+</body>
+</html>
