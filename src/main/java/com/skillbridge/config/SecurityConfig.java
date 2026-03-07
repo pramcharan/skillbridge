@@ -50,7 +50,10 @@ public class SecurityConfig {
                                 "/admin.html", "/jobs.html", "/job-detail.html",
                                 "/post-job.html", "/profile.html",
                                 "/community-chat.html", "/proposals-client.html",
-                                "/reset-password.html"
+                                "/reset-password.html",
+                                "/project.html",
+                                "/my-projects.html",
+                                "/notifications.html"
                         ).permitAll()
 
                         // ── Static assets ─────────────────────────────────────────────

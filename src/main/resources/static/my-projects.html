@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Projects — SkillBridge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        :root {
+          --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
+          --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623; --purple:#7B61FF;
+          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
+          --border:#1A2D4A; --border2:#243650;
+        }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+        nav {
+          display:flex; align-items:center; justify-content:space-between;
+          padding:0 5%; height:64px; background:rgba(6,13,26,0.95);
+          border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;
+        }
+        .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.35rem;
+          background:linear-gradient(135deg,var(--teal),var(--gold));
+          -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .nav-links { display:flex; gap:1.5rem; }
+        .nav-links a { font-size:0.88rem; color:var(--text2); text-decoration:none; transition:color 0.2s; }
+        .nav-links a:hover { color:var(--teal); }
+        .user-av {
+          width:36px; height:36px; border-radius:50%;
+          background:linear-gradient(135deg,var(--gold),var(--rose));
+          display:flex; align-items:center; justify-content:center;
+          font-weight:700; font-size:0.85rem; color:#fff;
+        }
+        .btn-sm { padding:0.4rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+        .btn-logout { background:transparent; border:1px solid var(--border2); color:var(--text2); transition:all 0.2s; }
+        .btn-logout:hover { border-color:var(--rose); color:var(--rose); }
+        main { max-width:800px; margin:0 auto; padding:2rem 5%; }
+        .page-header { margin-bottom:2rem; }
+        .page-header h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:1.6rem; margin-bottom:0.35rem; }
+        .page-header p { color:var(--text2); font-size:0.9rem; }
+        .project-card {
+          background:var(--card); border:1px solid var(--border2); border-radius:16px;
+          padding:1.25rem 1.5rem; margin-bottom:0.75rem;
+          display:flex; align-items:center; justify-content:space-between; gap:1rem;
+          text-decoration:none; color:inherit; transition:border-color 0.2s, transform 0.15s;
+        }
+        .project-card:hover { border-color:var(--teal); transform:translateY(-1px); }
+        .pc-left { display:flex; align-items:center; gap:1rem; }
+        .pc-avatar {
+          width:44px; height:44px; border-radius:12px;
+          background:linear-gradient(135deg,var(--purple),var(--teal));
+          display:flex; align-items:center; justify-content:center;
+          font-weight:700; color:#fff; font-size:0.95rem; flex-shrink:0;
+        }
+        .pc-title { font-weight:700; font-size:0.95rem; margin-bottom:0.2rem; }
+        .pc-meta { font-size:0.8rem; color:var(--text2); }
+        .pc-right { display:flex; flex-direction:column; align-items:flex-end; gap:0.35rem; flex-shrink:0; }
+        .status-badge { padding:0.25rem 0.75rem; border-radius:99px; font-size:0.75rem; font-weight:700; }
+        .status-active    { background:rgba(0,201,167,0.1); color:var(--teal); border:1px solid rgba(0,201,167,0.2); }
+        .status-completed { background:rgba(245,166,35,0.1); color:var(--gold); border:1px solid rgba(245,166,35,0.2); }
+        .status-cancelled { background:rgba(255,107,138,0.1); color:var(--rose); border:1px solid rgba(255,107,138,0.2); }
+        .unread-badge {
+          background:var(--rose); color:#fff; border-radius:99px;
+          font-size:0.7rem; font-weight:700; padding:0.15rem 0.5rem; min-width:20px; text-align:center;
+        }
+        .last-msg { font-size:0.78rem; color:var(--text3); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .empty-state { text-align:center; padding:4rem; color:var(--text3); }
+        .empty-icon { font-size:2.5rem; margin-bottom:0.75rem; }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="nav-logo">SkillBridge</a>
+    <div class="nav-links">
+        <a href="#" id="dashboard-link">← Dashboard</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+        <div class="user-av" id="user-av">?</div>
+        <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<main>
+    <div class="page-header">
+        <h1>My Projects 🚀</h1>
+        <p>All your active and past projects with chat history.</p>
+    </div>
+    <div id="projects-list">
+        <div class="empty-state"><div class="empty-icon">⏳</div><p>Loading...</p></div>
+    </div>
+</main>
+
+<script src="/js/utils.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+    // Works for both roles
+    const token = localStorage.getItem('sb_jwt');
+    if (!token) window.location.replace('/login.html');
+
+    async function loadProjects() {
+        try {
+            const [profileRes, projectsRes] = await Promise.all([
+                api.get('/api/v1/profile'),
+                api.get('/api/v1/projects')
+            ]);
+
+            const profile  = await profileRes.json();
+            const projects = await projectsRes.json();
+
+            document.getElementById('user-av').textContent = (profile.name||'?')[0].toUpperCase();
+
+            const role = localStorage.getItem('sb_role');
+            document.getElementById('dashboard-link').href =
+                role === 'CLIENT' ? '/dashboard-client.html' : '/dashboard-freelancer.html';
+
+            const list = document.getElementById('projects-list');
+
+            if (!projects || projects.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <p>No projects yet.</p>
+                        <p style="margin-top:0.5rem;font-size:0.85rem;">
+                            Projects are created when a client accepts a proposal.</p>
+                    </div>`;
+                return;
+            }
+
+            list.innerHTML = projects.map(p => {
+                const statusClass = 'status-' + (p.status||'active').toLowerCase();
+                const initials = (p.otherPartyName||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+                return `
+                <a class="project-card" href="/project.html?id=${p.id}">
+                    <div class="pc-left">
+                        <div class="pc-avatar">${initials}</div>
+                        <div>
+                            <div class="pc-title">${escHtml(p.title)}</div>
+                            <div class="pc-meta">
+                                with ${escHtml(p.otherPartyName||'—')} ·
+                                ${p.lastMessageAt ? 'Last msg ' + formatDate(p.lastMessageAt) : 'Started ' + formatDate(p.createdAt)}
+                            </div>
+                            ${p.lastMessage ? `<div class="last-msg">${escHtml(p.lastMessage)}</div>` : ''}
+                        </div>
+                    </div>
+                    <div class="pc-right">
+                        <span class="status-badge ${statusClass}">${p.status}</span>
+                        ${p.unreadCount > 0
+                            ? `<span class="unread-badge">${p.unreadCount}</span>`
+                            : ''}
+                    </div>
+                </a>`;
+            }).join('');
+        } catch(e) {
+            console.error(e);
+            document.getElementById('projects-list').innerHTML = `
+                <div class="empty-state"><div class="empty-icon">⚠️</div><p>Failed to load projects.</p></div>`;
+        }
+    }
+
+    loadProjects();
+</script>
+</body>
+</html>

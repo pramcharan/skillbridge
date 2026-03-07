@@ -46,4 +46,12 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     int countByClientIdAndStatus(Long clientId, ProjectStatus status);
 
     int countByFreelancerIdAndStatus(Long freelancerId, ProjectStatus status);
+
+    // Single project with full details
+    @Query("SELECT p FROM Project p " +
+            "JOIN FETCH p.client " +
+            "JOIN FETCH p.freelancer " +
+            "JOIN FETCH p.job " +
+            "WHERE p.id = :id")
+    java.util.Optional<Project> findByIdWithDetails(@Param("id") Long id);
 }

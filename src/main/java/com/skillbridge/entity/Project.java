@@ -45,6 +45,7 @@ public class Project {
     @Column(nullable = false)
     private ProjectStatus status = ProjectStatus.ACTIVE;
 
+    @Column
     private Instant lastMessageAt;
     private Instant completedAt;
 

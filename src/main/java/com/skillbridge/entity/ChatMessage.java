@@ -22,7 +22,7 @@ public class ChatMessage {
 
     // Null for community chat messages
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
     // Room ID for community chat: "general", "developers", etc.
@@ -45,6 +45,9 @@ public class ChatMessage {
 
     @Column(nullable = false)
     private Boolean isPinned = false;
+
+    @Column(nullable = false)
+    private Boolean isRead = false;
 
     @CreationTimestamp
     @Column(updatable = false)
