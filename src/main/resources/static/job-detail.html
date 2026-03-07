@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Detail — SkillBridge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        :root {
+          --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
+          --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623; --purple:#7B61FF;
+          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
+          --border:#1A2D4A; --border2:#243650;
+        }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+        nav {
+          display:flex; align-items:center; justify-content:space-between;
+          padding:0 5%; height:64px; background:rgba(6,13,26,0.95);
+          border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;
+        }
+        .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.35rem;
+          background:linear-gradient(135deg,var(--teal),var(--gold));
+          -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .nav-links { display:flex; gap:1.5rem; align-items:center; }
+        .nav-links a { font-size:0.88rem; color:var(--text2); text-decoration:none; transition:color 0.2s; }
+        .nav-links a:hover { color:var(--teal); }
+        .user-av {
+          width:36px; height:36px; border-radius:50%;
+          background:linear-gradient(135deg,var(--gold),var(--rose));
+          display:flex; align-items:center; justify-content:center;
+          font-weight:700; font-size:0.85rem; color:#fff;
+        }
+        .btn-sm { padding:0.4rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+        .btn-logout { background:transparent; border:1px solid var(--border2); color:var(--text2); transition:all 0.2s; }
+        .btn-logout:hover { border-color:var(--rose); color:var(--rose); }
+
+        main { max-width:1100px; margin:0 auto; padding:2rem 5%; }
+        .back-link { display:inline-flex; align-items:center; gap:0.4rem; color:var(--text2);
+          text-decoration:none; font-size:0.85rem; margin-bottom:1.5rem; transition:color 0.2s; }
+        .back-link:hover { color:var(--teal); }
+
+        .layout { display:grid; grid-template-columns:1fr 340px; gap:1.5rem; align-items:start; }
+        @media(max-width:768px) { .layout { grid-template-columns:1fr; } }
+
+        /* Left column */
+        .main-card {
+          background:var(--card); border:1px solid var(--border2); border-radius:20px;
+          padding:2rem; margin-bottom:1rem;
+        }
+        .job-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.6rem;
+          margin-bottom:0.6rem; line-height:1.25; }
+        .job-meta { display:flex; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem; }
+        .meta-chip {
+          display:inline-flex; align-items:center; gap:0.35rem;
+          font-size:0.82rem; color:var(--text2);
+        }
+        .status-badge {
+          padding:0.25rem 0.75rem; border-radius:99px; font-size:0.78rem; font-weight:700;
+          background:rgba(0,201,167,0.1); color:var(--teal); border:1px solid rgba(0,201,167,0.2);
+        }
+        .section-title {
+          font-family:'Syne',sans-serif; font-weight:700; font-size:0.82rem;
+          color:var(--teal); text-transform:uppercase; letter-spacing:0.08em;
+          margin:1.5rem 0 0.75rem;
+        }
+        .job-description { font-size:0.9rem; color:var(--text2); line-height:1.75; white-space:pre-wrap; }
+        .skills-list { display:flex; flex-wrap:wrap; gap:0.45rem; }
+        .skill-tag {
+          padding:0.28rem 0.75rem; border-radius:99px; font-size:0.8rem; font-weight:600;
+          background:rgba(123,97,255,0.12); color:var(--purple); border:1px solid rgba(123,97,255,0.25);
+        }
+        .skill-tag.matched { background:rgba(0,201,167,0.1); color:var(--teal); border-color:rgba(0,201,167,0.25); }
+        .skill-tag.missing { background:rgba(255,107,138,0.1); color:var(--rose); border-color:rgba(255,107,138,0.25); }
+
+        /* AI Match Card */
+        .ai-card {
+          background:linear-gradient(135deg, rgba(0,201,167,0.06), rgba(123,97,255,0.06));
+          border:1px solid rgba(0,201,167,0.2); border-radius:16px; padding:1.5rem;
+          margin-bottom:1rem;
+        }
+        .ai-card-title { font-size:0.78rem; font-weight:700; color:var(--teal);
+          text-transform:uppercase; letter-spacing:0.08em; margin-bottom:1rem; }
+        .score-ring { text-align:center; margin-bottom:1rem; }
+        .score-number { font-family:'Syne',sans-serif; font-weight:800; font-size:2.5rem; }
+        .score-label { font-size:0.8rem; color:var(--text2); margin-top:0.2rem; }
+        .ai-badge-lg {
+          display:inline-block; padding:0.3rem 1rem; border-radius:99px;
+          font-size:0.82rem; font-weight:700; margin-top:0.5rem;
+        }
+        .badge-green-lg { background:rgba(0,201,167,0.15); color:var(--teal); border:1px solid rgba(0,201,167,0.3); }
+        .badge-amber-lg { background:rgba(245,166,35,0.15); color:var(--gold); border:1px solid rgba(245,166,35,0.3); }
+        .badge-red-lg   { background:rgba(255,107,138,0.15); color:var(--rose); border:1px solid rgba(255,107,138,0.3); }
+        .ai-reason { font-size:0.83rem; color:var(--text2); line-height:1.6; margin-top:0.75rem;
+          padding:0.75rem; background:rgba(0,0,0,0.2); border-radius:8px; }
+        .ai-enriching { font-size:0.78rem; color:var(--text3); margin-top:0.5rem; font-style:italic; }
+
+        /* Sidebar cards */
+        .side-card {
+          background:var(--card); border:1px solid var(--border2); border-radius:16px;
+          padding:1.25rem; margin-bottom:1rem;
+        }
+        .side-card-title { font-size:0.78rem; font-weight:700; color:var(--text3);
+          text-transform:uppercase; letter-spacing:0.08em; margin-bottom:1rem; }
+        .detail-row { display:flex; justify-content:space-between; align-items:center;
+          padding:0.45rem 0; border-bottom:1px solid var(--border); font-size:0.88rem; }
+        .detail-row:last-child { border-bottom:none; }
+        .detail-row .label { color:var(--text2); }
+        .detail-row .value { font-weight:600; color:var(--text); }
+
+        /* Apply form */
+        .apply-card {
+          background:var(--card2); border:1px solid var(--border2); border-radius:16px;
+          padding:1.5rem; margin-bottom:1rem; position:sticky; top:80px;
+        }
+        .apply-card h3 { font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem;
+          margin-bottom:1rem; }
+        .form-group { margin-bottom:1rem; }
+        .form-group label { display:block; font-size:0.82rem; font-weight:600;
+          color:var(--text2); margin-bottom:0.4rem; }
+        .form-control {
+          width:100%; background:var(--bg2); border:1px solid var(--border2);
+          border-radius:10px; padding:0.65rem 0.9rem; font-size:0.88rem;
+          color:var(--text); font-family:'DM Sans',sans-serif; outline:none;
+          transition:border-color 0.2s;
+        }
+        .form-control:focus { border-color:var(--teal); }
+        .form-control::placeholder { color:var(--text3); }
+        textarea.form-control { resize:vertical; min-height:120px; }
+        .rate-wrap { position:relative; }
+        .rate-wrap .curr { position:absolute; left:0.9rem; top:50%; transform:translateY(-50%);
+          color:var(--text3); pointer-events:none; font-weight:600; }
+        .rate-wrap .form-control { padding-left:1.6rem; }
+        .apply-btn {
+          width:100%; padding:0.8rem; border-radius:12px; font-weight:700;
+          font-size:0.95rem; font-family:'Syne',sans-serif;
+          background:linear-gradient(135deg,var(--teal),var(--teal-dk));
+          border:none; color:#000; cursor:pointer; transition:opacity 0.2s;
+        }
+        .apply-btn:hover { opacity:0.9; }
+        .apply-btn:disabled { opacity:0.5; cursor:not-allowed; }
+        .applied-msg {
+          text-align:center; padding:1rem; background:rgba(0,201,167,0.08);
+          border:1px solid rgba(0,201,167,0.2); border-radius:10px;
+          color:var(--teal); font-weight:600; font-size:0.9rem;
+        }
+        .char-count { font-size:0.75rem; color:var(--text3); text-align:right; margin-top:0.25rem; }
+
+        /* Similar jobs */
+        .similar-card {
+          background:var(--card); border:1px solid var(--border2); border-radius:12px;
+          padding:1rem 1.25rem; margin-bottom:0.6rem; text-decoration:none;
+          display:block; transition:border-color 0.2s;
+        }
+        .similar-card:hover { border-color:var(--teal); }
+        .similar-title { font-weight:700; font-size:0.88rem; color:var(--text); margin-bottom:0.25rem; }
+        .similar-meta  { font-size:0.78rem; color:var(--text2); }
+
+        .toast {
+          position:fixed; bottom:1.5rem; right:1.5rem; z-index:999;
+          background:var(--card2); border:1px solid var(--teal); border-radius:12px;
+          padding:0.85rem 1.25rem; font-size:0.88rem; color:var(--teal); font-weight:600;
+          display:none;
+        }
+        .loading { text-align:center; padding:4rem; color:var(--text3); }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="nav-logo">SkillBridge</a>
+    <div class="nav-links">
+        <a href="/jobs.html">Browse Jobs</a>
+        <a href="/dashboard-freelancer.html">Dashboard</a>
+        <a href="/profile.html">Profile</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+        <div class="user-av" id="user-av">?</div>
+        <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<main id="main-content">
+    <div class="loading">Loading job details…</div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="/js/utils.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+    requireAuth('FREELANCER');
+
+    const jobId = new URLSearchParams(window.location.search).get('id');
+    if (!jobId) window.location.replace('/jobs.html');
+
+    let jobData    = null;
+    let alreadyApplied = false;
+
+    async function loadJob() {
+        try {
+            const [profileRes, jobRes] = await Promise.all([
+                api.get('/api/v1/profile'),
+                api.get(`/api/v1/jobs/${jobId}`)
+            ]);
+
+            const profile = await profileRes.json();
+            jobData = await jobRes.json();
+
+            document.getElementById('user-av').textContent = (profile.name || 'F')[0].toUpperCase();
+            document.title = `${jobData.title} — SkillBridge`;
+
+            renderPage(jobData, profile);
+            loadSimilarJobs();
+
+        } catch(e) {
+            document.getElementById('main-content').innerHTML = `
+                <div class="loading">⚠️ Failed to load job. <a href="/jobs.html" style="color:var(--teal)">Go back</a></div>`;
+        }
+    }
+
+    function renderPage(job, profile) {
+        const skillList = typeof job.requiredSkills === 'string'
+            ? job.requiredSkills.split(',').map(s => s.trim()).filter(Boolean)
+            : (job.requiredSkills || []);
+
+        const matched = job.matchedSkills || [];
+        const missing = job.missingSkills || [];
+
+        const badgeClass =
+            job.aiPreviewBadge === 'GREEN' ? 'badge-green-lg' :
+            job.aiPreviewBadge === 'AMBER' ? 'badge-amber-lg' : 'badge-red-lg';
+
+        const badgeLabel =
+            job.aiPreviewBadge === 'GREEN' ? '🟢 Strong Match' :
+            job.aiPreviewBadge === 'AMBER' ? '🟡 Partial Match' : '🔴 Weak Match';
+
+        document.getElementById('main-content').innerHTML = `
+        <a href="/jobs.html" class="back-link">← Back to Jobs</a>
+
+        <div class="layout">
+          <!-- Left: Job details -->
+          <div>
+            <div class="main-card">
+                <div class="job-title">${escHtml(job.title)}</div>
+                <div class="job-meta">
+                    <span class="status-badge">${job.status || 'OPEN'}</span>
+                    <span class="meta-chip">🏷 ${job.category || ''}</span>
+                    <span class="meta-chip">👤 ${escHtml(job.clientName || 'Client')}</span>
+                    <span class="meta-chip">📅 Posted ${formatDate(job.createdAt)}</span>
+                    <span class="meta-chip">📝 ${job.proposalCount || 0} proposals</span>
+                    ${job.deadline ? `<span class="meta-chip">⏰ Deadline ${formatDate(job.deadline)}</span>` : ''}
+                </div>
+
+                <div class="section-title">About this job</div>
+                <div class="job-description">${escHtml(job.description || '')}</div>
+
+                <div class="section-title">Required Skills</div>
+                <div class="skills-list">
+                    ${skillList.map(s => {
+                        const isMatched = matched.includes(s);
+                        const isMissing = missing.includes(s);
+                        const cls = isMatched ? 'matched' : isMissing ? 'missing' : '';
+                        const icon = isMatched ? '✓ ' : isMissing ? '✗ ' : '';
+                        return `<span class="skill-tag ${cls}">${icon}${escHtml(s)}</span>`;
+                    }).join('')}
+                </div>
+                ${matched.length > 0 || missing.length > 0
+                    ? `<div style="font-size:0.78rem;color:var(--text3);margin-top:0.6rem;">
+                         <span style="color:var(--teal);">✓ matched</span> &nbsp;
+                         <span style="color:var(--rose);">✗ missing</span>
+                       </div>` : ''}
+            </div>
+
+            <!-- AI Match Card (only if score exists) -->
+            ${job.aiPreviewScore != null ? `
+            <div class="ai-card" id="ai-card">
+                <div class="ai-card-title">🤖 AI Match Analysis</div>
+                <div class="score-ring">
+                    <div class="score-number" style="color:${
+                        job.aiPreviewBadge==='GREEN' ? 'var(--teal)' :
+                        job.aiPreviewBadge==='AMBER' ? 'var(--gold)' : 'var(--rose)'
+                    }">${job.aiPreviewScore?.toFixed(0)}%</div>
+                    <div class="score-label">match score</div>
+                    <div><span class="ai-badge-lg ${badgeClass}">${badgeLabel}</span></div>
+                </div>
+                <div class="ai-reason" id="ai-reason">
+                    ${escHtml(job.aiPreviewReason || 'Analyzing your match…')}
+                </div>
+                <div class="ai-enriching" id="ai-enriching">
+                    ✨ AI is enriching this analysis in the background…
+                </div>
+            </div>` : ''}
+
+            <!-- Similar jobs placeholder -->
+            <div id="similar-section"></div>
+          </div>
+
+          <!-- Right: Sidebar -->
+          <div>
+            <!-- Job summary -->
+            <div class="side-card">
+                <div class="side-card-title">Job Summary</div>
+                <div class="detail-row">
+                    <span class="label">Budget</span>
+                    <span class="value" style="color:var(--gold);font-family:'Syne',sans-serif;font-size:1.1rem;">
+                        ${job.budget ? '$' + job.budget.toLocaleString() : 'Negotiable'}
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Category</span>
+                    <span class="value">${job.category || '—'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Posted</span>
+                    <span class="value">${formatDate(job.createdAt)}</span>
+                </div>
+                ${job.deadline ? `
+                <div class="detail-row">
+                    <span class="label">Deadline</span>
+                    <span class="value">${formatDate(job.deadline)}</span>
+                </div>` : ''}
+                <div class="detail-row">
+                    <span class="label">Proposals</span>
+                    <span class="value">${job.proposalCount || 0}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Status</span>
+                    <span class="value" style="color:var(--teal);">${job.status || 'OPEN'}</span>
+                </div>
+            </div>
+
+            <!-- Apply form -->
+            <div class="apply-card" id="apply-section">
+                <h3>Apply for this Job</h3>
+                <div id="apply-form-content">
+                    <div class="form-group">
+                        <label>Your Expected Rate ($/hr) *</label>
+                        <div class="rate-wrap">
+                            <span class="curr">$</span>
+                            <input type="number" id="expected-rate" class="form-control"
+                                placeholder="e.g. 45" min="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Cover Letter *
+                            <span style="color:var(--text3);font-weight:400;">(50–2000 chars)</span>
+                        </label>
+                        <textarea id="cover-letter" class="form-control" rows="5"
+                            placeholder="Introduce yourself, explain why you're a great fit, and mention any relevant experience…"
+                            oninput="updateCharCount()"></textarea>
+                        <div class="char-count"><span id="char-count">0</span>/2000</div>
+                    </div>
+                    <button class="apply-btn" id="apply-btn" onclick="submitProposal()">
+                        Submit Proposal →
+                    </button>
+                </div>
+            </div>
+          </div>
+        </div>`;
+
+        // Hide "enriching" message after 15s if AI hasn't updated
+        setTimeout(() => {
+            const el = document.getElementById('ai-enriching');
+            if (el) el.style.display = 'none';
+        }, 15000);
+    }
+
+    function updateCharCount() {
+        const len = document.getElementById('cover-letter').value.length;
+        document.getElementById('char-count').textContent = len;
+        document.getElementById('char-count').style.color =
+            len < 50 ? 'var(--rose)' : len > 1800 ? 'var(--gold)' : 'var(--text3)';
+    }
+
+    async function submitProposal() {
+        const rate   = parseFloat(document.getElementById('expected-rate').value);
+        const letter = document.getElementById('cover-letter').value.trim();
+
+        if (!rate || rate <= 0) { showToast('Please enter your expected rate', true); return; }
+        if (letter.length < 50) { showToast('Cover letter must be at least 50 characters', true); return; }
+        if (letter.length > 2000) { showToast('Cover letter is too long', true); return; }
+
+        const btn = document.getElementById('apply-btn');
+        btn.disabled = true; btn.textContent = 'Submitting…';
+
+        try {
+            const res = await api.post('/api/v1/proposals', {
+                jobId:        parseInt(jobId),
+                expectedRate: rate,
+                coverLetter:  letter
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                document.getElementById('apply-form-content').innerHTML = `
+                    <div class="applied-msg">
+                        🎉 Proposal submitted!<br>
+                        <span style="font-weight:400;font-size:0.85rem;margin-top:0.35rem;display:block;">
+                            AI Match Score: <strong>${data.aiMatchScore?.toFixed(0) || '—'}%</strong>
+                            &nbsp;
+                            <span style="color:${
+                                data.aiMatchBadge==='GREEN' ? 'var(--teal)' :
+                                data.aiMatchBadge==='AMBER' ? 'var(--gold)' : 'var(--rose)'
+                            }">${data.aiMatchBadge || ''}</span>
+                        </span>
+                    </div>`;
+                showToast('🎉 Proposal submitted successfully!');
+            } else if (res.status === 400 && data.message?.includes('already applied')) {
+                document.getElementById('apply-form-content').innerHTML = `
+                    <div class="applied-msg">✓ You have already applied to this job.</div>`;
+            } else {
+                showToast('Error: ' + (data.message || 'Something went wrong'), true);
+                btn.disabled = false; btn.textContent = 'Submit Proposal →';
+            }
+        } catch(e) {
+            showToast('Network error. Please try again.', true);
+            btn.disabled = false; btn.textContent = 'Submit Proposal →';
+        }
+    }
+
+    async function loadSimilarJobs() {
+        try {
+            const res   = await api.get(`/api/v1/jobs/${jobId}/similar`);
+            const jobs  = await res.json();
+            const section = document.getElementById('similar-section');
+            if (!section || !jobs.length) return;
+
+            section.innerHTML = `
+                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;
+                    margin:1.5rem 0 0.75rem;">Similar Jobs</div>
+                ${jobs.map(j => `
+                    <a href="/job-detail.html?id=${j.id}" class="similar-card">
+                        <div class="similar-title">${escHtml(j.title)}</div>
+                        <div class="similar-meta">
+                            ${j.category} · ${j.budget ? '$'+j.budget.toLocaleString() : 'Negotiable'}
+                        </div>
+                    </a>`).join('')}`;
+        } catch(e) { /* silent */ }
+    }
+
+    function showToast(msg, err=false) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.style.borderColor = err ? 'var(--rose)' : 'var(--teal)';
+        t.style.color       = err ? 'var(--rose)' : 'var(--teal)';
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 3500);
+    }
+
+    loadJob();
+</script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Jobs — SkillBridge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        :root {
+          --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
+          --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623; --purple:#7B61FF;
+          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
+          --border:#1A2D4A; --border2:#243650;
+        }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+        nav {
+          display:flex; align-items:center; justify-content:space-between;
+          padding:0 5%; height:64px; background:rgba(6,13,26,0.95);
+          border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;
+        }
+        .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.35rem;
+          background:linear-gradient(135deg,var(--teal),var(--gold));
+          -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .nav-links { display:flex; gap:1.5rem; align-items:center; }
+        .nav-links a { font-size:0.88rem; color:var(--text2); text-decoration:none; transition:color 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color:var(--teal); }
+        .user-av {
+          width:36px; height:36px; border-radius:50%;
+          background:linear-gradient(135deg,var(--gold),var(--rose));
+          display:flex; align-items:center; justify-content:center;
+          font-weight:700; font-size:0.85rem; color:#fff;
+        }
+        .btn-sm { padding:0.4rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+        .btn-logout { background:transparent; border:1px solid var(--border2); color:var(--text2); transition:all 0.2s; }
+        .btn-logout:hover { border-color:var(--rose); color:var(--rose); }
+
+        main { max-width:1100px; margin:0 auto; padding:2rem 5%; }
+
+        /* Hero search bar */
+        .search-hero {
+          background:linear-gradient(135deg, var(--card), var(--card2));
+          border:1px solid var(--border2); border-radius:20px;
+          padding:2rem; margin-bottom:1.5rem; text-align:center;
+        }
+        .search-hero h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:1.7rem; margin-bottom:0.4rem; }
+        .search-hero p  { color:var(--text2); font-size:0.9rem; margin-bottom:1.25rem; }
+        .search-row { display:flex; gap:0.75rem; max-width:600px; margin:0 auto; }
+        .search-input {
+          flex:1; background:var(--bg2); border:1px solid var(--border2);
+          border-radius:10px; padding:0.7rem 1rem; font-size:0.9rem;
+          color:var(--text); font-family:'DM Sans',sans-serif; outline:none;
+          transition:border-color 0.2s;
+        }
+        .search-input:focus { border-color:var(--teal); }
+        .search-input::placeholder { color:var(--text3); }
+        .search-btn {
+          padding:0.7rem 1.5rem; border-radius:10px; font-weight:700;
+          background:linear-gradient(135deg,var(--teal),var(--teal-dk));
+          border:none; color:#000; cursor:pointer; font-family:'DM Sans',sans-serif;
+          white-space:nowrap;
+        }
+        .search-btn:hover { opacity:0.9; }
+
+        /* Filter bar */
+        .filter-bar { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem; align-items:center; }
+        .filter-chip {
+          padding:0.35rem 0.9rem; border-radius:99px; font-size:0.8rem; font-weight:600;
+          cursor:pointer; border:1px solid var(--border2); color:var(--text2);
+          background:var(--card); transition:all 0.2s;
+        }
+        .filter-chip:hover { border-color:var(--teal); color:var(--teal); }
+        .filter-chip.active { background:rgba(0,201,167,0.1); border-color:var(--teal); color:var(--teal); }
+        .results-count { margin-left:auto; font-size:0.82rem; color:var(--text3); }
+
+        /* Job grid */
+        .jobs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1rem; }
+
+        .job-card {
+          background:var(--card); border:1px solid var(--border2); border-radius:16px;
+          padding:1.35rem; transition:border-color 0.2s, transform 0.15s;
+          display:flex; flex-direction:column;
+        }
+        .job-card:hover { border-color:var(--teal); transform:translateY(-2px); }
+
+        .jc-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:0.75rem; gap:0.5rem; }
+        .jc-title { font-weight:700; font-size:0.97rem; line-height:1.35; flex:1; }
+        .ai-badge {
+          padding:0.22rem 0.65rem; border-radius:99px; font-size:0.72rem;
+          font-weight:700; white-space:nowrap; flex-shrink:0;
+        }
+        .badge-green { background:rgba(0,201,167,0.12); color:var(--teal); border:1px solid rgba(0,201,167,0.25); }
+        .badge-amber { background:rgba(245,166,35,0.12); color:var(--gold); border:1px solid rgba(245,166,35,0.25); }
+        .badge-red   { background:rgba(255,107,138,0.12); color:var(--rose); border:1px solid rgba(255,107,138,0.25); }
+
+        .jc-meta { font-size:0.8rem; color:var(--text2); margin-bottom:0.75rem; }
+        .jc-desc {
+          font-size:0.83rem; color:var(--text3); line-height:1.5;
+          margin-bottom:0.85rem; flex:1;
+          display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+        }
+        .jc-skills { display:flex; flex-wrap:wrap; gap:0.35rem; margin-bottom:1rem; }
+        .skill-tag {
+          padding:0.18rem 0.55rem; border-radius:99px; font-size:0.73rem;
+          background:rgba(123,97,255,0.1); color:var(--purple); border:1px solid rgba(123,97,255,0.2);
+        }
+        .jc-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; }
+        .jc-budget { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; color:var(--gold); }
+        .jc-proposals { font-size:0.78rem; color:var(--text3); }
+        .jc-apply {
+          padding:0.38rem 1rem; border-radius:8px; font-size:0.82rem; font-weight:700;
+          background:rgba(0,201,167,0.1); border:1px solid rgba(0,201,167,0.2);
+          color:var(--teal); text-decoration:none; transition:all 0.2s;
+        }
+        .jc-apply:hover { background:rgba(0,201,167,0.2); }
+
+        /* Pagination */
+        .pagination { display:flex; align-items:center; justify-content:center; gap:0.5rem; margin-top:2rem; }
+        .page-btn {
+          width:36px; height:36px; border-radius:8px; display:flex; align-items:center;
+          justify-content:center; font-size:0.85rem; font-weight:600; cursor:pointer;
+          border:1px solid var(--border2); color:var(--text2); background:var(--card);
+          transition:all 0.2s;
+        }
+        .page-btn:hover:not(:disabled) { border-color:var(--teal); color:var(--teal); }
+        .page-btn.active { background:rgba(0,201,167,0.1); border-color:var(--teal); color:var(--teal); }
+        .page-btn:disabled { opacity:0.3; cursor:not-allowed; }
+
+        .empty-state { text-align:center; padding:4rem; color:var(--text3); grid-column:1/-1; }
+        .empty-icon  { font-size:2.5rem; margin-bottom:0.75rem; }
+        .loading-grid { grid-column:1/-1; text-align:center; padding:3rem; color:var(--text3); }
+
+        /* Skeleton loader */
+        .skeleton {
+          background:linear-gradient(90deg, var(--card) 25%, var(--card2) 50%, var(--card) 75%);
+          background-size:200% 100%;
+          animation:shimmer 1.4s infinite;
+          border-radius:6px;
+        }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="nav-logo">SkillBridge</a>
+    <div class="nav-links">
+        <a href="/jobs.html" class="active">Browse Jobs</a>
+        <a href="/dashboard-freelancer.html">Dashboard</a>
+        <a href="/profile.html">Profile</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+        <div class="user-av" id="user-av">?</div>
+        <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<main>
+    <!-- Search hero -->
+    <div class="search-hero">
+        <h1>Find Your Next Project 🚀</h1>
+        <p>AI matches you to jobs based on your skills, rate and availability</p>
+        <div class="search-row">
+            <input type="text" id="search-input" class="search-input"
+                   placeholder="Search by skill, title, or keyword…"
+                   onkeydown="if(event.key==='Enter') doSearch()">
+            <button class="search-btn" onclick="doSearch()">Search</button>
+        </div>
+    </div>
+
+    <!-- Category filters -->
+    <div class="filter-bar">
+        <button class="filter-chip active" data-cat="" onclick="filterCat(this, '')">All</button>
+        <button class="filter-chip" data-cat="TECHNOLOGY" onclick="filterCat(this,'TECHNOLOGY')">Technology</button>
+        <button class="filter-chip" data-cat="DESIGN" onclick="filterCat(this,'DESIGN')">Design</button>
+        <button class="filter-chip" data-cat="WRITING" onclick="filterCat(this,'WRITING')">Writing</button>
+        <button class="filter-chip" data-cat="MARKETING" onclick="filterCat(this,'MARKETING')">Marketing</button>
+        <button class="filter-chip" data-cat="FINANCE" onclick="filterCat(this,'FINANCE')">Finance</button>
+        <button class="filter-chip" data-cat="OTHER" onclick="filterCat(this,'OTHER')">Other</button>
+        <span class="results-count" id="results-count"></span>
+    </div>
+
+    <!-- Jobs grid -->
+    <div class="jobs-grid" id="jobs-grid">
+        <div class="loading-grid">Loading jobs…</div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+</main>
+
+<script src="/js/utils.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+    requireAuth('FREELANCER');
+
+    let currentPage = 0;
+    let currentKeyword = '';
+    let currentCategory = '';
+    let totalPages = 0;
+
+    // Load profile for avatar
+    api.get('/api/v1/profile').then(r => r.json()).then(p => {
+        document.getElementById('user-av').textContent = (p.name || 'F')[0].toUpperCase();
+    });
+
+    async function loadJobs(page = 0) {
+        currentPage = page;
+        const grid  = document.getElementById('jobs-grid');
+        grid.innerHTML = `<div class="loading-grid">Loading jobs…</div>`;
+
+        let url = `/api/v1/jobs?page=${page}&size=9`;
+        if (currentKeyword) url += `&keyword=${encodeURIComponent(currentKeyword)}`;
+        if (currentCategory) url += `&category=${currentCategory}`;
+
+        try {
+            const res  = await api.get(url);
+            const data = await res.json();
+            const jobs = data.content || [];
+            totalPages = data.totalPages || 0;
+
+            document.getElementById('results-count').textContent =
+                `${data.totalElements || 0} job${data.totalElements === 1 ? '' : 's'} found`;
+
+            if (jobs.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <p>No jobs found. Try a different search or category.</p>
+                    </div>`;
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            grid.innerHTML = jobs.map(j => {
+                const badgeClass =
+                    j.aiPreviewBadge === 'GREEN' ? 'badge-green' :
+                    j.aiPreviewBadge === 'AMBER' ? 'badge-amber' : 'badge-red';
+
+                const skillList = typeof j.requiredSkills === 'string'
+                    ? j.requiredSkills.split(',').map(s => s.trim()).filter(Boolean)
+                    : (j.requiredSkills || []);
+
+                return `
+                <div class="job-card">
+                    <div class="jc-top">
+                        <div class="jc-title">${escHtml(j.title)}</div>
+                        ${j.aiPreviewBadge
+                            ? `<span class="ai-badge ${badgeClass}">
+                                 ${j.aiPreviewScore?.toFixed(0)}% match
+                               </span>`
+                            : ''}
+                    </div>
+                    <div class="jc-meta">
+                        ${j.category || ''} · ${escHtml(j.clientName || 'Client')} ·
+                        Posted ${formatDate(j.createdAt)}
+                    </div>
+                    <div class="jc-desc">${escHtml(j.description || '')}</div>
+                    <div class="jc-skills">
+                        ${skillList.slice(0,4).map(s =>
+                            `<span class="skill-tag">${escHtml(s)}</span>`).join('')}
+                        ${skillList.length > 4
+                            ? `<span class="skill-tag">+${skillList.length-4}</span>` : ''}
+                    </div>
+                    <div class="jc-footer">
+                        <div>
+                            <div class="jc-budget">${j.budget ? '$'+j.budget.toLocaleString() : 'Negotiable'}</div>
+                            <div class="jc-proposals">${j.proposalCount || 0} proposal${j.proposalCount===1?'':'s'}</div>
+                        </div>
+                        <a href="/job-detail.html?id=${j.id}" class="jc-apply">View Job →</a>
+                    </div>
+                </div>`;
+            }).join('');
+
+            renderPagination(data.totalPages, data.number);
+
+        } catch(e) {
+            console.error('Error loading jobs:', e);
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">⚠️</div>
+                    <p>Failed to load jobs. Please refresh.</p>
+                </div>`;
+        }
+    }
+
+    function renderPagination(total, current) {
+        const container = document.getElementById('pagination');
+        if (total <= 1) { container.innerHTML = ''; return; }
+
+        let html = `<button class="page-btn" onclick="loadJobs(${current-1})"
+            ${current===0 ? 'disabled' : ''}>‹</button>`;
+
+        for (let i = 0; i < total; i++) {
+            if (i === 0 || i === total-1 || Math.abs(i-current) <= 1) {
+                html += `<button class="page-btn ${i===current?'active':''}"
+                    onclick="loadJobs(${i})">${i+1}</button>`;
+            } else if (Math.abs(i-current) === 2) {
+                html += `<span style="color:var(--text3);padding:0 0.25rem;">…</span>`;
+            }
+        }
+
+        html += `<button class="page-btn" onclick="loadJobs(${current+1})"
+            ${current===total-1 ? 'disabled' : ''}>›</button>`;
+        container.innerHTML = html;
+    }
+
+    function doSearch() {
+        currentKeyword  = document.getElementById('search-input').value.trim();
+        currentCategory = '';
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        document.querySelector('[data-cat=""]').classList.add('active');
+        loadJobs(0);
+    }
+
+    function filterCat(el, cat) {
+        currentCategory = cat;
+        currentKeyword  = '';
+        document.getElementById('search-input').value = '';
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        loadJobs(0);
+    }
+
+    // Initial load
+    loadJobs(0);
+</script>
+</body>
+</html>
