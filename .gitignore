@@ -36,3 +36,5 @@ build/
 application-secrets.properties
 *-secrets.properties
 *.env
+
+uploads/

@@ -37,6 +37,8 @@ public class User {
     private Role role;
 
     private String bio;
+
+    @Column(name = "avatar_url")
     private String avatarUrl;
 
     // Stored as comma-separated string e.g. "React,Spring Boot,MySQL"
@@ -51,7 +53,7 @@ public class User {
     @Column(nullable = false)
     private Integer reviewCount = 0;
 
-    @Column(nullable = false)
+    @Column(name = "profile_completion_pct")
     private Integer profileCompletionPct = 0;
 
     @Enumerated(EnumType.STRING)
@@ -86,4 +88,7 @@ public class User {
 
     @OneToMany(mappedBy = "user",       cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PortfolioItem> portfolio;
+
+    private String location;
+    private String portfolioUrl;
 }

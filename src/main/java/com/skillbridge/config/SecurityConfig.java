@@ -57,7 +57,7 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // ── Static assets ─────────────────────────────────────────────
-                        .requestMatchers("/css/**", "/js/**", "/lib/**",
+                        .requestMatchers("/uploads/**", "/css/**", "/js/**", "/lib/**",
                                 "/images/**", "/favicon.ico").permitAll()
 
                         // ── Public API endpoints ──────────────────────────────────────

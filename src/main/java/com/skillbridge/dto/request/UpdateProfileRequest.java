@@ -17,4 +17,6 @@ public class UpdateProfileRequest {
     private Double             hourlyRate;
     private String             avatarUrl;
     private AvailabilityStatus availabilityStatus;
+    private String             location;      // ← ADD
+    private String             portfolioUrl;
 }
