@@ -1,6 +1,8 @@
 package com.skillbridge.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -31,6 +33,7 @@ public class Review {
     private User reviewee;
 
     @Column(nullable = false)
+    @Min(1) @Max(5)
     private Integer rating; // 1–5
 
     @Column(columnDefinition = "TEXT")

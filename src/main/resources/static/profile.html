@@ -305,9 +305,10 @@
             document.getElementById('portfolio-url').value  = p.portfolioUrl  || '';
 
             // Skills
-            skills = p.skills
-                ? p.skills.split(',').map(s=>s.trim()).filter(Boolean)
-                : [];
+            // Handle both array (from your API) and string (fallback)
+skills = Array.isArray(p.skills)
+    ? p.skills.filter(Boolean)
+    : (p.skills ? p.skills.split(',').map(s=>s.trim()).filter(Boolean) : []);
             renderSkills();
         } else {
             document.getElementById('freelancer-section').style.display = 'none';
@@ -324,9 +325,17 @@
         } else {
             document.getElementById('stat1-num').textContent = p.totalProposals|| 0;
             document.getElementById('stat1-lbl').textContent = 'Proposals Sent';
-            document.getElementById('stat2-num').textContent = p.avgRating
-                ? p.avgRating.toFixed(1) : '—';
-            document.getElementById('stat2-lbl').textContent = 'Avg Match Score';
+            // Add after stats section in populateForm()
+if (role !== 'CLIENT' && p.avgRating) {
+    const stars = '⭐'.repeat(Math.round(p.avgRating)) +
+                  '☆'.repeat(5 - Math.round(p.avgRating));
+    document.getElementById('stat2-num').textContent = p.avgRating.toFixed(1);
+    document.getElementById('stat2-lbl').textContent = `${stars} Avg Rating`;
+}
+else {
+    document.getElementById('stat2-num').textContent = '—';
+    document.getElementById('stat2-lbl').textContent = 'Avg Rating';
+}
         }
         document.getElementById('stat3-num').textContent = p.createdAt
             ? new Date(p.createdAt).getFullYear() : '—';

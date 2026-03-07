@@ -179,6 +179,18 @@
         .empty-chat { text-align:center; margin:auto; color:var(--text3); padding:2rem; }
         .empty-chat .icon { font-size:2.5rem; margin-bottom:0.75rem; }
         .typing-indicator { display:none; font-size:0.78rem; color:var(--text3); padding:0 1.5rem 0.5rem; font-style:italic; }
+
+
+        .modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100;
+    display:none; align-items:center; justify-content:center; padding:1rem;
+}
+.modal-overlay.open { display:flex; }
+.modal {
+    background:var(--card); border:1px solid var(--border2); border-radius:20px;
+    padding:2rem; width:100%; max-width:480px;
+}
+.modal h2 { font-family:'Syne',sans-serif; font-weight:800; font-size:1.25rem; margin-bottom:0.35rem; }
     </style>
 </head>
 <body>
@@ -284,6 +296,7 @@
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script>
+
     const projectId = new URLSearchParams(window.location.search).get('id');
     if (!projectId) window.location.replace('/dashboard-freelancer.html');
 
@@ -328,6 +341,7 @@
         document.getElementById('agreed-rate').textContent    = p.acceptedRate ? `$${p.acceptedRate}/hr` : '—';
         document.getElementById('client-name').textContent    = p.clientName || '—';
         document.getElementById('freelancer-name').textContent= p.freelancerName || '—';
+        document.getElementById('freelancer-name-modal').textContent = p.freelancerName || 'the freelancer';
         document.getElementById('client-av').textContent      = (p.clientName||'C')[0].toUpperCase();
         document.getElementById('freelancer-av').textContent  = (p.freelancerName||'F')[0].toUpperCase();
         document.getElementById('started-date').textContent   = formatDate(p.createdAt);
@@ -340,19 +354,28 @@
         // Actions — only show if ACTIVE
         const actionsEl = document.getElementById('sidebar-actions');
         const role = localStorage.getItem('sb_role');
-        if (p.status === 'ACTIVE') {
-            actionsEl.innerHTML = `
-                <button class="btn-complete" onclick="updateStatus('COMPLETED')">
-                    ✓ Mark as Completed
-                </button>
-                ${role === 'CLIENT' ? `
-                <button class="btn-cancel-project" onclick="updateStatus('CANCELLED')">
-                    Cancel Project
-                </button>` : ''}`;
-        } else {
-            actionsEl.innerHTML = `<p style="font-size:0.82rem;color:var(--text3);text-align:center;">
-                Project is ${p.status.toLowerCase()}</p>`;
-        }
+        // REPLACE WITH
+if (p.status === 'ACTIVE') {
+    actionsEl.innerHTML = `
+        <button class="btn-complete" onclick="updateStatus('COMPLETED')">
+            ✓ Mark as Completed
+        </button>
+        ${role === 'CLIENT' ? `
+        <button class="btn-cancel-project" onclick="updateStatus('CANCELLED')">
+            Cancel Project
+        </button>` : ''}`;
+} else if (p.status === 'COMPLETED') {
+    if (role === 'CLIENT') {
+        // Check if already reviewed
+        checkReviewStatus(p.id);
+    } else {
+        actionsEl.innerHTML = `<p style="font-size:0.82rem;color:var(--teal);text-align:center;">
+            ✅ Project completed</p>`;
+    }
+} else {
+    actionsEl.innerHTML = `<p style="font-size:0.82rem;color:var(--text3);text-align:center;">
+        Project is ${p.status.toLowerCase()}</p>`;
+}
     }
 
     async function loadMessages() {
@@ -543,7 +566,136 @@
         }
     }
 
+
+    async function checkReviewStatus(projectId) {
+    const actionsEl = document.getElementById('sidebar-actions');
+    try {
+        const res = await api.get(`/api/v1/reviews/project/${projectId}`);
+        if (res.status === 204) {
+            // No review yet — show button
+            actionsEl.innerHTML = `
+                <p style="font-size:0.82rem;color:var(--teal);text-align:center;margin-bottom:0.75rem;">
+                    ✅ Project completed</p>
+                <button class="btn-complete" onclick="openReviewModal()">
+                    ⭐ Leave a Review
+                </button>`;
+        } else {
+            const review = await res.json();
+            actionsEl.innerHTML = `
+                <p style="font-size:0.82rem;color:var(--teal);text-align:center;">
+                    ✅ Project completed</p>
+                <p style="font-size:0.82rem;color:var(--text3);text-align:center;margin-top:0.5rem;">
+                    You rated this ${'⭐'.repeat(review.rating)}</p>`;
+        }
+    } catch(e) {
+        actionsEl.innerHTML = `<p style="font-size:0.82rem;color:var(--teal);text-align:center;">✅ Project completed</p>`;
+    }
+}
+
+function openReviewModal() {
+    document.getElementById('review-modal').classList.add('open');
+}
+
+function closeReviewModal() {
+    document.getElementById('review-modal').classList.remove('open');
+}
+
+let selectedRating = 0;
+
+function setRating(val) {
+    selectedRating = val;
+    document.querySelectorAll('.star-btn').forEach((btn, i) => {
+        btn.textContent = i < val ? '⭐' : '☆';
+        btn.classList.toggle('active', i < val);
+    });
+    document.getElementById('review-rating-error').style.display = 'none';
+}
+
+async function submitReview() {
+    if (selectedRating === 0) {
+        document.getElementById('review-rating-error').style.display = 'block';
+        return;
+    }
+    const comment = document.getElementById('review-comment').value.trim();
+    const btn = document.getElementById('submit-review-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    try {
+        const res  = await api.post('/api/v1/reviews', {
+            projectId: Number(projectId),
+            rating: selectedRating,
+            comment: comment || null
+        });
+        if (res.ok) {
+            closeReviewModal();
+            checkReviewStatus(projectId);
+        } else {
+            const data = await res.json();
+            alert(data.message || 'Failed to submit review.');
+            btn.disabled = false;
+            btn.textContent = 'Submit Review';
+        }
+    } catch(e) {
+        alert('Network error. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Submit Review';
+    }
+}
+
     init();
 </script>
+
+<!-- Review Modal -->
+<div class="modal-overlay" id="review-modal">
+    <div class="modal">
+        <h2>⭐ Leave a Review</h2>
+        <p style="color:var(--text2);font-size:0.88rem;margin-bottom:1.5rem;">
+            Rate your experience working with <strong id="freelancer-name-modal"></strong>
+        </p>
+
+        <div style="margin-bottom:1.25rem;">
+            <label style="display:block;font-size:0.85rem;font-weight:600;color:var(--text2);margin-bottom:0.5rem;">
+                Rating <span style="color:var(--rose);">*</span>
+            </label>
+            <div style="display:flex;gap:0.5rem;">
+                <button class="star-btn" onclick="setRating(1)" style="font-size:1.75rem;background:none;border:none;cursor:pointer;">☆</button>
+                <button class="star-btn" onclick="setRating(2)" style="font-size:1.75rem;background:none;border:none;cursor:pointer;">☆</button>
+                <button class="star-btn" onclick="setRating(3)" style="font-size:1.75rem;background:none;border:none;cursor:pointer;">☆</button>
+                <button class="star-btn" onclick="setRating(4)" style="font-size:1.75rem;background:none;border:none;cursor:pointer;">☆</button>
+                <button class="star-btn" onclick="setRating(5)" style="font-size:1.75rem;background:none;border:none;cursor:pointer;">☆</button>
+            </div>
+            <div id="review-rating-error" style="color:var(--rose);font-size:0.8rem;margin-top:0.35rem;display:none;">
+                Please select a rating
+            </div>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+            <label style="display:block;font-size:0.85rem;font-weight:600;color:var(--text2);margin-bottom:0.4rem;">
+                Comment (optional)
+            </label>
+            <textarea id="review-comment" placeholder="Share your experience working with this freelancer..."
+                      style="width:100%;padding:0.75rem 1rem;border-radius:10px;background:var(--bg2);
+                             border:1px solid var(--border2);color:var(--text);font-family:'DM Sans',sans-serif;
+                             font-size:0.9rem;outline:none;resize:vertical;min-height:100px;line-height:1.6;"
+                      maxlength="1000"></textarea>
+        </div>
+
+        <div style="display:flex;gap:0.75rem;">
+            <button onclick="closeReviewModal()"
+                    style="padding:0.85rem 1.25rem;border-radius:12px;font-size:0.88rem;font-weight:600;
+                           cursor:pointer;font-family:'DM Sans',sans-serif;
+                           background:transparent;border:1px solid var(--border2);color:var(--text2);">
+                Cancel
+            </button>
+            <button id="submit-review-btn" onclick="submitReview()"
+                    style="flex:1;padding:0.85rem;border-radius:12px;font-size:0.9rem;font-weight:700;
+                           cursor:pointer;font-family:'DM Sans',sans-serif;border:none;
+                           background:linear-gradient(135deg,var(--teal),var(--teal-dk));color:#000;">
+                Submit Review ⭐
+            </button>
+        </div>
+    </div>
+</div>
 </body>
 </html>

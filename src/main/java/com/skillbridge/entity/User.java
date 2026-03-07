@@ -47,10 +47,10 @@ public class User {
 
     private Double hourlyRate;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "avg_rating")
     private Double avgRating = 0.0;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "review_count")
     private Integer reviewCount = 0;
 
     @Column(name = "profile_completion_pct")
