@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel — SkillBridge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        :root {
+          --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
+          --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623; --purple:#7B61FF;
+          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
+          --border:#1A2D4A; --border2:#243650;
+        }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+        nav {
+          display:flex; align-items:center; justify-content:space-between;
+          padding:0 5%; height:64px; background:rgba(6,13,26,0.95);
+          border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;
+        }
+        .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.35rem;
+          background:linear-gradient(135deg,var(--teal),var(--gold));
+          -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .admin-badge {
+          background:rgba(255,107,138,0.15); border:1px solid rgba(255,107,138,0.3);
+          color:var(--rose); border-radius:99px; padding:0.2rem 0.75rem;
+          font-size:0.75rem; font-weight:700;
+        }
+        .btn-sm { padding:0.4rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+        .btn-logout { background:transparent; border:1px solid var(--border2); color:var(--text2); transition:all 0.2s; }
+        .btn-logout:hover { border-color:var(--rose); color:var(--rose); }
+
+        main { max-width:1200px; margin:0 auto; padding:2rem 5%; }
+
+        /* Tabs */
+        .tabs { display:flex; gap:0.5rem; margin-bottom:2rem; border-bottom:1px solid var(--border); padding-bottom:0; }
+        .tab-btn {
+          padding:0.65rem 1.5rem; border-radius:10px 10px 0 0; font-size:0.88rem; font-weight:600;
+          cursor:pointer; font-family:'DM Sans',sans-serif;
+          background:transparent; border:1px solid transparent; border-bottom:none;
+          color:var(--text2); transition:all 0.2s; margin-bottom:-1px;
+        }
+        .tab-btn:hover { color:var(--teal); }
+        .tab-btn.active {
+          background:var(--card); border-color:var(--border2); color:var(--teal);
+          border-bottom-color:var(--card);
+        }
+        .tab-panel { display:none; }
+        .tab-panel.active { display:block; }
+
+        /* Stats grid */
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; margin-bottom:2rem; }
+        .stat-card {
+          background:var(--card); border:1px solid var(--border2); border-radius:16px;
+          padding:1.25rem; text-align:center;
+        }
+        .stat-num { font-family:'Syne',sans-serif; font-weight:800; font-size:1.75rem; }
+        .stat-lbl { font-size:0.78rem; color:var(--text3); margin-top:0.2rem; }
+        .stat-card.teal .stat-num { color:var(--teal); }
+        .stat-card.gold .stat-num { color:var(--gold); }
+        .stat-card.purple .stat-num { color:var(--purple); }
+        .stat-card.rose .stat-num { color:var(--rose); }
+
+        /* Search bar */
+        .toolbar { display:flex; gap:0.75rem; margin-bottom:1.25rem; align-items:center; }
+        .search-input {
+          flex:1; padding:0.65rem 1rem; border-radius:10px;
+          background:var(--card); border:1px solid var(--border2);
+          color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.88rem;
+          outline:none; transition:border-color 0.2s;
+        }
+        .search-input:focus { border-color:var(--teal); }
+        .search-input::placeholder { color:var(--text3); }
+        .btn-search {
+          padding:0.65rem 1.25rem; border-radius:10px; font-size:0.85rem; font-weight:600;
+          cursor:pointer; font-family:'DM Sans',sans-serif; border:none;
+          background:var(--teal); color:#000;
+        }
+
+        /* Table */
+        .table-wrap { background:var(--card); border:1px solid var(--border2); border-radius:16px; overflow:hidden; }
+        table { width:100%; border-collapse:collapse; }
+        th {
+          padding:0.75rem 1rem; text-align:left; font-size:0.75rem; font-weight:700;
+          color:var(--text3); text-transform:uppercase; letter-spacing:0.06em;
+          background:var(--bg2); border-bottom:1px solid var(--border);
+        }
+        td {
+          padding:0.85rem 1rem; font-size:0.85rem; color:var(--text2);
+          border-bottom:1px solid var(--border);
+        }
+        tr:last-child td { border-bottom:none; }
+        tr:hover td { background:rgba(255,255,255,0.02); }
+        .td-name { color:var(--text); font-weight:600; }
+        .role-badge {
+          padding:0.2rem 0.65rem; border-radius:99px; font-size:0.72rem; font-weight:700;
+        }
+        .role-freelancer { background:rgba(123,97,255,0.12); color:var(--purple); border:1px solid rgba(123,97,255,0.2); }
+        .role-client     { background:rgba(0,201,167,0.1);  color:var(--teal);   border:1px solid rgba(0,201,167,0.2); }
+        .role-admin      { background:rgba(255,107,138,0.1);color:var(--rose);   border:1px solid rgba(255,107,138,0.2); }
+        .status-active   { color:var(--teal); font-weight:600; }
+        .status-inactive { color:var(--rose); font-weight:600; }
+        .action-btn {
+          padding:0.3rem 0.75rem; border-radius:7px; font-size:0.75rem; font-weight:600;
+          cursor:pointer; font-family:'DM Sans',sans-serif; border:none; transition:opacity 0.2s;
+        }
+        .action-btn:hover { opacity:0.8; }
+        .btn-deactivate { background:rgba(255,107,138,0.12); color:var(--rose); border:1px solid rgba(255,107,138,0.2); }
+        .btn-activate   { background:rgba(0,201,167,0.1);  color:var(--teal); border:1px solid rgba(0,201,167,0.2); }
+        .btn-close-job  { background:rgba(245,166,35,0.1); color:var(--gold); border:1px solid rgba(245,166,35,0.2); }
+        .btn-delete     { background:rgba(255,107,138,0.12); color:var(--rose); border:1px solid rgba(255,107,138,0.2); }
+
+        /* Pagination */
+        .pagination { display:flex; justify-content:center; gap:0.5rem; margin-top:1.25rem; }
+        .pg-btn {
+          padding:0.45rem 0.9rem; border-radius:8px; font-size:0.82rem; font-weight:600;
+          cursor:pointer; border:1px solid var(--border2); background:transparent;
+          color:var(--text2); transition:all 0.2s; font-family:'DM Sans',sans-serif;
+        }
+        .pg-btn:hover, .pg-btn.active { border-color:var(--teal); color:var(--teal); }
+        .pg-btn:disabled { opacity:0.4; cursor:not-allowed; }
+
+        .empty-state { text-align:center; padding:3rem; color:var(--text3); }
+        .skeleton { height:48px; background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);
+          background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px; margin-bottom:4px; }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+        .toast {
+          position:fixed; bottom:1.5rem; right:1.5rem; z-index:999;
+          background:var(--card2); border:1px solid var(--border2); border-radius:12px;
+          padding:0.85rem 1.25rem; font-size:0.88rem; font-weight:600;
+          transform:translateY(100px); opacity:0; transition:all 0.3s;
+          max-width:320px;
+        }
+        .toast.show { transform:translateY(0); opacity:1; }
+        .toast.success { border-color:rgba(0,201,167,0.3); color:var(--teal); }
+        .toast.error   { border-color:rgba(255,107,138,0.3); color:var(--rose); }
+
+        .stat-card:hover {
+    border-color:var(--border2);
+    transform:translateY(-2px);
+    transition:transform 0.2s;
+}
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="nav-logo">SkillBridge</a>
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+        <span class="admin-badge">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Admin
+</span>
+        <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<main>
+    <div style="margin-bottom:1.75rem;">
+        <h1 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;margin-bottom:0.25rem;">
+            Admin Panel
+        </h1>
+        <p style="color:var(--text2);font-size:0.88rem;">Platform overview and management tools.</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('stats')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle"><rect x="18" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="2" y="13" width="4" height="8"/></svg>
+            Stats
+        </button>
+        <button class="tab-btn" onclick="switchTab('users')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Users
+        </button>
+        <button class="tab-btn" onclick="switchTab('jobs')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+            Jobs
+        </button>
+    </div>
+
+    <!-- Stats Tab -->
+    <div class="tab-panel active" id="tab-stats">
+        <div class="stats-grid" id="stats-grid">
+            <div class="skeleton"></div><div class="skeleton"></div>
+            <div class="skeleton"></div><div class="skeleton"></div>
+            <div class="skeleton"></div><div class="skeleton"></div>
+        </div>
+    </div>
+
+    <!-- Users Tab -->
+    <div class="tab-panel" id="tab-users">
+        <div class="toolbar">
+            <input type="text" class="search-input" id="user-search"
+                   placeholder="Search by name or email…"
+                   onkeydown="if(event.key==='Enter') loadUsers(0)">
+            <button class="btn-search" onclick="loadUsers(0)">Search</button>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th><th>Name</th><th>Email</th><th>Role</th>
+                    <th>Status</th><th>Joined</th><th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="users-tbody">
+                <tr><td colspan="7"><div class="skeleton"></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination" id="users-pagination"></div>
+    </div>
+
+    <!-- Jobs Tab -->
+    <div class="tab-panel" id="tab-jobs">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th><th>Title</th><th>Client</th><th>Category</th>
+                    <th>Budget</th><th>Status</th><th>Proposals</th><th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="jobs-tbody">
+                <tr><td colspan="8"><div class="skeleton"></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination" id="jobs-pagination"></div>
+    </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="/js/utils.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+    // Admin only — check role
+    const token = localStorage.getItem('sb_jwt');
+    const role  = localStorage.getItem('sb_role');
+    if (!token) window.location.replace('/login.html');
+
+    let userPage = 0, userTotalPages = 0;
+    let jobPage  = 0, jobTotalPages  = 0;
+
+    // ── Tabs ───────────────────────────────────────────────────────────────
+    function switchTab(name) {
+        document.querySelectorAll('.tab-btn').forEach((b,i) =>
+            b.classList.toggle('active', ['stats','users','jobs'][i] === name));
+        document.querySelectorAll('.tab-panel').forEach(p =>
+            p.classList.toggle('active', p.id === 'tab-'+name));
+
+        if (name === 'stats') loadStats();
+        if (name === 'users') loadUsers(0);
+        if (name === 'jobs')  loadJobs(0);
+    }
+
+    // ── Stats ──────────────────────────────────────────────────────────────
+    async function loadStats() {
+    try {
+        const res  = await api.get('/api/v1/admin/stats');
+        const data = await res.json();
+
+        if (!res.ok) {
+            document.getElementById('stats-grid').innerHTML =
+                `<div class="empty-state">Access denied</div>`;
+            return;
+        }
+
+        const cards = [
+            {
+                label: 'Total Users', value: data.totalUsers, color: 'teal',
+                svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`
+            },
+            {
+                label: 'Freelancers', value: data.totalFreelancers, color: 'purple',
+                svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`
+            },
+            {
+                label: 'Clients', value: data.totalClients, color: 'teal',
+                svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`
+            },
+            {
+                label: 'Total Jobs', value: data.totalJobs, color: 'gold',
+                svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`
+            },
+            {
+                label: 'Open Jobs', value: data.openJobs, color: 'teal',
+                svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+            },
+            {
+                label: 'Proposals', value: data.totalProposals, color: 'purple',
+                svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`
+            },
+            {
+                label: 'Projects', value: data.totalProjects, color: 'gold',
+                svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`
+            },
+            {
+                label: 'Completed', value: data.completedProjects, color: 'teal',
+                svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`
+            },
+            {
+                label: 'Avg Rating', value: data.avgPlatformRating?.toFixed(1) || '—', color: 'gold',
+                svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+            },
+            {
+                label: 'Reviews', value: data.totalReviews, color: 'rose',
+                svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`
+            },
+        ];
+
+        const colorMap = {
+            teal:   { stroke:'var(--teal)',   bg:'rgba(0,201,167,0.08)'   },
+            purple: { stroke:'var(--purple)', bg:'rgba(123,97,255,0.08)'  },
+            gold:   { stroke:'var(--gold)',   bg:'rgba(245,166,35,0.08)'  },
+            rose:   { stroke:'var(--rose)',   bg:'rgba(255,107,138,0.08)' },
+        };
+
+        document.getElementById('stats-grid').innerHTML = cards.map(c => {
+            const col = colorMap[c.color];
+            return `
+            <div class="stat-card ${c.color}">
+                <div style="
+                    width:44px; height:44px; border-radius:12px;
+                    background:${col.bg}; border:1px solid ${col.stroke}33;
+                    display:flex; align-items:center; justify-content:center;
+                    margin:0 auto 0.75rem; color:${col.stroke};">
+                    ${c.svg}
+                </div>
+                <div class="stat-num">${c.value}</div>
+                <div class="stat-lbl">${c.label}</div>
+            </div>`;
+        }).join('');
+
+    } catch(e) {
+        console.error(e);
+    }
+}
+
+    // ── Users ──────────────────────────────────────────────────────────────
+    async function loadUsers(page) {
+        userPage = page;
+        const query = document.getElementById('user-search').value.trim();
+        let url = `/api/v1/admin/users?page=${page}&size=20`;
+        if (query) url += `&query=${encodeURIComponent(query)}`;
+
+        const tbody = document.getElementById('users-tbody');
+        tbody.innerHTML = `<tr><td colspan="7"><div class="skeleton"></div></td></tr>`;
+
+        try {
+            const res  = await api.get(url);
+            const data = await res.json();
+            const users = data.content || [];
+            userTotalPages = data.totalPages || 0;
+
+            if (users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">No users found.</div></td></tr>`;
+                document.getElementById('users-pagination').innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = users.map(u => `
+                <tr>
+                    <td>${u.id}</td>
+                    <td class="td-name">${escHtml(u.name||'—')}</td>
+                    <td>${escHtml(u.email||'')}</td>
+                    <td><span class="role-badge role-${(u.role||'').toLowerCase()}">${u.role||'—'}</span></td>
+                    <td class="${u.isActive ? 'status-active':'status-inactive'}">
+                        ${u.isActive ? '● Active' : '● Inactive'}
+                    </td>
+                    <td>${formatDate(u.createdAt)}</td>
+                    <td style="display:flex;gap:0.35rem;flex-wrap:wrap;">
+                        ${u.isActive
+                            ? `<button class="action-btn btn-deactivate" onclick="setUserActive(${u.id},false)">Deactivate</button>`
+                            : `<button class="action-btn btn-activate"   onclick="setUserActive(${u.id},true)">Activate</button>`}
+                        ${u.role !== 'ADMIN'
+                            ? `<button class="action-btn btn-activate" onclick="promoteAdmin(${u.id})">Make Admin</button>`
+                            : ''}
+                    </td>
+                </tr>`).join('');
+
+            renderPagination('users-pagination', page, userTotalPages, loadUsers);
+        } catch(e) {
+            tbody.innerHTML = `<tr><td colspan="7" class="empty-state">Failed to load users.</td></tr>`;
+        }
+    }
+
+    async function setUserActive(id, active) {
+        const action = active ? 'activate' : 'deactivate';
+        if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+        try {
+            const endpoint = active
+                ? `/api/v1/admin/users/${id}/activate`
+                : `/api/v1/admin/users/${id}/deactivate`;
+            const res = await api.patch(endpoint);
+            if (res.ok) {
+                showToast(active ? 'User activated' : 'User deactivated', active ? 'success' : 'error');
+                loadUsers(userPage);
+            }
+        } catch(e) {
+            showToast('Failed to update user', 'error');
+        }
+    }
+
+    async function promoteAdmin(id) {
+        if (!confirm('Promote this user to ADMIN? This cannot be easily undone.')) return;
+        try {
+            const res = await api.patch(`/api/v1/admin/users/${id}/promote`);
+            if (res.ok) {
+                showToast('User promoted to Admin', 'success');
+                loadUsers(userPage);
+            }
+        } catch(e) {
+            showToast('Failed to promote user', 'error');
+        }
+    }
+
+    // ── Jobs ───────────────────────────────────────────────────────────────
+    async function loadJobs(page) {
+        jobPage = page;
+        const tbody = document.getElementById('jobs-tbody');
+        tbody.innerHTML = `<tr><td colspan="8"><div class="skeleton"></div></td></tr>`;
+
+        try {
+            const res  = await api.get(`/api/v1/admin/jobs?page=${page}&size=20`);
+            const data = await res.json();
+            const jobs = data.content || [];
+            jobTotalPages = data.totalPages || 0;
+
+            if (jobs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">No jobs found.</div></td></tr>`;
+                document.getElementById('jobs-pagination').innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = jobs.map(j => `
+                <tr>
+                    <td>${j.id}</td>
+                    <td class="td-name" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"
+                        title="${escHtml(j.title)}">${escHtml(j.title)}</td>
+                    <td>${escHtml(j.clientName||'—')}</td>
+                    <td>${j.category||'—'}</td>
+                    <td>${j.budget ? '$'+Number(j.budget).toLocaleString() : '—'}</td>
+                    <td style="color:${j.status==='OPEN'?'var(--teal)':j.status==='CLOSED'?'var(--text3)':'var(--gold)'}">
+                        ${j.status||'—'}</td>
+                    <td>${j.proposalCount||0}</td>
+                    <td style="display:flex;gap:0.35rem;">
+                        ${j.status === 'OPEN'
+                            ? `<button class="action-btn btn-close-job" onclick="closeJob(${j.id})">Force Close</button>`
+                            : ''}
+                        <button class="action-btn btn-delete" onclick="deleteJob(${j.id})">Delete</button>
+                    </td>
+                </tr>`).join('');
+
+            renderPagination('jobs-pagination', page, jobTotalPages, loadJobs);
+        } catch(e) {
+            tbody.innerHTML = `<tr><td colspan="8" class="empty-state">Failed to load jobs.</td></tr>`;
+        }
+    }
+
+    async function closeJob(id) {
+        if (!confirm('Force close this job?')) return;
+        try {
+            const res = await api.patch(`/api/v1/admin/jobs/${id}/close`);
+            if (res.ok) { showToast('Job closed', 'success'); loadJobs(jobPage); }
+        } catch(e) { showToast('Failed to close job', 'error'); }
+    }
+
+    async function deleteJob(id) {
+        if (!confirm('Permanently delete this job? This cannot be undone.')) return;
+        try {
+            const res = await api.delete(`/api/v1/admin/jobs/${id}`);
+            if (res.ok) { showToast('Job deleted', 'success'); loadJobs(jobPage); }
+        } catch(e) { showToast('Failed to delete job', 'error'); }
+    }
+
+    // ── Pagination ─────────────────────────────────────────────────────────
+    function renderPagination(elId, current, total, loadFn) {
+        const el = document.getElementById(elId);
+        if (total <= 1) { el.innerHTML=''; return; }
+        let html = `<button class="pg-btn" onclick="${loadFn.name}(${current-1})" ${current===0?'disabled':''}>← Prev</button>`;
+        for (let i=0; i<total; i++) {
+            if (total > 7 && Math.abs(i-current) > 2 && i !== 0 && i !== total-1) {
+                if (i===1||i===total-2) html += `<span style="color:var(--text3);padding:0.5rem;">…</span>`;
+                continue;
+            }
+            html += `<button class="pg-btn${i===current?' active':''}" onclick="${loadFn.name}(${i})">${i+1}</button>`;
+        }
+        html += `<button class="pg-btn" onclick="${loadFn.name}(${current+1})" ${current>=total-1?'disabled':''}>Next →</button>`;
+        el.innerHTML = html;
+    }
+
+    // ── Toast ──────────────────────────────────────────────────────────────
+    function showToast(msg, type='success') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = `toast ${type} show`;
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ── Init ───────────────────────────────────────────────────────────────
+    loadStats();
+</script>
+</body>
+</html>

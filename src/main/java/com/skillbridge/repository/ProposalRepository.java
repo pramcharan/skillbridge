@@ -74,4 +74,6 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
             "AND p.viewedByClient = false " +
             "AND p.status = 'PENDING'")
     int countUnreadProposalsForClient(@Param("clientId") Long clientId);
+
+    long count();
 }

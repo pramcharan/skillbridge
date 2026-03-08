@@ -54,4 +54,5 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
             "JOIN FETCH p.job " +
             "WHERE p.id = :id")
     java.util.Optional<Project> findByIdWithDetails(@Param("id") Long id);
+
 }

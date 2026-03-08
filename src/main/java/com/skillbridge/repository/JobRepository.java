@@ -48,4 +48,11 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     long countByClientId(Long clientId);
 
     long countByClientIdAndStatus(Long clientId, JobStatus status);
+
+    // Count by status
+    long countByStatus(com.skillbridge.entity.enums.JobStatus status);
+
+    // All jobs for admin with client info
+    @Query("SELECT j FROM Job j JOIN FETCH j.client ORDER BY j.createdAt DESC")
+    Page<Job> findAllForAdmin(Pageable pageable);
 }
