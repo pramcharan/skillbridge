@@ -30,5 +30,9 @@ public class SavedJob {
 
     @CreationTimestamp
     @Column(updatable = false)
+    private Instant createdAt;
+
+    @CreationTimestamp
+    @Column(updatable = false)
     private Instant savedAt;
 }

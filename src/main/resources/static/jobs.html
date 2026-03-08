@@ -27,119 +27,205 @@
         .nav-links { display:flex; gap:1.5rem; align-items:center; }
         .nav-links a { font-size:0.88rem; color:var(--text2); text-decoration:none; transition:color 0.2s; }
         .nav-links a:hover, .nav-links a.active { color:var(--teal); }
+        .notif-btn {
+          position:relative; width:36px; height:36px; border-radius:10px;
+          background:var(--card); border:1px solid var(--border2);
+          display:flex; align-items:center; justify-content:center; cursor:pointer;
+          color:var(--text2); transition:all 0.2s;
+        }
+        .notif-btn:hover { border-color:var(--teal); color:var(--teal); }
+        .notif-badge {
+          position:absolute; top:-4px; right:-4px;
+          background:var(--rose); color:#fff; border-radius:99px;
+          font-size:0.6rem; font-weight:700; padding:0.1rem 0.35rem; min-width:16px; text-align:center;
+          display:none;
+        }
         .user-av {
           width:36px; height:36px; border-radius:50%;
           background:linear-gradient(135deg,var(--gold),var(--rose));
           display:flex; align-items:center; justify-content:center;
-          font-weight:700; font-size:0.85rem; color:#fff;
+          font-weight:700; font-size:0.85rem; color:#fff; cursor:pointer;
         }
         .btn-sm { padding:0.4rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
         .btn-logout { background:transparent; border:1px solid var(--border2); color:var(--text2); transition:all 0.2s; }
         .btn-logout:hover { border-color:var(--rose); color:var(--rose); }
 
-        main { max-width:1100px; margin:0 auto; padding:2rem 5%; }
+        /* Layout */
+        .page-layout { display:grid; grid-template-columns:260px 1fr; gap:1.5rem; max-width:1200px; margin:0 auto; padding:2rem 5%; }
 
-        /* Hero search bar */
-        .search-hero {
-          background:linear-gradient(135deg, var(--card), var(--card2));
-          border:1px solid var(--border2); border-radius:20px;
-          padding:2rem; margin-bottom:1.5rem; text-align:center;
+        /* Filters sidebar */
+        .filters-sidebar { position:sticky; top:80px; align-self:start; }
+        .filter-card { background:var(--card); border:1px solid var(--border2); border-radius:16px; padding:1.25rem; margin-bottom:1rem; }
+        .filter-title { font-family:'Syne',sans-serif; font-weight:700; font-size:0.8rem;
+          color:var(--text2); text-transform:uppercase; letter-spacing:0.07em;
+          margin-bottom:1rem; display:flex; align-items:center; justify-content:space-between; }
+        .filter-title button { background:none; border:none; color:var(--teal); font-size:0.75rem;
+          cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:600; }
+        .cat-option {
+          display:flex; align-items:center; gap:0.6rem; padding:0.5rem 0.65rem; border-radius:8px;
+          cursor:pointer; font-size:0.85rem; color:var(--text2); transition:all 0.15s;
+          user-select:none;
         }
-        .search-hero h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:1.7rem; margin-bottom:0.4rem; }
-        .search-hero p  { color:var(--text2); font-size:0.9rem; margin-bottom:1.25rem; }
-        .search-row { display:flex; gap:0.75rem; max-width:600px; margin:0 auto; }
-        .search-input {
-          flex:1; background:var(--bg2); border:1px solid var(--border2);
-          border-radius:10px; padding:0.7rem 1rem; font-size:0.9rem;
-          color:var(--text); font-family:'DM Sans',sans-serif; outline:none;
-          transition:border-color 0.2s;
+        .cat-option:hover { background:rgba(0,201,167,0.05); color:var(--text); }
+        .cat-option.selected { background:rgba(0,201,167,0.08); color:var(--teal); }
+        .cat-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+        .budget-inputs { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; }
+        .budget-input {
+          padding:0.55rem 0.75rem; border-radius:8px;
+          background:var(--bg2); border:1px solid var(--border2);
+          color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.85rem; outline:none;
         }
-        .search-input:focus { border-color:var(--teal); }
-        .search-input::placeholder { color:var(--text3); }
-        .search-btn {
-          padding:0.7rem 1.5rem; border-radius:10px; font-weight:700;
-          background:linear-gradient(135deg,var(--teal),var(--teal-dk));
-          border:none; color:#000; cursor:pointer; font-family:'DM Sans',sans-serif;
-          white-space:nowrap;
+        .budget-input:focus { border-color:var(--teal); }
+        .budget-input::placeholder { color:var(--text3); }
+        .sort-select {
+          width:100%; padding:0.55rem 0.75rem; border-radius:8px;
+          background:var(--bg2); border:1px solid var(--border2);
+          color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.85rem; outline:none;
+          -webkit-appearance:none; cursor:pointer;
         }
-        .search-btn:hover { opacity:0.9; }
+        .sort-select:focus { border-color:var(--teal); }
+        .sort-select option { background:var(--bg2); }
+        .btn-apply-filters {
+          width:100%; padding:0.7rem; border-radius:10px; font-size:0.88rem; font-weight:700;
+          cursor:pointer; font-family:'DM Sans',sans-serif; border:none;
+          background:linear-gradient(135deg,var(--teal),var(--teal-dk)); color:#000;
+          transition:opacity 0.2s; margin-top:0.5rem;
+        }
+        .btn-apply-filters:hover { opacity:0.9; }
 
-        /* Filter bar */
-        .filter-bar { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem; align-items:center; }
-        .filter-chip {
-          padding:0.35rem 0.9rem; border-radius:99px; font-size:0.8rem; font-weight:600;
-          cursor:pointer; border:1px solid var(--border2); color:var(--text2);
-          background:var(--card); transition:all 0.2s;
+        /* Main content */
+        .main-content {}
+        .search-bar {
+          display:flex; gap:0.75rem; align-items:center;
+          background:var(--card); border:1px solid var(--border2); border-radius:14px;
+          padding:0.65rem 1rem; margin-bottom:1rem;
         }
-        .filter-chip:hover { border-color:var(--teal); color:var(--teal); }
-        .filter-chip.active { background:rgba(0,201,167,0.1); border-color:var(--teal); color:var(--teal); }
-        .results-count { margin-left:auto; font-size:0.82rem; color:var(--text3); }
+        .search-bar input {
+          flex:1; background:transparent; border:none; outline:none;
+          color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.92rem;
+        }
+        .search-bar input::placeholder { color:var(--text3); }
+        .btn-search {
+          padding:0.5rem 1.25rem; border-radius:10px; font-size:0.85rem; font-weight:700;
+          cursor:pointer; font-family:'DM Sans',sans-serif; border:none;
+          background:linear-gradient(135deg,var(--teal),var(--teal-dk)); color:#000;
+        }
+        .results-bar {
+          display:flex; align-items:center; justify-content:space-between;
+          margin-bottom:1rem; font-size:0.85rem;
+        }
+        .results-count { color:var(--text2); }
+        .active-filters { display:flex; gap:0.35rem; flex-wrap:wrap; }
+        .filter-tag {
+          display:inline-flex; align-items:center; gap:0.3rem;
+          background:rgba(0,201,167,0.08); border:1px solid rgba(0,201,167,0.2);
+          color:var(--teal); border-radius:99px; padding:0.2rem 0.65rem; font-size:0.75rem; font-weight:600;
+        }
+        .filter-tag button { background:none; border:none; color:var(--teal); cursor:pointer; font-size:0.85rem; padding:0; }
 
-        /* Job grid */
-        .jobs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1rem; }
+        /* View toggle */
+        .view-toggle { display:flex; gap:0.25rem; }
+        .view-btn {
+          width:32px; height:32px; border-radius:8px; border:1px solid var(--border2);
+          background:transparent; color:var(--text3); cursor:pointer; display:flex;
+          align-items:center; justify-content:center; transition:all 0.2s;
+        }
+        .view-btn.active { border-color:var(--teal); color:var(--teal); background:rgba(0,201,167,0.08); }
 
+        /* Job cards — list view */
+        .jobs-list { display:flex; flex-direction:column; gap:0.75rem; }
         .job-card {
           background:var(--card); border:1px solid var(--border2); border-radius:16px;
-          padding:1.35rem; transition:border-color 0.2s, transform 0.15s;
-          display:flex; flex-direction:column;
+          padding:1.5rem; transition:border-color 0.2s, transform 0.15s;
+          cursor:pointer; text-decoration:none; color:inherit; display:block;
+          position:relative;
         }
-        .job-card:hover { border-color:var(--teal); transform:translateY(-2px); }
-
-        .jc-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:0.75rem; gap:0.5rem; }
-        .jc-title { font-weight:700; font-size:0.97rem; line-height:1.35; flex:1; }
+        .job-card:hover { border-color:var(--teal); transform:translateY(-1px); }
+        .jc-top { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:0.6rem; }
+        .jc-title { font-family:'Syne',sans-serif; font-weight:700; font-size:1.05rem; margin-bottom:0.2rem; }
+        .jc-client { font-size:0.8rem; color:var(--text3); }
+        .jc-right { display:flex; flex-direction:column; align-items:flex-end; gap:0.4rem; flex-shrink:0; }
         .ai-badge {
-          padding:0.22rem 0.65rem; border-radius:99px; font-size:0.72rem;
-          font-weight:700; white-space:nowrap; flex-shrink:0;
+          padding:0.25rem 0.75rem; border-radius:99px; font-size:0.73rem; font-weight:700; white-space:nowrap;
         }
-        .badge-green { background:rgba(0,201,167,0.12); color:var(--teal); border:1px solid rgba(0,201,167,0.25); }
-        .badge-amber { background:rgba(245,166,35,0.12); color:var(--gold); border:1px solid rgba(245,166,35,0.25); }
-        .badge-red   { background:rgba(255,107,138,0.12); color:var(--rose); border:1px solid rgba(255,107,138,0.25); }
-
-        .jc-meta { font-size:0.8rem; color:var(--text2); margin-bottom:0.75rem; }
-        .jc-desc {
-          font-size:0.83rem; color:var(--text3); line-height:1.5;
-          margin-bottom:0.85rem; flex:1;
+        .badge-green { background:rgba(0,201,167,0.1); color:var(--teal); border:1px solid rgba(0,201,167,0.2); }
+        .badge-amber { background:rgba(245,166,35,0.1); color:var(--gold); border:1px solid rgba(245,166,35,0.2); }
+        .badge-red   { background:rgba(255,107,138,0.1); color:var(--rose); border:1px solid rgba(255,107,138,0.2); }
+        .save-btn {
+          width:28px; height:28px; border-radius:8px; border:1px solid var(--border2);
+          background:transparent; color:var(--text3); cursor:pointer;
+          display:flex; align-items:center; justify-content:center; transition:all 0.2s;
+          flex-shrink:0;
+        }
+        .save-btn:hover { border-color:var(--gold); color:var(--gold); }
+        .save-btn.saved { border-color:var(--gold); color:var(--gold); background:rgba(245,166,35,0.08); }
+        .jc-desc { font-size:0.85rem; color:var(--text2); line-height:1.55;
           display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-        }
-        .jc-skills { display:flex; flex-wrap:wrap; gap:0.35rem; margin-bottom:1rem; }
+          margin-bottom:0.75rem; }
+        .jc-skills { display:flex; flex-wrap:wrap; gap:0.35rem; margin-bottom:0.75rem; }
         .skill-tag {
-          padding:0.18rem 0.55rem; border-radius:99px; font-size:0.73rem;
-          background:rgba(123,97,255,0.1); color:var(--purple); border:1px solid rgba(123,97,255,0.2);
+          padding:0.2rem 0.65rem; border-radius:99px; font-size:0.73rem;
+          background:rgba(123,97,255,0.08); color:var(--purple); border:1px solid rgba(123,97,255,0.15);
         }
-        .jc-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; }
-        .jc-budget { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; color:var(--gold); }
-        .jc-proposals { font-size:0.78rem; color:var(--text3); }
-        .jc-apply {
-          padding:0.38rem 1rem; border-radius:8px; font-size:0.82rem; font-weight:700;
-          background:rgba(0,201,167,0.1); border:1px solid rgba(0,201,167,0.2);
-          color:var(--teal); text-decoration:none; transition:all 0.2s;
+        .jc-footer { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+        .jc-budget { font-family:'Syne',sans-serif; font-weight:700; color:var(--gold); font-size:0.95rem; }
+        .jc-meta-item { font-size:0.78rem; color:var(--text3); display:flex; align-items:center; gap:0.3rem; }
+        .jc-view-btn {
+          margin-left:auto; padding:0.4rem 1.1rem; border-radius:8px; font-size:0.82rem; font-weight:700;
+          background:rgba(0,201,167,0.08); border:1px solid rgba(0,201,167,0.2); color:var(--teal);
+          text-decoration:none; transition:all 0.2s; white-space:nowrap;
         }
-        .jc-apply:hover { background:rgba(0,201,167,0.2); }
+        .jc-view-btn:hover { background:rgba(0,201,167,0.15); }
+
+        /* Grid view */
+        .jobs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:0.75rem; }
+        .jobs-grid .job-card { height:100%; }
 
         /* Pagination */
-        .pagination { display:flex; align-items:center; justify-content:center; gap:0.5rem; margin-top:2rem; }
-        .page-btn {
-          width:36px; height:36px; border-radius:8px; display:flex; align-items:center;
-          justify-content:center; font-size:0.85rem; font-weight:600; cursor:pointer;
-          border:1px solid var(--border2); color:var(--text2); background:var(--card);
-          transition:all 0.2s;
+        .pagination { display:flex; justify-content:center; gap:0.5rem; margin-top:1.5rem; align-items:center; }
+        .pg-btn {
+          padding:0.5rem 1rem; border-radius:8px; font-size:0.82rem; font-weight:600;
+          cursor:pointer; border:1px solid var(--border2); background:transparent;
+          color:var(--text2); transition:all 0.2s; font-family:'DM Sans',sans-serif;
         }
-        .page-btn:hover:not(:disabled) { border-color:var(--teal); color:var(--teal); }
-        .page-btn.active { background:rgba(0,201,167,0.1); border-color:var(--teal); color:var(--teal); }
-        .page-btn:disabled { opacity:0.3; cursor:not-allowed; }
+        .pg-btn:hover, .pg-btn.active { border-color:var(--teal); color:var(--teal); background:rgba(0,201,167,0.05); }
+        .pg-btn:disabled { opacity:0.4; cursor:not-allowed; }
+        .pg-info { font-size:0.82rem; color:var(--text3); }
 
-        .empty-state { text-align:center; padding:4rem; color:var(--text3); grid-column:1/-1; }
-        .empty-icon  { font-size:2.5rem; margin-bottom:0.75rem; }
-        .loading-grid { grid-column:1/-1; text-align:center; padding:3rem; color:var(--text3); }
-
-        /* Skeleton loader */
+        .empty-state { text-align:center; padding:4rem; color:var(--text3); }
+        .empty-icon { width:56px; height:56px; margin:0 auto 1rem; opacity:0.3; }
         .skeleton {
-          background:linear-gradient(90deg, var(--card) 25%, var(--card2) 50%, var(--card) 75%);
-          background-size:200% 100%;
-          animation:shimmer 1.4s infinite;
-          border-radius:6px;
+          background:var(--card); border:1px solid var(--border2); border-radius:16px; height:160px;
+          background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);
+          background-size:200% 100%; animation:shimmer 1.5s infinite;
         }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+        /* Saved jobs tab */
+        .view-tabs { display:flex; gap:0.5rem; margin-bottom:1rem; }
+        .view-tab {
+          padding:0.45rem 1.1rem; border-radius:99px; font-size:0.82rem; font-weight:600;
+          cursor:pointer; border:1px solid var(--border2); background:transparent;
+          color:var(--text2); transition:all 0.2s; font-family:'DM Sans',sans-serif;
+        }
+        .view-tab.active { border-color:var(--teal); color:var(--teal); background:rgba(0,201,167,0.08); }
+
+        .mobile-filter-btn {
+    display:none; width:100%; padding:0.65rem 1rem; border-radius:10px;
+    background:var(--card); border:1px solid var(--border2);
+    color:var(--text2); font-family:'DM Sans',sans-serif; font-size:0.88rem;
+    font-weight:600; cursor:pointer; margin-bottom:1rem;
+    align-items:center; justify-content:center; gap:0.5rem;
+}
+@media(max-width:900px) {
+    .filters-sidebar {
+        display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+        background:rgba(6,13,26,0.95); z-index:100; overflow-y:auto;
+        padding:2rem 5%;
+    }
+    .filters-sidebar.open { display:block; }
+    .mobile-filter-btn { display:flex; }
+}
     </style>
 </head>
 <body>
@@ -147,48 +233,122 @@
     <a href="/" class="nav-logo">SkillBridge</a>
     <div class="nav-links">
         <a href="/jobs.html" class="active">Browse Jobs</a>
-        <a href="/dashboard-freelancer.html">Dashboard</a>
+        <a href="/my-projects.html">Projects</a>
         <a href="/profile.html">Profile</a>
     </div>
     <div style="display:flex;align-items:center;gap:0.75rem;">
-        <div class="user-av" id="user-av">?</div>
+        <button class="notif-btn" onclick="window.location.href='/notifications.html'" title="Notifications">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="notif-badge" id="notif-badge"></span>
+        </button>
+        <div class="user-av" id="user-av" onclick="window.location.href='/profile.html'">?</div>
         <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
     </div>
 </nav>
 
-<main>
-    <!-- Search hero -->
-    <div class="search-hero">
-        <h1>Find Your Next Project 🚀</h1>
-        <p>AI matches you to jobs based on your skills, rate and availability</p>
-        <div class="search-row">
-            <input type="text" id="search-input" class="search-input"
-                   placeholder="Search by skill, title, or keyword…"
-                   onkeydown="if(event.key==='Enter') doSearch()">
-            <button class="search-btn" onclick="doSearch()">Search</button>
+<div class="page-layout">
+    <!-- Filters Sidebar -->
+    <aside class="filters-sidebar">
+        <button onclick="toggleMobileFilters()" style="display:none;" id="close-filters"
+                class="mobile-filter-btn">✕ Close Filters</button>
+        <div class="filter-card">
+            <div class="filter-title">
+                Sort By
+            </div>
+            <select class="sort-select" id="sort-by">
+                <option value="recent">Most Recent</option>
+                <option value="budget">Highest Budget</option>
+                <option value="proposals">Fewest Proposals</option>
+            </select>
         </div>
-    </div>
 
-    <!-- Category filters -->
-    <div class="filter-bar">
-        <button class="filter-chip active" data-cat="" onclick="filterCat(this, '')">All</button>
-        <button class="filter-chip" data-cat="TECHNOLOGY" onclick="filterCat(this,'TECHNOLOGY')">Technology</button>
-        <button class="filter-chip" data-cat="DESIGN" onclick="filterCat(this,'DESIGN')">Design</button>
-        <button class="filter-chip" data-cat="WRITING" onclick="filterCat(this,'WRITING')">Writing</button>
-        <button class="filter-chip" data-cat="MARKETING" onclick="filterCat(this,'MARKETING')">Marketing</button>
-        <button class="filter-chip" data-cat="FINANCE" onclick="filterCat(this,'FINANCE')">Finance</button>
-        <button class="filter-chip" data-cat="OTHER" onclick="filterCat(this,'OTHER')">Other</button>
-        <span class="results-count" id="results-count"></span>
-    </div>
+        <div class="filter-card">
+            <div class="filter-title">
+                Category
+                <button onclick="clearCategory()">Clear</button>
+            </div>
+            <div id="category-list"></div>
+        </div>
 
-    <!-- Jobs grid -->
-    <div class="jobs-grid" id="jobs-grid">
-        <div class="loading-grid">Loading jobs…</div>
-    </div>
+        <div class="filter-card">
+            <div class="filter-title">
+                Budget Range (USD)
+                <button onclick="clearBudget()">Clear</button>
+            </div>
+            <div class="budget-inputs">
+                <input type="number" class="budget-input" id="min-budget" placeholder="Min">
+                <input type="number" class="budget-input" id="max-budget" placeholder="Max">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.35rem;margin-top:0.75rem;">
+                <button onclick="setBudgetPreset(0,500)"  class="cat-option" style="border-radius:8px;">Under $500</button>
+                <button onclick="setBudgetPreset(500,2000)"  class="cat-option" style="border-radius:8px;">$500 – $2,000</button>
+                <button onclick="setBudgetPreset(2000,10000)" class="cat-option" style="border-radius:8px;">$2,000 – $10,000</button>
+                <button onclick="setBudgetPreset(10000,null)"  class="cat-option" style="border-radius:8px;">$10,000+</button>
+            </div>
+        </div>
 
-    <!-- Pagination -->
-    <div class="pagination" id="pagination"></div>
-</main>
+        <button class="btn-apply-filters" onclick="applyFilters()">Apply Filters</button>
+        <button onclick="resetFilters()" style="width:100%;padding:0.6rem;border-radius:10px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;background:transparent;border:1px solid var(--border2);color:var(--text3);margin-top:0.5rem;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--rose)';this.style.color='var(--rose)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text3)'">Reset All</button>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <button class="mobile-filter-btn" onclick="toggleMobileFilters()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+            </svg>
+            Filters & Sort
+        </button>
+        <!-- Search bar -->
+        <div class="search-bar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input type="text" id="search-input"
+                   placeholder="Search by title, skill, or keyword…"
+                   onkeydown="if(event.key==='Enter') applyFilters()">
+            <button class="btn-search" onclick="applyFilters()">Search</button>
+        </div>
+
+        <!-- View tabs -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+            <div class="view-tabs">
+                <button class="view-tab active" id="tab-all" onclick="switchView('all')">All Jobs</button>
+                <button class="view-tab" id="tab-saved" onclick="switchView('saved')">
+                    Saved
+                    <span id="saved-count" style="margin-left:0.3rem;background:rgba(245,166,35,0.15);color:var(--gold);border-radius:99px;padding:0.1rem 0.4rem;font-size:0.7rem;"></span>
+                </button>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span class="results-count" id="results-info"></span>
+                <div class="view-toggle">
+                    <button class="view-btn active" id="view-list" onclick="setViewMode('list')" title="List view">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    </button>
+                    <button class="view-btn" id="view-grid" onclick="setViewMode('grid')" title="Grid view">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active filter tags -->
+        <div class="active-filters" id="active-filters" style="margin-bottom:0.75rem;"></div>
+
+        <!-- Jobs container -->
+        <div class="jobs-list" id="jobs-container">
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination"></div>
+    </div>
+</div>
 
 <script src="/js/utils.js"></script>
 <script src="/js/api.js"></script>
@@ -196,136 +356,350 @@
 <script>
     requireAuth('FREELANCER');
 
-    let currentPage = 0;
-    let currentKeyword = '';
-    let currentCategory = '';
-    let totalPages = 0;
+    const CATEGORIES = [
+        { value:'TECHNOLOGY', label:'Technology', color:'#7B61FF' },
+        { value:'DESIGN',     label:'Design',     color:'#FF6B8A' },
+        { value:'WRITING',    label:'Writing',    color:'#00C9A7' },
+        { value:'MARKETING',  label:'Marketing',  color:'#F5A623' },
+        { value:'FINANCE',    label:'Finance',    color:'#00C9A7' },
+        { value:'ENGINEERING',label:'Engineering',color:'#7B61FF' },
+        { value:'LEGAL',      label:'Legal',      color:'#F5A623' },
+        { value:'EDUCATION',  label:'Education',  color:'#FF6B8A' },
+        { value:'OTHER',      label:'Other',      color:'#4A6080' },
+    ];
 
-    // Load profile for avatar
-    api.get('/api/v1/profile').then(r => r.json()).then(p => {
-        document.getElementById('user-av').textContent = (p.name || 'F')[0].toUpperCase();
+    let currentPage     = 0;
+    let totalPages      = 0;
+    let totalElements   = 0;
+    let selectedCat     = '';
+    let viewMode        = 'list';
+    let currentView     = 'all'; // 'all' or 'saved'
+    let savedJobIds     = new Set();
+
+    // Build category list
+    const catList = document.getElementById('category-list');
+    CATEGORIES.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'cat-option';
+        div.dataset.value = c.value;
+        div.innerHTML = `<span class="cat-dot" style="background:${c.color}"></span>${c.label}`;
+        div.onclick = () => {
+            selectedCat = selectedCat === c.value ? '' : c.value;
+            document.querySelectorAll('.cat-option[data-value]').forEach(el =>
+                el.classList.toggle('selected', el.dataset.value === selectedCat));
+        };
+        catList.appendChild(div);
     });
 
-    async function loadJobs(page = 0) {
-        currentPage = page;
-        const grid  = document.getElementById('jobs-grid');
-        grid.innerHTML = `<div class="loading-grid">Loading jobs…</div>`;
+    function clearCategory() {
+    selectedCat = '';
+    document.querySelectorAll('.cat-option[data-value]').forEach(el => el.classList.remove('selected'));
+    applyFilters();
+}
 
-        let url = `/api/v1/jobs?page=${page}&size=9`;
-        if (currentKeyword) url += `&keyword=${encodeURIComponent(currentKeyword)}`;
-        if (currentCategory) url += `&category=${currentCategory}`;
+function clearBudget() {
+    document.getElementById('min-budget').value = '';
+    document.getElementById('max-budget').value = '';
+    applyFilters();
+}
+
+    function setBudgetPreset(min, max) {
+        document.getElementById('min-budget').value = min || '';
+        document.getElementById('max-budget').value = max || '';
+    }
+
+    function resetFilters() {
+        clearCategory();
+        clearBudget();
+        document.getElementById('search-input').value = '';
+        document.getElementById('sort-by').value = 'recent';
+        applyFilters();
+    }
+
+    function applyFilters() {
+        currentPage = 0;
+        if (currentView === 'all') loadJobs();
+    }
+
+    function setViewMode(mode) {
+        viewMode = mode;
+        document.getElementById('view-list').classList.toggle('active', mode === 'list');
+        document.getElementById('view-grid').classList.toggle('active', mode === 'grid');
+        const container = document.getElementById('jobs-container');
+        container.className = mode === 'grid' ? 'jobs-grid' : 'jobs-list';
+    }
+
+    function switchView(view) {
+        currentView = view;
+        document.getElementById('tab-all').classList.toggle('active', view === 'all');
+        document.getElementById('tab-saved').classList.toggle('active', view === 'saved');
+        if (view === 'all') loadJobs();
+        else loadSavedJobs();
+    }
+
+    async function loadJobs() {
+        const container = document.getElementById('jobs-container');
+        container.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+
+        const keyword  = document.getElementById('search-input').value.trim();
+        const minBudget= document.getElementById('min-budget').value;
+        const maxBudget= document.getElementById('max-budget').value;
+        const sortBy   = document.getElementById('sort-by').value;
+
+        let url = `/api/v1/jobs?page=${currentPage}&size=10&sortBy=${sortBy}`;
+        if (keyword)    url += `&keyword=${encodeURIComponent(keyword)}`;
+        if (selectedCat) url += `&category=${selectedCat}`;
+        if (minBudget)  url += `&minBudget=${minBudget}`;
+        if (maxBudget)  url += `&maxBudget=${maxBudget}`;
+
+        updateFilterTags(keyword, selectedCat, minBudget, maxBudget);
 
         try {
             const res  = await api.get(url);
             const data = await res.json();
             const jobs = data.content || [];
-            totalPages = data.totalPages || 0;
+            totalPages    = data.totalPages    || 0;
+            totalElements = data.totalElements || 0;
 
-            document.getElementById('results-count').textContent =
-                `${data.totalElements || 0} job${data.totalElements === 1 ? '' : 's'} found`;
+            document.getElementById('results-info').textContent =
+                `${totalElements} job${totalElements !== 1 ? 's' : ''}`;
 
             if (jobs.length === 0) {
-                grid.innerHTML = `
+                container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-icon">📭</div>
-                        <p>No jobs found. Try a different search or category.</p>
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <p style="font-size:1rem;font-weight:600;margin-bottom:0.5rem;">No jobs found</p>
+                        <p style="font-size:0.85rem;">Try adjusting your filters or search terms.</p>
                     </div>`;
                 document.getElementById('pagination').innerHTML = '';
                 return;
             }
 
-            grid.innerHTML = jobs.map(j => {
-                const badgeClass =
-                    j.aiPreviewBadge === 'GREEN' ? 'badge-green' :
-                    j.aiPreviewBadge === 'AMBER' ? 'badge-amber' : 'badge-red';
-
-                const skillList = typeof j.requiredSkills === 'string'
-                    ? j.requiredSkills.split(',').map(s => s.trim()).filter(Boolean)
-                    : (j.requiredSkills || []);
-
-                return `
-                <div class="job-card">
-                    <div class="jc-top">
-                        <div class="jc-title">${escHtml(j.title)}</div>
-                        ${j.aiPreviewBadge
-                            ? `<span class="ai-badge ${badgeClass}">
-                                 ${j.aiPreviewScore?.toFixed(0)}% match
-                               </span>`
-                            : ''}
-                    </div>
-                    <div class="jc-meta">
-                        ${j.category || ''} · ${escHtml(j.clientName || 'Client')} ·
-                        Posted ${formatDate(j.createdAt)}
-                    </div>
-                    <div class="jc-desc">${escHtml(j.description || '')}</div>
-                    <div class="jc-skills">
-                        ${skillList.slice(0,4).map(s =>
-                            `<span class="skill-tag">${escHtml(s)}</span>`).join('')}
-                        ${skillList.length > 4
-                            ? `<span class="skill-tag">+${skillList.length-4}</span>` : ''}
-                    </div>
-                    <div class="jc-footer">
-                        <div>
-                            <div class="jc-budget">${j.budget ? '$'+j.budget.toLocaleString() : 'Negotiable'}</div>
-                            <div class="jc-proposals">${j.proposalCount || 0} proposal${j.proposalCount===1?'':'s'}</div>
-                        </div>
-                        <a href="/job-detail.html?id=${j.id}" class="jc-apply">View Job →</a>
-                    </div>
-                </div>`;
-            }).join('');
-
-            renderPagination(data.totalPages, data.number);
-
+            container.className = viewMode === 'grid' ? 'jobs-grid' : 'jobs-list';
+            container.innerHTML = jobs.map(j => renderJobCard(j)).join('');
+            renderPagination();
         } catch(e) {
-            console.error('Error loading jobs:', e);
-            grid.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-icon">⚠️</div>
-                    <p>Failed to load jobs. Please refresh.</p>
-                </div>`;
+            console.error(e);
+            container.innerHTML = `<div class="empty-state"><p>Failed to load jobs.</p></div>`;
         }
     }
 
-    function renderPagination(total, current) {
-        const container = document.getElementById('pagination');
-        if (total <= 1) { container.innerHTML = ''; return; }
+    async function loadSavedJobs() {
+        const container = document.getElementById('jobs-container');
+        container.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
 
-        let html = `<button class="page-btn" onclick="loadJobs(${current-1})"
-            ${current===0 ? 'disabled' : ''}>‹</button>`;
+        try {
+            const res  = await api.get('/api/v1/saved-jobs');
+            const jobs = await res.json();
 
-        for (let i = 0; i < total; i++) {
-            if (i === 0 || i === total-1 || Math.abs(i-current) <= 1) {
-                html += `<button class="page-btn ${i===current?'active':''}"
-                    onclick="loadJobs(${i})">${i+1}</button>`;
-            } else if (Math.abs(i-current) === 2) {
-                html += `<span style="color:var(--text3);padding:0 0.25rem;">…</span>`;
+            document.getElementById('results-info').textContent =
+                `${jobs.length} saved`;
+            document.getElementById('pagination').innerHTML = '';
+
+            if (!jobs.length) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <p style="font-size:1rem;font-weight:600;margin-bottom:0.5rem;">No saved jobs</p>
+                        <p style="font-size:0.85rem;">Bookmark jobs to find them here.</p>
+                    </div>`;
+                return;
             }
+
+            container.className = viewMode === 'grid' ? 'jobs-grid' : 'jobs-list';
+            container.innerHTML = jobs.map(j => renderJobCard(j)).join('');
+        } catch(e) {
+            container.innerHTML = `<div class="empty-state"><p>Failed to load saved jobs.</p></div>`;
         }
-
-        html += `<button class="page-btn" onclick="loadJobs(${current+1})"
-            ${current===total-1 ? 'disabled' : ''}>›</button>`;
-        container.innerHTML = html;
     }
 
-    function doSearch() {
-        currentKeyword  = document.getElementById('search-input').value.trim();
-        currentCategory = '';
-        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-        document.querySelector('[data-cat=""]').classList.add('active');
-        loadJobs(0);
+    function renderJobCard(j) {
+        const badgeClass = j.aiPreviewBadge === 'GREEN' ? 'badge-green' :
+                           j.aiPreviewBadge === 'AMBER' ? 'badge-amber' : 'badge-red';
+        const skills = Array.isArray(j.requiredSkills)
+            ? j.requiredSkills
+            : (j.requiredSkills||'').split(',').map(s=>s.trim()).filter(Boolean);
+        const isSaved = savedJobIds.has(j.id);
+
+        return `
+        <a class="job-card" href="/job-detail.html?id=${j.id}">
+            <div class="jc-top">
+                <div style="flex:1;min-width:0;">
+                    <div class="jc-title">${escHtml(j.title)}</div>
+                    <div class="jc-client">${escHtml(j.clientName||'Client')} · ${j.category||''}</div>
+                </div>
+                <div class="jc-right">
+                    ${j.aiPreviewScore != null
+                        ? `<span class="ai-badge ${badgeClass}">${j.aiPreviewScore.toFixed(0)}% match</span>`
+                        : ''}
+                    <button class="save-btn${isSaved?' saved':''}"
+                            onclick="toggleSave(event,${j.id},this)"
+                            title="${isSaved?'Remove from saved':'Save job'}">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="${isSaved?'var(--gold)':'none'}" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            ${j.description
+                ? `<div class="jc-desc">${escHtml(j.description)}</div>`
+                : ''}
+            ${skills.length
+                ? `<div class="jc-skills">
+                    ${skills.slice(0,5).map(s=>`<span class="skill-tag">${escHtml(s)}</span>`).join('')}
+                    ${skills.length>5?`<span class="skill-tag">+${skills.length-5}</span>`:''}
+                   </div>`
+                : ''}
+            <div class="jc-footer">
+                <span class="jc-budget">${j.budget?'$'+Number(j.budget).toLocaleString():'Negotiable'}</span>
+                <span class="jc-meta-item">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    ${formatDate(j.createdAt)}
+                </span>
+                <span class="jc-meta-item">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    ${j.proposalCount||0} proposals
+                </span>
+                <span class="jc-view-btn">View →</span>
+            </div>
+        </a>`;
     }
 
-    function filterCat(el, cat) {
-        currentCategory = cat;
-        currentKeyword  = '';
-        document.getElementById('search-input').value = '';
-        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        loadJobs(0);
+    async function toggleSave(e, jobId, btn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const isSaved = savedJobIds.has(jobId);
+        try {
+            if (isSaved) {
+                await api.delete(`/api/v1/saved-jobs/${jobId}`);
+                savedJobIds.delete(jobId);
+            } else {
+                await api.post(`/api/v1/saved-jobs/${jobId}`, {});
+                savedJobIds.add(jobId);
+            }
+            // Toggle button appearance
+            const newSaved = !isSaved;
+            btn.className = 'save-btn' + (newSaved ? ' saved' : '');
+            btn.querySelector('svg').setAttribute('fill', newSaved ? 'var(--gold)' : 'none');
+            btn.title = newSaved ? 'Remove from saved' : 'Save job';
+            updateSavedCount();
+        } catch(e) {
+            console.error('Save toggle failed:', e);
+        }
     }
 
-    // Initial load
-    loadJobs(0);
+    function updateSavedCount() {
+        const el = document.getElementById('saved-count');
+        el.textContent = savedJobIds.size > 0 ? savedJobIds.size : '';
+    }
+
+    // REPLACE the entire updateFilterTags function
+function updateFilterTags(keyword, cat, min, max) {
+    const el = document.getElementById('active-filters');
+    let html = '';
+
+    if (keyword) html += `<span class="filter-tag">
+        "${escHtml(keyword)}"
+        <button onclick="clearTag('keyword')" title="Remove">×</button>
+    </span>`;
+
+    if (cat) html += `<span class="filter-tag">
+        ${escHtml(cat)}
+        <button onclick="clearTag('category')" title="Remove">×</button>
+    </span>`;
+
+    if (min) html += `<span class="filter-tag">
+        Min $${min}
+        <button onclick="clearTag('min')" title="Remove">×</button>
+    </span>`;
+
+    if (max) html += `<span class="filter-tag">
+        Max $${max}
+        <button onclick="clearTag('max')" title="Remove">×</button>
+    </span>`;
+
+    el.innerHTML = html;
+}
+
+// REPLACE clearFilterTag with clearTag
+function clearTag(type) {
+    if (type === 'keyword')  document.getElementById('search-input').value = '';
+    if (type === 'category') { selectedCat = ''; document.querySelectorAll('.cat-option[data-value]').forEach(el => el.classList.remove('selected')); }
+    if (type === 'min')      document.getElementById('min-budget').value = '';
+    if (type === 'max')      document.getElementById('max-budget').value = '';
+    applyFilters();
+}
+
+    function renderPagination() {
+        const pg = document.getElementById('pagination');
+        if (totalPages <= 1) { pg.innerHTML=''; return; }
+
+        let html = `<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===0?'disabled':''}>← Prev</button>`;
+        for (let i=0; i<totalPages; i++) {
+            if (totalPages > 7 && Math.abs(i-currentPage) > 2 && i!==0 && i!==totalPages-1) {
+                if (i===1||i===totalPages-2) html += `<span style="color:var(--text3);padding:0.5rem;">…</span>`;
+                continue;
+            }
+            html += `<button class="pg-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i+1}</button>`;
+        }
+        html += `<span class="pg-info">Page ${currentPage+1} of ${totalPages}</span>`;
+        html += `<button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=totalPages-1?'disabled':''}>Next →</button>`;
+        pg.innerHTML = html;
+    }
+
+    function goPage(p) {
+        if (p < 0 || p >= totalPages) return;
+        currentPage = p;
+        loadJobs();
+        window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    // Init
+    async function init() {
+        try {
+            const [profileRes, savedRes, notifRes] = await Promise.all([
+                api.get('/api/v1/profile'),
+                api.get('/api/v1/saved-jobs/ids'),
+                api.get('/api/v1/notifications/unread-count')
+            ]);
+
+            const profile = await profileRes.json();
+            document.getElementById('user-av').textContent = (profile.name||'?')[0].toUpperCase();
+
+            const ids = await savedRes.json();
+            savedJobIds = new Set(ids);
+            updateSavedCount();
+
+            const notif = await notifRes.json();
+            const badge = document.getElementById('notif-badge');
+            if (notif.count > 0) {
+                badge.textContent = notif.count > 9 ? '9+' : notif.count;
+                badge.style.display = 'block';
+            }
+        } catch(e) {
+            console.error(e);
+        }
+        loadJobs();
+    }
+
+    init();
+
+    function toggleMobileFilters() {
+    document.querySelector('.filters-sidebar').classList.toggle('open');
+    document.getElementById('close-filters').style.display =
+        document.querySelector('.filters-sidebar.open') ? 'flex' : 'none';
+}
+
+// Close filters after applying on mobile
+const origApply = applyFilters;
+applyFilters = function() {
+    origApply();
+    document.querySelector('.filters-sidebar').classList.remove('open');
+};
 </script>
 </body>
 </html>

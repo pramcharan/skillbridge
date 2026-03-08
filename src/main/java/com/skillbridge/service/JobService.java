@@ -69,38 +69,49 @@ public class JobService {
 
     // ── GET ALL JOBS (paginated + filtered) ───────────────────────────
     @Transactional(readOnly = true)
-    public Page<JobCardResponse> getJobs(String keyword, JobCategory category,
-                                         int page, int size, String freelancerEmail) {
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.by(Sort.Direction.DESC, "createdAt"));
+    public Page<JobCardResponse> getJobs(
+            String keyword,
+            String category,
+            Double minBudget,
+            Double maxBudget,
+            String sortBy,
+            int page,
+            int size,
+            String freelancerEmail) {
 
-        Page<Job> jobs;
-        if (keyword != null && !keyword.isBlank()) {
-            jobs = jobRepository.searchByKeyword(keyword.trim(), pageable);
-        } else if (category != null) {
-            jobs = jobRepository.findByStatusAndCategory(
-                    JobStatus.OPEN, category, pageable);
-        } else {
-            jobs = jobRepository.findByStatus(JobStatus.OPEN, pageable);
+        JobCategory cat = null;
+        if (category != null && !category.isBlank()) {
+            try { cat = JobCategory.valueOf(category.toUpperCase()); }
+            catch (IllegalArgumentException ignored) {}
         }
 
-        // Get freelancer for scoring if logged in
+        String kw = (keyword != null && !keyword.isBlank()) ? keyword : null;
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Job> jobs;
+        if ("budget".equalsIgnoreCase(sortBy)) {
+            jobs = jobRepository.searchJobsByBudgetDesc(kw, cat, minBudget, maxBudget, pageable);
+        } else if ("proposals".equalsIgnoreCase(sortBy)) {
+            jobs = jobRepository.searchJobsByFewestProposals(kw, cat, minBudget, maxBudget, pageable);
+        } else {
+            jobs = jobRepository.searchJobs(kw, cat, minBudget, maxBudget, pageable);
+        }
+
+        // Get freelancer for AI scoring
         User freelancer = null;
         if (freelancerEmail != null) {
             freelancer = userRepository.findByEmail(freelancerEmail).orElse(null);
         }
+        final User fl = freelancer;
 
-        final User finalFreelancer = freelancer;
-        return jobs.map(job -> {
-            JobCardResponse card = jobMapper.toCardResponse(job);
-            // Add AI preview score if freelancer is logged in
-            if (finalFreelancer != null) {
-                AiMatchResult score = aiScoringOrchestrator.scoreSync(
-                        finalFreelancer, job);
-                card.setAiPreviewScore(score.getFinalScore());
-                card.setAiPreviewBadge(score.getBadge());
+        return jobs.map(j -> {
+            JobCardResponse r = toCardResponse(j);
+            if (fl != null) {
+                AiMatchResult score = aiScoringOrchestrator.scoreSync(fl, j);
+                r.setAiPreviewScore(score.getFinalScore());
+                r.setAiPreviewBadge(score.getBadge());
             }
-            return card;
+            return r;
         });
     }
 
@@ -234,5 +245,35 @@ public class JobService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found: " + email));
+    }
+
+
+    public JobCardResponse toCardResponse(Job j) {
+        JobCardResponse r = new JobCardResponse();
+        r.setId(j.getId());
+        r.setTitle(j.getTitle());
+        r.setCategory(j.getCategory());
+        r.setStatus(j.getStatus());
+        r.setBudget(j.getBudget());
+        r.setDeadline(j.getDeadline());
+        r.setCreatedAt(j.getCreatedAt());
+        r.setProposalCount(j.getProposalCount() != null ? j.getProposalCount() : 0);
+
+        // Convert skills string "React,Node.js" → List<String>
+        if (j.getRequiredSkills() != null && !j.getRequiredSkills().isBlank()) {
+            r.setRequiredSkills(
+                    java.util.Arrays.stream(j.getRequiredSkills().split(","))
+                            .map(String::trim)
+                            .filter(s -> !s.isEmpty())
+                            .collect(java.util.stream.Collectors.toList())
+            );
+        } else {
+            r.setRequiredSkills(java.util.List.of());
+        }
+
+        if (j.getClient() != null) {
+            r.setClientName(j.getClient().getName());
+        }
+        return r;
     }
 }

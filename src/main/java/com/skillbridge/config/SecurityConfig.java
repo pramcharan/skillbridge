@@ -69,8 +69,6 @@ public class SecurityConfig {
                                 "/api/v1/stats/reviews"
                         ).permitAll()
 
-                        .requestMatchers("/admin.html").permitAll()
-
                         // ── OAuth2 + WebSocket ────────────────────────────────────────
                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()

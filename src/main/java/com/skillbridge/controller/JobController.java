@@ -37,12 +37,16 @@ public class JobController {
     @GetMapping
     public ResponseEntity<Page<JobCardResponse>> getJobs(
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) JobCategory category,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Double minBudget,
+            @RequestParam(required = false) Double maxBudget,
+            @RequestParam(required = false, defaultValue = "recent") String sortBy,
             @RequestParam(defaultValue = "0")  int page,
             @RequestParam(defaultValue = "10") int size,
             @AuthenticationPrincipal String email) {
         return ResponseEntity.ok(
-                jobService.getJobs(keyword, category, page, size, email));
+                jobService.getJobs(keyword, category, minBudget, maxBudget,
+                        sortBy, page, size, email));
     }
 
     // ── GET single job by ID ─────────────────────────────────────────

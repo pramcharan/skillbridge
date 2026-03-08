@@ -55,4 +55,50 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     // All jobs for admin with client info
     @Query("SELECT j FROM Job j JOIN FETCH j.client ORDER BY j.createdAt DESC")
     Page<Job> findAllForAdmin(Pageable pageable);
+
+    // Add to JobRepository.java
+    @Query("SELECT j FROM Job j JOIN FETCH j.client " +
+            "WHERE j.status = 'OPEN' " +
+            "AND (:keyword IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%',:keyword,'%')) " +
+            "     OR LOWER(j.description) LIKE LOWER(CONCAT('%',:keyword,'%'))) " +
+            "AND (:category IS NULL OR j.category = :category) " +
+            "AND (:minBudget IS NULL OR j.budget >= :minBudget) " +
+            "AND (:maxBudget IS NULL OR j.budget <= :maxBudget) " +
+            "ORDER BY j.createdAt DESC")
+    Page<Job> searchJobs(
+            @Param("keyword")   String keyword,
+            @Param("category")  com.skillbridge.entity.enums.JobCategory category,
+            @Param("minBudget") Double minBudget,
+            @Param("maxBudget") Double maxBudget,
+            Pageable pageable);
+
+    @Query("SELECT j FROM Job j JOIN FETCH j.client " +
+            "WHERE j.status = 'OPEN' " +
+            "AND (:keyword IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%',:keyword,'%')) " +
+            "     OR LOWER(j.description) LIKE LOWER(CONCAT('%',:keyword,'%'))) " +
+            "AND (:category IS NULL OR j.category = :category) " +
+            "AND (:minBudget IS NULL OR j.budget >= :minBudget) " +
+            "AND (:maxBudget IS NULL OR j.budget <= :maxBudget) " +
+            "ORDER BY j.budget DESC")
+    Page<Job> searchJobsByBudgetDesc(
+            @Param("keyword")   String keyword,
+            @Param("category")  com.skillbridge.entity.enums.JobCategory category,
+            @Param("minBudget") Double minBudget,
+            @Param("maxBudget") Double maxBudget,
+            Pageable pageable);
+
+    @Query("SELECT j FROM Job j JOIN FETCH j.client " +
+            "WHERE j.status = 'OPEN' " +
+            "AND (:keyword IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%',:keyword,'%')) " +
+            "     OR LOWER(j.description) LIKE LOWER(CONCAT('%',:keyword,'%'))) " +
+            "AND (:category IS NULL OR j.category = :category) " +
+            "AND (:minBudget IS NULL OR j.budget >= :minBudget) " +
+            "AND (:maxBudget IS NULL OR j.budget <= :maxBudget) " +
+            "ORDER BY j.proposalCount ASC")
+    Page<Job> searchJobsByFewestProposals(
+            @Param("keyword")   String keyword,
+            @Param("category")  com.skillbridge.entity.enums.JobCategory category,
+            @Param("minBudget") Double minBudget,
+            @Param("maxBudget") Double maxBudget,
+            Pageable pageable);
 }
