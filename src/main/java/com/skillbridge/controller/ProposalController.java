@@ -4,6 +4,7 @@ import com.skillbridge.dto.request.SubmitProposalRequest;
 import com.skillbridge.dto.request.UpdateProposalStatusRequest;
 import com.skillbridge.dto.response.ProposalResponse;
 import com.skillbridge.dto.response.ProposalSummaryResponse;
+import com.skillbridge.service.FileStorageService;
 import com.skillbridge.service.ProposalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +25,7 @@ import java.util.Map;
 public class ProposalController {
 
     private final ProposalService proposalService;
+    private final FileStorageService fileStorageService;
 
     // ── SUBMIT proposal (FREELANCER) ──────────────────────────────────
     @PostMapping
@@ -58,6 +62,19 @@ public class ProposalController {
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(
                 proposalService.getMyProposals(email, page, size));
+    }
+
+    @PostMapping("/attachment")
+    public ResponseEntity<Map<String,String>> uploadAttachment(
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal String email) {
+        try {
+            String url = fileStorageService.storePortfolioFile(file);
+            return ResponseEntity.ok(Map.of("url", url));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "File upload failed: " + e.getMessage()));
+        }
     }
 
     // ── UPDATE status — accept/reject (CLIENT) ─────────────────────────

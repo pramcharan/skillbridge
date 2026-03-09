@@ -21,7 +21,7 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
             "JOIN FETCH p.freelancer " +
             "JOIN FETCH p.job " +
             "WHERE p.job.id = :jobId " +
-            "ORDER BY p.aiMatchScore DESC NULLS LAST")
+            "ORDER BY COALESCE(p.aiMatchScore, 0) DESC")
     List<Proposal> findByJobIdOrderByAiMatchScoreDesc(@Param("jobId") Long jobId);
 
     // Freelancer's own proposals
@@ -76,4 +76,13 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
     int countUnreadProposalsForClient(@Param("clientId") Long clientId);
 
     long count();
+
+
+    @Query("SELECT p FROM Proposal p JOIN FETCH p.freelancer JOIN FETCH p.job " +
+            "WHERE p.job.id = :jobId ORDER BY p.aiMatchScore DESC")
+    List<Proposal> findByJobIdWithDetails(@Param("jobId") Long jobId);
+
+    @Query("SELECT p FROM Proposal p JOIN FETCH p.job j JOIN FETCH j.client " +
+            "WHERE p.freelancer.email = :email ORDER BY p.createdAt DESC")
+    List<Proposal> findByFreelancerEmailWithDetails(@Param("email") String email);
 }

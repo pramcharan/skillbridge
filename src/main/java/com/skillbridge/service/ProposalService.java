@@ -73,6 +73,7 @@ public class ProposalService {
         proposal.setJob(job);
         proposal.setFreelancer(freelancer);
         proposal.setCoverLetter(request.getCoverLetter());
+        proposal.setAttachmentUrl(request.getAttachmentUrl());
         proposal.setExpectedRate(request.getExpectedRate());
         proposal.setStatus(ProposalStatus.PENDING);
         proposal.setViewedByClient(false);

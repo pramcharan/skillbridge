@@ -53,4 +53,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // Platform avg rating
     @Query("SELECT AVG(r.rating) FROM Review r")
     Optional<Double> findPlatformAverageRating();
+
+    @Query("SELECT r FROM Review r JOIN FETCH r.reviewer " +
+            "WHERE r.reviewee.id = :userId ORDER BY r.createdAt DESC")
+    Page<Review> findByRevieweeIdWithReviewer(
+            @Param("userId") Long userId, Pageable pageable);
 }

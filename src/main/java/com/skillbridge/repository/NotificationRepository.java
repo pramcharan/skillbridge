@@ -42,4 +42,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     // Recent unread — for real-time push
     List<Notification> findByUserIdAndIsReadFalseOrderByCreatedAtDesc(
             Long userId);
+
 }

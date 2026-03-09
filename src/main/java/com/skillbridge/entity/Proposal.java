@@ -32,6 +32,9 @@ public class Proposal {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String coverLetter;
 
+    @Column(name = "attachment_url")
+    private String attachmentUrl;
+
     private Double expectedRate;
 
     @Enumerated(EnumType.STRING)

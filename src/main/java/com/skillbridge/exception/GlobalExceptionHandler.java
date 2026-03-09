@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
         // Log internally — NEVER expose stack trace to client
-        ex.printStackTrace();
+        log.error("Unhandled exception: {}", ex.getMessage(), ex);
         return ResponseEntity.status(500)
                 .body(new ErrorResponse("INTERNAL_ERROR", "An unexpected error occurred"));
     }

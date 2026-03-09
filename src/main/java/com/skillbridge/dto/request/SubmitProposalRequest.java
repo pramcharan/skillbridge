@@ -10,9 +10,11 @@ public class SubmitProposalRequest {
     private Long jobId;
 
     @NotBlank(message = "Cover letter is required")
-    @Size(min = 50, max = 2000,
-            message = "Cover letter must be 50–2000 characters")
+    @Size(min = 50, max = 10000,
+            message = "Cover letter must be 50–5000 characters")
     private String coverLetter;
+
+    private String attachmentUrl;
 
     @NotNull(message = "Expected rate is required")
     @Positive(message = "Expected rate must be positive")

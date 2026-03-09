@@ -447,27 +447,58 @@ nav .nav-links a[href="/jobs.html"] {
             <div class="apply-card" id="apply-section">
                 <h3>Apply for this Job</h3>
                 <div id="apply-form-content">
-                    <div class="form-group">
-                        <label>Your Expected Rate ($/hr) *</label>
-                        <div class="rate-wrap">
-                            <span class="curr">$</span>
-                            <input type="number" id="expected-rate" class="form-control"
-                                placeholder="e.g. 45" min="1">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Cover Letter *
-                            <span style="color:var(--text3);font-weight:400;">(50–2000 chars)</span>
-                        </label>
-                        <textarea id="cover-letter" class="form-control" rows="5"
-                            placeholder="Introduce yourself, explain why you're a great fit, and mention any relevant experience…"
-                            oninput="updateCharCount()"></textarea>
-                        <div class="char-count"><span id="char-count">0</span>/2000</div>
-                    </div>
-                    <button class="apply-btn" id="apply-btn" onclick="submitProposal()">
-                        Submit Proposal →
-                    </button>
-                </div>
+    <div class="form-group">
+        <label>Your Expected Rate ($/hr) *</label>
+        <div class="rate-wrap">
+            <span class="curr">$</span>
+            <input type="number" id="expected-rate" class="form-control"
+                placeholder="e.g. 45" min="1">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Cover Letter *
+            <span style="color:var(--text3);font-weight:400;">(50–5000 chars)</span>
+        </label>
+        <textarea id="cover-letter" class="form-control" rows="5"
+            placeholder="Introduce yourself, explain why you're a great fit..."
+            oninput="updateCharCount()"></textarea>
+        <div class="char-count">
+            <span id="char-count">0</span>/5000
+            <span id="char-hint" style="margin-left:0.5rem;font-size:0.72rem;"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Attachment <span style="color:var(--text3);font-weight:400;">(optional — PDF or image)</span></label>
+        <div id="upload-area" style="
+            border:2px dashed var(--border2); border-radius:10px; padding:1rem;
+            text-align:center; cursor:pointer; transition:border-color 0.2s;
+            font-size:0.82rem; color:var(--text3);"
+            onclick="document.getElementById('attachment-input').click()"
+            ondragover="event.preventDefault();this.style.borderColor='var(--teal)'"
+            ondragleave="this.style.borderColor='var(--border2)'"
+            ondrop="handleDrop(event)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.5" style="margin-bottom:0.4rem;display:block;margin-inline:auto;">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Click to upload or drag & drop<br>PDF, JPG, PNG — max 5MB
+        </div>
+        <input type="file" id="attachment-input" accept=".pdf,image/*"
+            style="display:none" onchange="handleFileSelect(this)">
+        <div id="file-preview" style="display:none;margin-top:0.5rem;
+    padding:0.5rem 0.75rem; background:var(--bg2); border-radius:8px;
+    font-size:0.82rem; align-items:center; justify-content:space-between;">
+            <span id="file-name" style="color:var(--teal);"></span>
+            <button onclick="removeFile()" style="background:none;border:none;
+                color:var(--rose);cursor:pointer;font-size:0.9rem;">✕</button>
+        </div>
+        <div id="upload-status" style="font-size:0.78rem;margin-top:0.35rem;"></div>
+    </div>
+    <button class="apply-btn" id="apply-btn" onclick="submitProposal()">
+        Submit Proposal →
+    </button>
+</div>
             </div>
           </div>
         </div>`;
@@ -479,30 +510,108 @@ nav .nav-links a[href="/jobs.html"] {
         }, 15000);
     }
 
-    function updateCharCount() {
-        const len = document.getElementById('cover-letter').value.length;
-        document.getElementById('char-count').textContent = len;
-        document.getElementById('char-count').style.color =
-            len < 50 ? 'var(--rose)' : len > 1800 ? 'var(--gold)' : 'var(--text3)';
+    let uploadedFileUrl = null;
+
+function updateCharCount() {
+    const len = document.getElementById('cover-letter').value.length;
+    document.getElementById('char-count').textContent = len;
+    const hint = document.getElementById('char-hint');
+    if (len < 50) {
+        document.getElementById('char-count').style.color = 'var(--rose)';
+        hint.textContent = `${50 - len} more needed`;
+        hint.style.color = 'var(--rose)';
+    } else if (len > 4800) {
+        document.getElementById('char-count').style.color = 'var(--gold)';
+        hint.textContent = `${5000 - len} left`;
+        hint.style.color = 'var(--gold)';
+    } else {
+        document.getElementById('char-count').style.color = 'var(--text3)';
+        hint.textContent = '';
     }
+}
+
+async function handleFileSelect(input) {
+    const file = input.files[0];
+    if (file) await uploadFile(file);
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('upload-area').style.borderColor = 'var(--border2)';
+    const file = e.dataTransfer.files[0];
+    if (file) uploadFile(file);
+}
+
+async function uploadFile(file) {
+    const allowed = ['application/pdf','image/jpeg','image/png','image/webp'];
+    if (!allowed.includes(file.type)) {
+        document.getElementById('upload-status').innerHTML =
+            '<span style="color:var(--rose);">Only PDF, JPG, PNG allowed.</span>';
+        return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+        document.getElementById('upload-status').innerHTML =
+            '<span style="color:var(--rose);">File must be under 5MB.</span>';
+        return;
+    }
+
+    document.getElementById('upload-status').innerHTML =
+        '<span style="color:var(--text3);">Uploading…</span>';
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const token = localStorage.getItem('sb_jwt');
+        const res   = await fetch('/api/v1/proposals/attachment', {
+            method: 'POST',
+            headers: { Authorization: 'Bearer ' + token },
+            body: formData
+        });
+        const data = await res.json();
+        if (res.ok) {
+            uploadedFileUrl = data.url;
+            const preview = document.getElementById('file-preview');
+            document.getElementById('file-name').textContent = file.name;
+            preview.style.display = 'flex';
+            document.getElementById('upload-area').style.display = 'none';
+            document.getElementById('upload-status').innerHTML =
+                '<span style="color:var(--teal);">Uploaded successfully.</span>';
+        } else {
+            document.getElementById('upload-status').innerHTML =
+                `<span style="color:var(--rose);">${data.message || 'Upload failed.'}</span>`;
+        }
+    } catch(e) {
+        document.getElementById('upload-status').innerHTML =
+            '<span style="color:var(--rose);">Upload failed. Try again.</span>';
+    }
+}
+
+function removeFile() {
+    uploadedFileUrl = null;
+    document.getElementById('file-preview').style.display = 'none';
+    document.getElementById('upload-area').style.display = 'block';
+    document.getElementById('upload-status').innerHTML = '';
+    document.getElementById('attachment-input').value = '';
+}
 
     async function submitProposal() {
         const rate   = parseFloat(document.getElementById('expected-rate').value);
         const letter = document.getElementById('cover-letter').value.trim();
 
         if (!rate || rate <= 0) { showToast('Please enter your expected rate', true); return; }
-        if (letter.length < 50) { showToast('Cover letter must be at least 50 characters', true); return; }
-        if (letter.length > 2000) { showToast('Cover letter is too long', true); return; }
-
+        if (letter.length < 50)   { showToast('Cover letter must be at least 50 characters', true); return; }
+if (letter.length > 5000) { showToast('Cover letter cannot exceed 5000 characters', true); return; }
         const btn = document.getElementById('apply-btn');
         btn.disabled = true; btn.textContent = 'Submitting…';
 
         try {
             const res = await api.post('/api/v1/proposals', {
-                jobId:        parseInt(jobId),
-                expectedRate: rate,
-                coverLetter:  letter
-            });
+    jobId:         parseInt(jobId),
+    expectedRate:  rate,
+    coverLetter:   letter,
+    attachmentUrl: uploadedFileUrl || null
+});
 
             const data = await res.json();
 
