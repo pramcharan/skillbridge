@@ -226,6 +226,103 @@
     .filters-sidebar.open { display:block; }
     .mobile-filter-btn { display:flex; }
 }
+
+        /* Search bar focus glow */
+.search-bar {
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-bar:focus-within {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(0,201,167,0.08);
+}
+
+/* Job card left accent on hover */
+.job-card {
+    border-left: 3px solid transparent;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.job-card:hover {
+    border-left-color: var(--teal);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+}
+
+/* AI badge subtle pulse for GREEN */
+.badge-green {
+    animation: badge-pulse 3s ease-in-out infinite;
+}
+@keyframes badge-pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,201,167,0.15); }
+    50%      { box-shadow: 0 0 0 4px rgba(0,201,167,0.08); }
+}
+
+/* Budget value standout */
+.jc-budget {
+    background: rgba(245,166,35,0.06);
+    border: 1px solid rgba(245,166,35,0.15);
+    padding: 0.15rem 0.6rem;
+    border-radius: 99px;
+}
+
+/* Filter card hover state */
+.filter-card {
+    transition: border-color 0.2s;
+}
+.filter-card:hover {
+    border-color: var(--border2);
+}
+
+/* Skeleton shimmer improvement */
+.skeleton {
+    border-radius: 16px;
+    height: 140px;
+}
+
+/* View tab pill improvement */
+.view-tab {
+    transition: all 0.2s;
+}
+.view-tab:hover:not(.active) {
+    border-color: var(--border2);
+    color: var(--text);
+}
+
+/* Sort select arrow */
+.sort-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234A6080' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2rem;
+}
+
+/* Page header — add above search bar in HTML */
+.page-header {
+    margin-bottom: 1.25rem;
+}
+.page-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+}
+.page-header p {
+    font-size: 0.88rem;
+    color: var(--text2);
+    margin-top: 0.2rem;
+}
+
+/* Active filter tags animation */
+.filter-tag {
+    animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Pagination improvement */
+.pg-btn.active {
+    font-weight: 700;
+}
     </style>
 </head>
 <body>
@@ -252,7 +349,7 @@
 <div class="page-layout">
     <!-- Filters Sidebar -->
     <aside class="filters-sidebar">
-        <button onclick="toggleMobileFilters()" style="display:none;" id="close-filters"
+        <button onclick="toggleMobileFilters()" id="close-filters"
                 class="mobile-filter-btn">✕ Close Filters</button>
         <div class="filter-card">
             <div class="filter-title">
@@ -354,6 +451,7 @@
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script>
+
     requireAuth('FREELANCER');
 
     const CATEGORIES = [
@@ -418,6 +516,7 @@ function clearBudget() {
 
     function applyFilters() {
         currentPage = 0;
+        document.querySelector('.filters-sidebar').classList.remove('open');
         if (currentView === 'all') loadJobs();
     }
 
@@ -693,13 +792,6 @@ function clearTag(type) {
     document.getElementById('close-filters').style.display =
         document.querySelector('.filters-sidebar.open') ? 'flex' : 'none';
 }
-
-// Close filters after applying on mobile
-const origApply = applyFilters;
-applyFilters = function() {
-    origApply();
-    document.querySelector('.filters-sidebar').classList.remove('open');
-};
 </script>
 </body>
 </html>

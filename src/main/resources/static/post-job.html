@@ -121,6 +121,122 @@
           padding:0.85rem 1.25rem; font-size:0.88rem; color:var(--teal); font-weight:600;
           display:none;
         }
+
+        /* Page header */
+.page-header h1 {
+    background: linear-gradient(135deg, var(--text), var(--text2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+/* Form card top accent */
+.form-card {
+    border-top: 2px solid rgba(0,201,167,0.2);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+.form-card:focus-within {
+    border-color: rgba(0,201,167,0.35);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+
+/* Section title left accent bar */
+.form-card h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.form-card h2::before {
+    content: '';
+    display: inline-block;
+    width: 3px; height: 14px;
+    background: var(--teal);
+    border-radius: 99px;
+}
+
+/* Submit button glow */
+@keyframes glow-pulse {
+    0%,100% { box-shadow: 0 4px 20px rgba(0,201,167,0.3); }
+    50%      { box-shadow: 0 4px 32px rgba(0,201,167,0.55); }
+}
+.submit-btn:not(:disabled) {
+    animation: glow-pulse 2.5s ease-in-out infinite;
+}
+
+/* Tips card list item dot — upgrade to teal dot */
+.tips-card li::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--teal);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.45rem;
+}
+
+/* Skill chip hover */
+.skill-chip {
+    transition: transform 0.15s;
+}
+.skill-chip:hover {
+    transform: translateY(-1px);
+}
+
+/* Input label required star */
+.req { font-size: 0.7rem; vertical-align: super; }
+
+/* Budget input focus */
+.budget-wrap .form-control:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(245,166,35,0.1);
+}
+
+/* Date input styling */
+input[type="date"].form-control {
+    color-scheme: dark;
+}
+
+/* Form card entrance */
+.form-card {
+    animation: cardIn 0.4s ease both;
+}
+.form-card:nth-child(1) { animation-delay: 0.05s; }
+.form-card:nth-child(2) { animation-delay: 0.12s; }
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Tips card */
+.tips-card {
+    animation: cardIn 0.4s ease both;
+}
+
+/* Toast slide in */
+.toast {
+    animation: toastIn 0.3s ease;
+}
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Character count hint — add dynamically */
+.char-hint {
+    font-size: 0.75rem;
+    color: var(--text3);
+    text-align: right;
+    margin-top: 0.25rem;
+}
+        .back-link::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-left: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg) translateY(-1px);
+}
     </style>
 </head>
 <body>
@@ -137,15 +253,15 @@
 </nav>
 
 <main>
-    <a href="/dashboard-client.html" class="back-link">← Back to Dashboard</a>
+    <a href="/dashboard-client.html" class="back-link"> Back to Dashboard</a>
 
     <div class="page-header">
-        <h1>Post a New Job ✨</h1>
+        <h1>Post a New Job</h1>
         <p>Find the perfect freelancer with AI-powered matching</p>
     </div>
 
     <div class="tips-card">
-        <h3>💡 Tips for a great job post</h3>
+        <h3>Tips for a great job post</h3>
         <ul>
             <li>Be specific about required skills — our AI uses these to score applicants</li>
             <li>Set a realistic budget — it attracts quality freelancers faster</li>
@@ -155,7 +271,7 @@
     </div>
 
     <div class="form-card">
-        <h2>📋 Job Details</h2>
+        <h2>Job Details</h2>
         <div class="form-group" id="fg-title">
             <label>Job Title <span class="req">*</span></label>
             <input type="text" id="title" class="form-control"
@@ -200,7 +316,7 @@
     </div>
 
     <div class="form-card">
-        <h2>🛠 Required Skills</h2>
+        <h2>Required Skills</h2>
         <div class="form-group" id="fg-skills">
             <label>Skills <span class="req">*</span>
                 <span style="color:var(--text3);font-weight:400;"> — used for AI candidate matching</span>
@@ -226,6 +342,19 @@
 <script src="/js/auth.js"></script>
 <script>
     requireAuth('CLIENT');
+
+    document.getElementById('description').addEventListener('input', function() {
+    const len = this.value.length;
+    let hint = document.getElementById('desc-hint');
+    if (!hint) {
+        hint = document.createElement('div');
+        hint.id = 'desc-hint';
+        hint.className = 'char-hint';
+        this.parentNode.appendChild(hint);
+    }
+    hint.textContent = `${len} characters${len < 50 ? ` — need ${50 - len} more` : ''}`;
+    hint.style.color = len < 50 ? 'var(--rose)' : len > 1800 ? 'var(--gold)' : 'var(--text3)';
+});
 
     api.get('/api/v1/profile').then(r => r.json()).then(p => {
         document.getElementById('user-av').textContent = (p.name || 'C')[0].toUpperCase();
@@ -311,7 +440,7 @@
             const res  = await api.post('/api/v1/jobs', payload);
             const data = await res.json();
             if (res.ok) {
-                showToast('🎉 Job posted successfully!');
+                showToast('Job posted successfully!');
                 setTimeout(() => window.location.replace('/dashboard-client.html'), 1200);
             } else {
                 showToast('Error: ' + (data.message || 'Something went wrong'), true);

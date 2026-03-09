@@ -77,15 +77,14 @@
           border: 1.5px solid var(--border2); background: var(--bg2);
           transition: all 0.2s; text-align: center;
         }
-        .role-label .role-icon { font-size: 1.6rem; }
+        .role-icon { color: var(--text3); transition: color 0.2s; }
         .role-label .role-name { font-size: 0.88rem; font-weight: 700; color: var(--text); }
         .role-label .role-desc { font-size: 0.75rem; color: var(--text3); line-height: 1.3; }
         .role-option:checked + .role-label {
           border-color: var(--teal); background: rgba(0,201,167,0.08);
           box-shadow: 0 0 0 3px rgba(0,201,167,0.1);
         }
-        .role-option:checked + .role-label .role-name { color: var(--teal); }
-
+.role-option:checked + .role-label .role-icon { color: var(--teal); }
         /* Form elements */
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
         .form-group { margin-bottom: 1rem; }
@@ -113,7 +112,7 @@
         .btn-register {
           width: 100%; padding: 0.85rem; margin-top: 0.5rem;
           background: linear-gradient(135deg, var(--teal), var(--teal-dk));
-          color: #fff; border: none; border-radius: 10px;
+          color: #000; border: none; border-radius: 10px;
           font-size: 1rem; font-weight: 700; cursor: pointer;
           transition: all 0.25s; font-family: 'DM Sans', sans-serif;
           box-shadow: 0 4px 20px rgba(0,201,167,0.3);
@@ -158,13 +157,93 @@
         }
         .page-footer a { color: var(--text3); text-decoration: none; }
         .page-footer a:hover { color: var(--teal); }
+
+        /* Card entrance animation */
+.register-card {
+    animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    border-top: 2px solid rgba(0,201,167,0.2);
+}
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Title gradient */
+.card-title {
+    background: linear-gradient(135deg, var(--text), var(--text2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Role label hover */
+.role-label:hover {
+    border-color: rgba(0,201,167,0.3);
+    background: rgba(0,201,167,0.04);
+}
+
+/* Role label checked glow */
+.role-option:checked + .role-label {
+    box-shadow: 0 0 0 3px rgba(0,201,167,0.1), 0 4px 16px rgba(0,201,167,0.1);
+}
+
+/* Input focus left accent */
+.form-control:focus {
+    border-left: 3px solid var(--teal);
+    padding-left: calc(1rem - 2px);
+}
+
+/* Register button glow pulse */
+@keyframes glow-pulse {
+    0%,100% { box-shadow: 0 4px 20px rgba(0,201,167,0.3); }
+    50%      { box-shadow: 0 4px 32px rgba(0,201,167,0.55); }
+}
+.btn-register:not(:disabled) {
+    animation: glow-pulse 2.5s ease-in-out infinite;
+}
+
+/* OAuth button Google hover */
+.btn-oauth:first-child:hover { border-color: #4285F4; }
+
+/* OAuth button GitHub hover */
+.btn-oauth:last-child:hover { border-color: #6e7681; }
+
+/* Password strength bar rounded */
+.pwd-strength { margin-top: 0.5rem; }
+
+/* Alert slide in */
+.alert {
+    animation: alertIn 0.25s ease both;
+}
+@keyframes alertIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Footer links */
+.card-footer-link a:hover {
+    text-decoration: underline;
+}
+
+/* Nav link arrow on sign in */
+.nav-link a::after {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-right: 1.5px solid currentColor;
+    border-top: 1.5px solid currentColor;
+    transform: rotate(45deg) translateY(-1px);
+    margin-left: 4px;
+}
+
+/* Remove arrow from nav-link in HTML and card-footer-link */
+/* (the → arrows are text — replace with CSS) */
     </style>
 </head>
 <body>
 <div class="page-bg"></div>
 <nav>
     <a href="/" class="nav-logo">SkillBridge</a>
-    <div class="nav-link">Already have an account? <a href="/login.html">Sign in →</a></div>
+    <div class="nav-link">Already have an account? <a href="/login.html">Sign in</a></div>
 </nav>
 
 <main>
@@ -179,7 +258,12 @@
             <input type="radio" name="role" id="role-freelancer"
                    class="role-option" value="FREELANCER" checked>
             <label for="role-freelancer" class="role-label">
-                <span class="role-icon">💼</span>
+                <span class="role-icon">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="7" width="20" height="14" rx="2"/>
+        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+    </svg>
+</span>
                 <span class="role-name">I'm a Freelancer</span>
                 <span class="role-desc">I want to find work and clients</span>
             </label>
@@ -187,7 +271,12 @@
             <input type="radio" name="role" id="role-client"
                    class="role-option" value="CLIENT">
             <label for="role-client" class="role-label">
-                <span class="role-icon">🏢</span>
+                <span class="role-icon">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+</span>
                 <span class="role-name">I'm a Client</span>
                 <span class="role-desc">I want to hire talent</span>
             </label>
@@ -244,7 +333,7 @@
         </div>
 
         <div class="card-footer-link">
-            Already have an account? <a href="/login.html">Sign in →</a>
+            Already have an account? <a href="/login.html">Sign in</a>
         </div>
     </div>
 </main>
@@ -278,7 +367,7 @@
         case 3:
           label = 'Good';     color = '#00C9A7'; bar.style.width = '75%'; break;
         case 4:
-          label = 'Strong ✓'; color = '#16a34a'; bar.style.width = '100%'; break;
+          label = 'Strong'; color = '#16a34a'; bar.style.width = '100%'; break;
       }
       bar.style.background = color;
       hint.textContent  = val.length > 0 ? label : '';
@@ -297,28 +386,25 @@
       alertEl.innerHTML = '';
 
       // Client-side validation
-      if (!name)               return alertEl.innerHTML = '<div class="alert alert-error">⚠ Please enter your name.</div>';
-      if (!email)              return alertEl.innerHTML = '<div class="alert alert-error">⚠ Please enter your email.</div>';
-      if (password.length < 8) return alertEl.innerHTML = '<div class="alert alert-error">⚠ Password must be at least 8 characters.</div>';
+      if (!name)               return alertEl.innerHTML = '<div class="alert alert-error">Please enter your name.</div>';
+      if (!email)              return alertEl.innerHTML = '<div class="alert alert-error">Please enter your email.</div>';
+      if (password.length < 8) return alertEl.innerHTML = '<div class="alert alert-error">Password must be at least 8 characters.</div>';
 
       btn.disabled = true;
       btn.classList.add('loading');
 
       try {
-        const res  = await apiFetch('/api/v1/auth/register', {
-          method: 'POST',
-          body: JSON.stringify({ name, email, password, role })
-        });
-        const data = await res.json();
+        const res  = await api.post('/api/v1/auth/register', { name, email, password, role });
+const data = await res.json();
 
         if (!res.ok) {
-          alertEl.innerHTML = `<div class="alert alert-error">⚠ ${data.message || 'Registration failed.'}</div>`;
+          alertEl.innerHTML = `<div class="alert alert-error">${data.message || 'Registration failed.'}</div>`;
           return;
         }
 
         // Save auth and redirect
         saveAuth(data.token, data.role, data.userId);
-        alertEl.innerHTML = '<div class="alert alert-success">✓ Account created! Redirecting…</div>';
+        alertEl.innerHTML = '<div class="alert alert-success">Account created! Redirecting…</div>';
 
         setTimeout(() => {
           if (data.role === 'FREELANCER') window.location.href = '/dashboard-freelancer.html';
@@ -326,8 +412,7 @@
         }, 800);
 
       } catch (err) {
-        alertEl.innerHTML = '<div class="alert alert-error">⚠ Could not connect. Please try again.</div>';
-      } finally {
+        alertEl.innerHTML = '<div class="alert alert-error">Could not connect. Please try again.</div>';
         btn.disabled = false;
         btn.classList.remove('loading');
       }

@@ -47,11 +47,18 @@
 
         /* Welcome banner */
         .welcome-banner {
-          background:linear-gradient(135deg,var(--card),var(--card2));
-          border:1px solid var(--border2); border-radius:16px;
-          padding:2rem; margin-bottom:2rem;
-          display:flex; align-items:center; justify-content:space-between; gap:1rem;
-        }
+  background:linear-gradient(135deg,var(--card),var(--card2));
+  border:1px solid var(--border2); border-radius:16px;
+  position:relative; overflow:hidden;
+  padding:2rem; margin-bottom:2rem;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.welcome-banner::before {
+  content:''; position:absolute; top:-40px; right:-40px;
+  width:200px; height:200px; border-radius:50%;
+  background:radial-gradient(circle, rgba(0,201,167,0.08) 0%, transparent 70%);
+  pointer-events:none;
+}
         .wb-left h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:1.6rem; margin-bottom:0.35rem; }
         .wb-left p { font-size:0.9rem; color:var(--text2); }
         .wb-badge {
@@ -122,10 +129,9 @@
           display:inline-flex; align-items:center; gap:0.3rem;
           padding:0.2rem 0.6rem; border-radius:99px; font-size:0.75rem; font-weight:700;
         }
-        .badge-green { background:#dcfce7; color:#16a34a; border:1px solid #86efac; }
-        .badge-amber { background:#fef3c7; color:#d97706; border:1px solid #fcd34d; }
-        .badge-red   { background:#fee2e2; color:#dc2626; border:1px solid #fca5a5; }
-
+        .badge-green { background:rgba(0,201,167,0.1);  color:var(--teal);   border:1px solid rgba(0,201,167,0.2); }
+.badge-amber { background:rgba(245,166,35,0.1); color:var(--gold);   border:1px solid rgba(245,166,35,0.2); }
+.badge-red   { background:rgba(255,107,138,0.1);color:var(--rose);   border:1px solid rgba(255,107,138,0.2); }
         .empty-state { text-align:center; padding:3rem; color:var(--text3); font-size:0.9rem; }
         .empty-state .empty-icon { font-size:2.5rem; margin-bottom:0.75rem; }
 
@@ -136,6 +142,12 @@
         }
         .jr-title { font-weight:700; font-size:0.95rem; }
         .jr-meta  { font-size:0.8rem; color:var(--text2); margin-top:0.2rem; }
+        .stat-icon {
+    width:40px; height:40px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 0.75rem;
+}
+.stat-card:hover { transform:translateY(-2px); transition:transform 0.2s; }
     </style>
 </head>
 <body>
@@ -144,7 +156,7 @@
     <div class="nav-links">
         <a href="/jobs.html">Browse Jobs</a>
         <a href="/my-projects.html">My Projects</a>
-        <a href="/community-chat.html">Community</a>
+        <a href="/notifications.html">Notifications</a>
         <a href="/profile.html">Profile</a>
     </div>
     <div class="nav-user">
@@ -170,13 +182,15 @@
     <!-- Welcome -->
     <div class="welcome-banner">
         <div class="wb-left">
-            <h1>Welcome back, <span id="user-name">...</span>! 👋
+            <h1>Welcome back, <span id="user-name">...</span>!
                 <span class="wb-badge" id="role-badge">FREELANCER</span>
             </h1>
             <p>Here's what's happening on SkillBridge today.</p>
         </div>
-        <a href="/jobs.html"><button class="btn-sm btn-primary">Browse Jobs →</button></a>
-    </div>
+        <a href="/jobs.html" class="btn-sm btn-primary"
+           style="text-decoration:none;display:inline-flex;align-items:center;color:#000;">
+            Browse Jobs →
+        </a>    </div>
 
     <!-- Profile Completion -->
     <div class="completion-card">
@@ -192,22 +206,34 @@
 
     <!-- Stats -->
     <div class="stats-row">
-        <div class="stat-card">
-            <div class="num" id="stat-applications">0</div>
-            <div class="lbl">Applications Sent</div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(0,201,167,0.08);color:var(--teal);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </div>
-        <div class="stat-card">
-            <div class="num" id="stat-active">0</div>
-            <div class="lbl">Active Projects</div>
+        <div class="num" id="stat-applications">0</div>
+        <div class="lbl">Applications Sent</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(123,97,255,0.08);color:var(--purple);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
         </div>
-        <div class="stat-card">
-            <div class="num" id="stat-completed">0</div>
-            <div class="lbl">Completed</div>
+        <div class="num" id="stat-active" style="color:var(--purple);">0</div>
+        <div class="lbl">Active Projects</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(0,201,167,0.08);color:var(--teal);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
-        <div class="stat-card">
-            <div class="num" id="stat-rating">—</div>
-            <div class="lbl">Your Rating</div>
+        <div class="num" id="stat-completed">0</div>
+        <div class="lbl">Completed</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(245,166,35,0.08);color:var(--gold);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
+        <div class="num" id="stat-rating" style="color:var(--gold);">—</div>
+        <div class="lbl">Your Rating</div>
+    </div>
     </div>
 
     <!-- Recommended Jobs -->
@@ -217,7 +243,6 @@
     </div>
     <div class="jobs-grid" id="jobs-grid">
         <div class="empty-state">
-            <div class="empty-icon">🔍</div>
             <p>Loading recommended jobs…</p>
         </div>
     </div>
@@ -266,10 +291,10 @@
                 : '—';
 
         // ── Availability badge ────────────────────────────────────────────
-        const avail = stats.availabilityStatus || 'UNKNOWN';
+        const avail = profile.availabilityStatus || 'UNKNOWN';
         document.getElementById('role-badge').textContent =
-            avail === 'AVAILABLE' ? '🟢 AVAILABLE' :
-            avail === 'OPEN_TO_OFFERS' ? '🟡 OPEN' : '🔴 BUSY';
+            avail === 'AVAILABLE' ? 'AVAILABLE' :
+            avail === 'OPEN_TO_OFFERS' ? 'OPEN' : 'BUSY';
 
         // ── Profile completion tips ────────────────────────────────────────
         const tips   = [];
@@ -291,10 +316,13 @@
         const grid = document.getElementById('jobs-grid');
 
         if (jobs.length === 0) {
-          grid.innerHTML = `<div class="empty-state">
-            <div class="empty-icon">📭</div>
-            <p>No open jobs yet. Check back soon!</p>
-          </div>`;
+          grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="margin:0 auto 1rem;display:block;opacity:0.25;">
+        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+    </svg>
+    <p style="font-weight:600;margin-bottom:0.35rem;">No open jobs yet</p>
+    <p style="font-size:0.82rem;">Check back soon!</p>
+</div>`;
           return;
         }
 
@@ -362,10 +390,13 @@
         const list = document.getElementById('proposals-list');
         if (proposals.length === 0) {
           list.innerHTML = `<div class="empty-state">
-            <div class="empty-icon">📝</div>
-            <p>You haven't applied to any jobs yet.</p>
-            <a href="/jobs.html" style="color:var(--teal);font-weight:600;">Browse jobs →</a>
-          </div>`;
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="margin:0 auto 1rem;display:block;opacity:0.25;">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+    <p style="font-weight:600;margin-bottom:0.35rem;">No applications yet</p>
+    <p style="font-size:0.82rem;margin-bottom:0.75rem;">Start applying to jobs to track them here.</p>
+    <a href="/jobs.html" style="color:var(--teal);font-weight:600;font-size:0.85rem;">Browse jobs →</a>
+</div>`;
           return;
         }
 
@@ -389,8 +420,16 @@
               <div style="display:flex;align-items:center;gap:0.75rem;">
                 ${p.aiMatchScore ? `<span class="ai-badge ${badgeClass}">
                   ${p.aiMatchScore.toFixed(0)}%</span>` : ''}
-                <span style="font-size:0.82rem;font-weight:700;color:${statusColor};">
-                  ${p.status}</span>
+                <span style="font-size:0.75rem;font-weight:700;padding:0.2rem 0.65rem;border-radius:99px;
+    background:${
+        p.status==='ACCEPTED' ? 'rgba(0,201,167,0.1)' :
+        p.status==='REJECTED' ? 'rgba(255,107,138,0.1)' : 'rgba(139,163,199,0.1)'};
+    border:1px solid ${
+        p.status==='ACCEPTED' ? 'rgba(0,201,167,0.2)' :
+        p.status==='REJECTED' ? 'rgba(255,107,138,0.2)' : 'rgba(139,163,199,0.2)'};
+    color:${statusColor};">
+    ${p.status}
+</span>
               </div>
             </div>`;
         }).join('');

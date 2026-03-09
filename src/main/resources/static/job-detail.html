@@ -54,9 +54,11 @@
           margin-bottom:0.6rem; line-height:1.25; }
         .job-meta { display:flex; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem; }
         .meta-chip {
-          display:inline-flex; align-items:center; gap:0.35rem;
-          font-size:0.82rem; color:var(--text2);
-        }
+  display:inline-flex; align-items:center; gap:0.35rem;
+  font-size:0.78rem; color:var(--text2);
+  background:var(--bg2); border:1px solid var(--border2);
+  padding:0.25rem 0.75rem; border-radius:99px;
+}
         .status-badge {
           padding:0.25rem 0.75rem; border-radius:99px; font-size:0.78rem; font-weight:700;
           background:rgba(0,201,167,0.1); color:var(--teal); border:1px solid rgba(0,201,167,0.2);
@@ -165,6 +167,91 @@
           display:none;
         }
         .loading { text-align:center; padding:4rem; color:var(--text3); }
+
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        /* Sticky apply card shadow */
+.apply-card {
+    box-shadow: 0 8px 40px rgba(0,201,167,0.08);
+}
+
+/* Apply button pulse on load */
+@keyframes glow-pulse {
+    0%,100% { box-shadow: 0 4px 20px rgba(0,201,167,0.3); }
+    50%      { box-shadow: 0 4px 32px rgba(0,201,167,0.55); }
+}
+.apply-btn:not(:disabled) {
+    animation: glow-pulse 2.5s ease-in-out infinite;
+}
+
+/* Score ring — colored glow */
+.score-number {
+    text-shadow: 0 0 30px currentColor;
+    opacity: 0.95;
+}
+
+/* AI card shimmer top border */
+.ai-card {
+    border-top: 2px solid rgba(0,201,167,0.4);
+    position: relative;
+    overflow: hidden;
+}
+.ai-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--teal), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer { to { left: 200%; } }
+
+/* Job description readable width */
+.job-description {
+    max-width: 68ch;
+}
+
+/* Skill tags hover */
+.skill-tag { transition: transform 0.15s; cursor: default; }
+.skill-tag:hover { transform: translateY(-1px); }
+
+/* Back link arrow */
+.back-link::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-left: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg) translateY(-1px);
+}
+
+/* Section title left accent */
+.section-title {
+    display: flex; align-items: center; gap: 0.5rem;
+}
+.section-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px; height: 14px;
+    background: var(--teal);
+    border-radius: 99px;
+}
+
+/* Nav active state */
+nav .nav-links a[href="/jobs.html"] {
+    color: var(--teal);
+}
+
+/* Similar card budget color */
+.similar-meta { color: var(--text3); }
+
+/* Applied success */
+.applied-msg {
+    animation: fadeInUp 0.4s ease;
+}
+@keyframes fadeInUp {
+    from { opacity:0; transform:translateY(8px); }
+    to   { opacity:1; transform:none; }
+}
     </style>
 </head>
 <body>
@@ -182,7 +269,13 @@
 </nav>
 
 <main id="main-content">
-    <div class="loading">Loading job details…</div>
+    <div class="loading">
+        <div style="width:40px;height:40px;border-radius:50%;
+        border:3px solid var(--border2);border-top-color:var(--teal);
+        animation:spin 0.8s linear infinite;margin:0 auto 1rem;">
+        </div>
+        Loading job details…
+    </div>
 </main>
 
 <div class="toast" id="toast"></div>
@@ -191,6 +284,7 @@
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script>
+
     requireAuth('FREELANCER');
 
     const jobId = new URLSearchParams(window.location.search).get('id');
@@ -217,7 +311,7 @@
 
         } catch(e) {
             document.getElementById('main-content').innerHTML = `
-                <div class="loading">⚠️ Failed to load job. <a href="/jobs.html" style="color:var(--teal)">Go back</a></div>`;
+                <div class="loading">Failed to load job. <a href="/jobs.html" style="color:var(--teal)">Go back</a></div>`;
         }
     }
 
@@ -234,11 +328,11 @@
             job.aiPreviewBadge === 'AMBER' ? 'badge-amber-lg' : 'badge-red-lg';
 
         const badgeLabel =
-            job.aiPreviewBadge === 'GREEN' ? '🟢 Strong Match' :
-            job.aiPreviewBadge === 'AMBER' ? '🟡 Partial Match' : '🔴 Weak Match';
+            job.aiPreviewBadge === 'GREEN' ? 'Strong Match' :
+            job.aiPreviewBadge === 'AMBER' ? 'Partial Match' : 'Weak Match';
 
         document.getElementById('main-content').innerHTML = `
-        <a href="/jobs.html" class="back-link">← Back to Jobs</a>
+        <a href="/jobs.html" class="back-link">Back to Jobs</a>
 
         <div class="layout">
           <!-- Left: Job details -->
@@ -247,11 +341,11 @@
                 <div class="job-title">${escHtml(job.title)}</div>
                 <div class="job-meta">
                     <span class="status-badge">${job.status || 'OPEN'}</span>
-                    <span class="meta-chip">🏷 ${job.category || ''}</span>
-                    <span class="meta-chip">👤 ${escHtml(job.clientName || 'Client')}</span>
-                    <span class="meta-chip">📅 Posted ${formatDate(job.createdAt)}</span>
-                    <span class="meta-chip">📝 ${job.proposalCount || 0} proposals</span>
-                    ${job.deadline ? `<span class="meta-chip">⏰ Deadline ${formatDate(job.deadline)}</span>` : ''}
+                    <span class="meta-chip">${job.category || ''}</span>
+                    <span class="meta-chip">${escHtml(job.clientName || 'Client')}</span>
+                    <span class="meta-chip">Posted ${formatDate(job.createdAt)}</span>
+                    <span class="meta-chip">${job.proposalCount || 0} proposals</span>
+                    ${job.deadline ? `<span class="meta-chip">Deadline ${formatDate(job.deadline)}</span>` : ''}
                 </div>
 
                 <div class="section-title">About this job</div>
@@ -269,28 +363,45 @@
                 </div>
                 ${matched.length > 0 || missing.length > 0
                     ? `<div style="font-size:0.78rem;color:var(--text3);margin-top:0.6rem;">
-                         <span style="color:var(--teal);">✓ matched</span> &nbsp;
-                         <span style="color:var(--rose);">✗ missing</span>
+                         <span style="color:var(--teal);display:inline-flex;align-items:center;gap:0.3rem;">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+    matched
+</span> &nbsp;
+<span style="color:var(--rose);display:inline-flex;align-items:center;gap:0.3rem;">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    missing
+</span>
                        </div>` : ''}
             </div>
 
             <!-- AI Match Card (only if score exists) -->
             ${job.aiPreviewScore != null ? `
             <div class="ai-card" id="ai-card">
-                <div class="ai-card-title">🤖 AI Match Analysis</div>
+                <div class="ai-card-title">AI Match Analysis</div>
                 <div class="score-ring">
-                    <div class="score-number" style="color:${
-                        job.aiPreviewBadge==='GREEN' ? 'var(--teal)' :
-                        job.aiPreviewBadge==='AMBER' ? 'var(--gold)' : 'var(--rose)'
-                    }">${job.aiPreviewScore?.toFixed(0)}%</div>
-                    <div class="score-label">match score</div>
-                    <div><span class="ai-badge-lg ${badgeClass}">${badgeLabel}</span></div>
-                </div>
+    <svg width="110" height="110" viewBox="0 0 110 110" style="display:block;margin:0 auto 0.5rem">
+        <circle cx="55" cy="55" r="46" fill="none" stroke="var(--border2)" stroke-width="8"/>
+        <circle cx="55" cy="55" r="46" fill="none"
+            stroke="${job.aiPreviewBadge==='GREEN'?'var(--teal)':job.aiPreviewBadge==='AMBER'?'var(--gold)':'var(--rose)'}"
+            stroke-width="8" stroke-linecap="round"
+            stroke-dasharray="${(job.aiPreviewScore/100)*289} 289"
+            stroke-dashoffset="72"
+            style="transition:stroke-dasharray 1s ease;filter:drop-shadow(0 0 6px currentColor)"/>
+        <text x="55" y="52" text-anchor="middle" font-family="Syne,sans-serif"
+            font-weight="800" font-size="22"
+            fill="${job.aiPreviewBadge==='GREEN'?'#00C9A7':job.aiPreviewBadge==='AMBER'?'#F5A623':'#FF6B8A'}">
+            ${job.aiPreviewScore?.toFixed(0)}%
+        </text>
+        <text x="55" y="67" text-anchor="middle" font-family="DM Sans,sans-serif"
+            font-size="10" fill="#8BA3C7">match score</text>
+    </svg>
+    <div><span class="ai-badge-lg ${badgeClass}">${badgeLabel}</span></div>
+</div>
                 <div class="ai-reason" id="ai-reason">
                     ${escHtml(job.aiPreviewReason || 'Analyzing your match…')}
                 </div>
                 <div class="ai-enriching" id="ai-enriching">
-                    ✨ AI is enriching this analysis in the background…
+                    AI is enriching this analysis in the background…
                 </div>
             </div>` : ''}
 
@@ -398,7 +509,7 @@
             if (res.ok) {
                 document.getElementById('apply-form-content').innerHTML = `
                     <div class="applied-msg">
-                        🎉 Proposal submitted!<br>
+                        Proposal submitted!<br>
                         <span style="font-weight:400;font-size:0.85rem;margin-top:0.35rem;display:block;">
                             AI Match Score: <strong>${data.aiMatchScore?.toFixed(0) || '—'}%</strong>
                             &nbsp;
@@ -408,7 +519,7 @@
                             }">${data.aiMatchBadge || ''}</span>
                         </span>
                     </div>`;
-                showToast('🎉 Proposal submitted successfully!');
+                showToast('Proposal submitted successfully!');
             } else if (res.status === 400 && data.message?.includes('already applied')) {
                 document.getElementById('apply-form-content').innerHTML = `
                     <div class="applied-msg">✓ You have already applied to this job.</div>`;

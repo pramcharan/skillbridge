@@ -4,11 +4,16 @@ import com.skillbridge.dto.request.PostJobRequest;
 import com.skillbridge.dto.request.UpdateJobRequest;
 import com.skillbridge.dto.response.JobCardResponse;
 import com.skillbridge.dto.response.JobDetailResponse;
+import com.skillbridge.entity.Job;
 import com.skillbridge.entity.enums.JobCategory;
+import com.skillbridge.exception.ResourceNotFoundException;
+import com.skillbridge.repository.JobRepository;
 import com.skillbridge.service.JobService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +29,7 @@ import java.util.Map;
 public class JobController {
 
     private final JobService jobService;
+    private final JobRepository jobRepository;
 
     // ── POST a new job (CLIENT only) ─────────────────────────────────
     @PostMapping
@@ -87,7 +93,17 @@ public class JobController {
     // ── GET similar jobs ─────────────────────────────────────────────
     @GetMapping("/{id}/similar")
     public ResponseEntity<List<JobCardResponse>> getSimilarJobs(
-            @PathVariable Long id) {
-        return ResponseEntity.ok(jobService.getSimilarJobs(id));
+            @PathVariable Long id,
+            @AuthenticationPrincipal String email) {
+        Job job = jobRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
+        Pageable pageable = PageRequest.of(0, 4);
+        Page<Job> similar = jobRepository.searchJobs(
+                null, job.getCategory(), null, null, pageable);
+        return ResponseEntity.ok(
+                similar.getContent().stream()
+                        .filter(j -> !j.getId().equals(id))
+                        .map(jobService::toCardResponse)
+                        .collect(java.util.stream.Collectors.toList()));
     }
 }

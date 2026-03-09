@@ -254,6 +254,84 @@
         }
         .page-footer a { color: var(--text3); text-decoration: none; transition: color 0.2s; }
         .page-footer a:hover { color: var(--teal); }
+        /* Card entrance animation */
+.login-card {
+    animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Left panel entrance */
+.left-panel {
+    animation: panelIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+@keyframes panelIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Card top accent bar */
+.login-card {
+    border-top: 2px solid rgba(0,201,167,0.4);
+    position: relative;
+    overflow: hidden;
+}
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--teal), transparent);
+    animation: shimmer 4s ease-in-out infinite;
+}
+@keyframes shimmer { to { left: 200%; } }
+
+/* Input focus — left accent */
+.form-control:focus {
+    border-left: 3px solid var(--teal);
+    padding-left: calc(1rem - 2px);
+}
+
+/* Feature check icons — stagger in */
+.lp-feat:nth-child(1) { animation: featIn 0.4s 0.2s both; }
+.lp-feat:nth-child(2) { animation: featIn 0.4s 0.32s both; }
+.lp-feat:nth-child(3) { animation: featIn 0.4s 0.44s both; }
+.lp-feat:nth-child(4) { animation: featIn 0.4s 0.56s both; }
+@keyframes featIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* OAuth button Google/GitHub hover colors */
+.btn-oauth:first-child:hover { border-color: #4285F4; }
+.btn-oauth:last-child:hover  { border-color: #6e7681; }
+
+/* Login button — fix text color to match brand */
+.btn-login { color: #000; }
+
+/* Forgot link subtle underline */
+.forgot-link {
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: color 0.2s, text-decoration-color 0.2s;
+}
+.forgot-link:hover {
+    text-decoration-color: var(--teal);
+}
+
+/* Alert icons — replace ⚠ with SVG feel */
+.alert-error::before {
+    content: '';
+    display: inline-block;
+    width: 14px; height: 14px; flex-shrink: 0;
+    background: var(--rose);
+    border-radius: 50%;
+    margin-right: 0.1rem;
+}
+
+/* Page footer links gap */
+.page-footer { letter-spacing: 0.01em; }
     </style>
 </head>
 <body>
@@ -373,10 +451,12 @@
       btn.classList.add('loading');
 
       try {
-        const res = await apiFetch('/api/v1/auth/login', {
-          method: 'POST',
-          body: JSON.stringify({ email, password })
-        });
+        const res = await fetch('/api/v1/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+});
+
         const data = await res.json();
 
         if (!res.ok) {
@@ -421,10 +501,11 @@
         return;
       }
       try {
-        await apiFetch('/api/v1/auth/forgot-password', {
-          method: 'POST',
-          body: JSON.stringify({ email })
-        });
+        await fetch('/api/v1/auth/forgot-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+});
         alertEl.innerHTML = '<div class="alert alert-success">✓ If that email exists, a reset link has been sent.</div>';
       } catch {
         alertEl.innerHTML = '<div class="alert alert-success">✓ If that email exists, a reset link has been sent.</div>';

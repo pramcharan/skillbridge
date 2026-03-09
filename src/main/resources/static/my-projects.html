@@ -67,7 +67,102 @@
         }
         .last-msg { font-size:0.78rem; color:var(--text3); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
         .empty-state { text-align:center; padding:4rem; color:var(--text3); }
-        .empty-icon { font-size:2.5rem; margin-bottom:0.75rem; }
+
+        .empty-icon { width:48px; height:48px; margin:0 auto 1rem; opacity:0.3; display:block; }
+
+        /* Page header accent */
+.page-header h1 {
+    background: linear-gradient(135deg, var(--text), var(--text2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+/* Project card left border accent */
+.project-card {
+    border-left: 3px solid transparent;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.project-card:hover {
+    border-left-color: var(--teal);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+/* Avatar gradient per-status feel */
+.pc-avatar {
+    box-shadow: 0 4px 12px rgba(123,97,255,0.2);
+}
+
+/* Unread badge pulse */
+.unread-badge {
+    animation: badge-pulse 2s ease-in-out infinite;
+}
+@keyframes badge-pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(255,107,138,0.4); }
+    50%      { box-shadow: 0 0 0 4px rgba(255,107,138,0.1); }
+}
+
+/* Last message preview color */
+.last-msg {
+    color: var(--text3);
+    font-style: italic;
+}
+
+/* Status badge — ACTIVE gets a subtle glow */
+.status-active {
+    box-shadow: 0 0 8px rgba(0,201,167,0.15);
+}
+
+/* Card list entrance animation */
+.project-card {
+    animation: slideUp 0.3s ease both;
+}
+.project-card:nth-child(1) { animation-delay: 0.05s; }
+.project-card:nth-child(2) { animation-delay: 0.1s; }
+.project-card:nth-child(3) { animation-delay: 0.15s; }
+.project-card:nth-child(4) { animation-delay: 0.2s; }
+.project-card:nth-child(5) { animation-delay: 0.25s; }
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Nav dashboard link arrow styling */
+#dashboard-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 600;
+}
+
+/* Notification bell — add to nav for consistency */
+.notif-btn {
+    position:relative; width:36px; height:36px; border-radius:10px;
+    background:var(--card); border:1px solid var(--border2);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    color:var(--text2); transition:all 0.2s;
+}
+.notif-btn:hover { border-color:var(--teal); color:var(--teal); }
+
+/* Empty state improvement */
+.empty-state p:first-of-type {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 0.35rem;
+}
+
+/* Skeleton loader for initial load */
+.skeleton {
+    background: linear-gradient(90deg, var(--card) 25%, var(--card2) 50%, var(--card) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 16px;
+    height: 76px;
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--border2);
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
     </style>
 </head>
 <body>
@@ -84,12 +179,10 @@
 
 <main>
     <div class="page-header">
-        <h1>My Projects 🚀</h1>
+        <h1>My Projects</h1>
         <p>All your active and past projects with chat history.</p>
     </div>
-    <div id="projects-list">
-        <div class="empty-state"><div class="empty-icon">⏳</div><p>Loading...</p></div>
-    </div>
+    <div id="projects-list"></div>
 </main>
 
 <script src="/js/utils.js"></script>
@@ -97,10 +190,13 @@
 <script src="/js/auth.js"></script>
 <script>
     // Works for both roles
-    const token = localStorage.getItem('sb_jwt');
-    if (!token) window.location.replace('/login.html');
+    requireAuth();
 
     async function loadProjects() {
+
+        // Replace initial loading div with skeletons:
+document.getElementById('projects-list').innerHTML =
+    '<div class="skeleton"></div>'.repeat(4);
         try {
             const [profileRes, projectsRes] = await Promise.all([
                 api.get('/api/v1/profile'),
@@ -121,7 +217,9 @@
             if (!projects || projects.length === 0) {
                 list.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-icon">📭</div>
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+</svg>
                         <p>No projects yet.</p>
                         <p style="margin-top:0.5rem;font-size:0.85rem;">
                             Projects are created when a client accepts a proposal.</p>
@@ -156,7 +254,12 @@
         } catch(e) {
             console.error(e);
             document.getElementById('projects-list').innerHTML = `
-                <div class="empty-state"><div class="empty-icon">⚠️</div><p>Failed to load projects.</p></div>`;
+                <div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="12"/>
+    <line x1="12" y1="16" x2="12.01" y2="16"/>
+</svg>
+<p>Failed to load projects.</p></div>`;
         }
     }
 

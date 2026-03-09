@@ -88,6 +88,12 @@
           background:linear-gradient(135deg,var(--teal),var(--teal-dk)); border:none; color:#000;
           transition:opacity 0.2s;
         }
+
+        .empty-icon-svg {
+    width: 52px; height: 52px;
+    margin: 0 auto 0.75rem; display: block; opacity: 0.25;
+}
+
         .btn-accept:hover { opacity:0.85; }
         .btn-reject {
           padding:0.5rem 1.25rem; border-radius:10px; font-size:0.85rem; font-weight:700;
@@ -123,13 +129,128 @@
           display:none; animation:slideUp 0.3s ease;
         }
         @keyframes slideUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+
+        .back-link::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-left: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg) translateY(-1px);
+}
+        /* Page header gradient title */
+.page-header h1 {
+    background: linear-gradient(135deg, var(--text), var(--text2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+/* Proposal card entrance */
+.proposal-card {
+    animation: cardIn 0.3s ease both;
+    border-left: 3px solid transparent;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.proposal-card:nth-child(1) { animation-delay: 0.03s; }
+.proposal-card:nth-child(2) { animation-delay: 0.06s; }
+.proposal-card:nth-child(3) { animation-delay: 0.09s; }
+.proposal-card:nth-child(4) { animation-delay: 0.12s; }
+.proposal-card:nth-child(5) { animation-delay: 0.15s; }
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+}
+.proposal-card:hover {
+    border-left-color: var(--teal);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+
+/* Avatar gradient per initial */
+.pc-avatar {
+    box-shadow: 0 2px 8px rgba(123,97,255,0.25);
+}
+
+/* Rate number glow */
+.pc-rate {
+    text-shadow: 0 0 20px rgba(245,166,35,0.3);
+}
+
+/* Accept button glow */
+@keyframes glow-pulse {
+    0%,100% { box-shadow: 0 4px 16px rgba(0,201,167,0.3); }
+    50%      { box-shadow: 0 4px 24px rgba(0,201,167,0.5); }
+}
+.btn-accept {
+    animation: glow-pulse 2.5s ease-in-out infinite;
+}
+
+/* Cover letter subtle left border */
+.pc-cover {
+    border-left: 3px solid var(--border2);
+    transition: border-color 0.2s;
+}
+.proposal-card:hover .pc-cover {
+    border-left-color: rgba(0,201,167,0.3);
+}
+
+/* AI reason shimmer border */
+.pc-ai-reason {
+    position: relative;
+    overflow: hidden;
+}
+.pc-ai-reason::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, var(--teal), var(--purple));
+    border-radius: 99px;
+}
+
+/* Badge green pulse */
+.badge-green {
+    animation: badge-pulse 3s ease-in-out infinite;
+}
+@keyframes badge-pulse {
+    0%,100% { box-shadow: none; }
+    50%      { box-shadow: 0 0 8px rgba(0,201,167,0.2); }
+}
+
+/* Skill tag hover */
+.skill-tag {
+    transition: background 0.15s, color 0.15s;
+}
+.skill-tag:hover {
+    background: rgba(123,97,255,0.2);
+    color: #a08fff;
+}
+
+/* Job info bar */
+.job-info-bar {
+    border-top: 2px solid rgba(0,201,167,0.15);
+}
+
+/* Sort bar count */
+.sort-bar span {
+    background: var(--card2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    border: 1px solid var(--border2);
+}
+
+/* NEW badge pulse */
+@keyframes new-pulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.5; }
+}
     </style>
 </head>
 <body>
 <nav>
     <a href="/" class="nav-logo">SkillBridge</a>
     <div class="nav-links">
-        <a href="/dashboard-client.html">← Dashboard</a>
+        <a href="/dashboard-client.html">Dashboard</a>
         <a href="/post-job.html">Post a Job</a>
     </div>
     <div style="display:flex;align-items:center;gap:0.75rem;">
@@ -139,7 +260,7 @@
 </nav>
 
 <main>
-    <a href="/dashboard-client.html" class="back-link">← Back to Dashboard</a>
+    <a href="/dashboard-client.html" class="back-link">Back to Dashboard</a>
 
     <div class="page-header">
         <h1>Proposals <span id="proposal-count" style="color:var(--text3);font-size:1.1rem;"></span></h1>
@@ -197,9 +318,13 @@
             console.error('Error loading proposals:', e);
             document.getElementById('proposals-container').innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-icon">⚠️</div>
-                    <p>Failed to load proposals. Please try again.</p>
-                </div>`;
+    <svg class="empty-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <p>Failed to load proposals. Please try again.</p>
+</div>`;
         }
     }
 
@@ -209,11 +334,13 @@
         if (proposals.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-icon">📭</div>
-                    <p>No proposals yet for this job.</p>
-                    <p style="margin-top:0.5rem;font-size:0.85rem;">
-                        Share your job to get more applicants.</p>
-                </div>`;
+    <svg class="empty-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M22 12h-6l-2 3h-4l-2-3H2"/>
+        <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+    </svg>
+    <p>No proposals yet for this job.</p>
+    <p style="margin-top:0.5rem;font-size:0.85rem;">Share your job to get more applicants.</p>
+</div>`;
             return;
         }
 
@@ -236,7 +363,7 @@
                             <div class="pc-name">${escHtml(p.freelancerName || 'Freelancer')}</div>
                             <div class="pc-meta">
                                 ${p.freelancerRating
-                                    ? `⭐ ${p.freelancerRating.toFixed(1)} · `
+                                    ? `${p.freelancerRating.toFixed(1)} · `
                                     : ''}
                                 Applied ${formatDate(p.createdAt)}
                                 ${!p.viewedByClient ? ' · <span style="color:var(--teal);font-weight:700;">NEW</span>' : ''}
@@ -246,7 +373,7 @@
                     <div class="pc-right">
                         ${p.aiMatchScore != null
                             ? `<span class="ai-badge ${badgeClass}">
-                                 🤖 ${p.aiMatchScore.toFixed(0)}% Match
+                                 ${p.aiMatchScore.toFixed(0)}% Match
                                </span>`
                             : ''}
                         <div class="pc-rate">$${p.expectedRate}/hr</div>
@@ -264,14 +391,14 @@
 
                 ${p.aiMatchReason
                     ? `<div class="pc-ai-reason">
-                         🤖 AI Analysis: ${escHtml(p.aiMatchReason)}
+                         AI Analysis: ${escHtml(p.aiMatchReason)}
                        </div>`
                     : ''}
 
                 <div class="pc-actions">
                     ${isPending
                         ? `<button class="btn-accept" onclick="updateStatus(${p.id}, 'ACCEPTED')">
-                             ✓ Accept Proposal
+                             Accept Proposal
                            </button>
                            <button class="btn-reject" onclick="updateStatus(${p.id}, 'REJECTED')">
                              Reject
@@ -292,7 +419,7 @@
 
             if (res.ok) {
                 showToast(status === 'ACCEPTED'
-                    ? '🎉 Proposal accepted! Project created.'
+                    ? 'Proposal accepted! Project created.'
                     : 'Proposal rejected.');
 
                 // Reload to show updated statuses

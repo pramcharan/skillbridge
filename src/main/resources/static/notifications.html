@@ -67,6 +67,7 @@
           background:var(--bg2); color:var(--text3); font-size:0.8rem;
           display:flex; align-items:center; justify-content:center; transition:all 0.2s;
         }
+        .empty-icon { width:52px; height:52px; margin:0 auto 1rem; opacity:0.3; display:block; }
         .btn-notif:hover { color:var(--rose); }
         .unread-dot {
           width:8px; height:8px; border-radius:50%; background:var(--teal);
@@ -76,6 +77,77 @@
         .empty-icon { font-size:2.5rem; margin-bottom:0.75rem; }
         .notif-link { text-decoration:none; color:inherit; display:block; cursor:pointer; }
         .notif-link:hover .notif-title { color:var(--teal); }
+
+        /* Skeleton */
+.skeleton {
+    background: linear-gradient(90deg, var(--card) 25%, var(--card2) 50%, var(--card) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 14px;
+    height: 72px;
+    margin-bottom: 0.6rem;
+    border: 1px solid var(--border2);
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* Notification item entrance */
+.notif-item {
+    animation: slideUp 0.25s ease both;
+}
+.notif-item:nth-child(1) { animation-delay: 0.03s; }
+.notif-item:nth-child(2) { animation-delay: 0.06s; }
+.notif-item:nth-child(3) { animation-delay: 0.09s; }
+.notif-item:nth-child(4) { animation-delay: 0.12s; }
+.notif-item:nth-child(5) { animation-delay: 0.15s; }
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Unread dot pulse */
+.unread-dot {
+    animation: dot-pulse 2s ease-in-out infinite;
+}
+@keyframes dot-pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.5; transform: scale(1.3); }
+}
+
+/* Unread item left border */
+.notif-item.unread {
+    border-left: 3px solid var(--teal);
+}
+
+/* Icon colors per type */
+.icon-message  { color: var(--purple); }
+.icon-proposal { color: var(--teal);   }
+.icon-project  { color: var(--gold);   }
+.icon-system   { color: var(--rose);   }
+
+/* Delete button hover — rose */
+.btn-notif:hover { background: rgba(255,107,138,0.08); color: var(--rose); }
+
+/* Mark read hover — teal */
+.btn-notif.btn-read:hover { background: rgba(0,201,167,0.08); color: var(--teal); }
+
+/* Page header gradient title */
+.page-header h1 {
+    background: linear-gradient(135deg, var(--text), var(--text2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+/* Mark all button — teal on hover glow */
+.btn-mark-all:hover {
+    box-shadow: 0 0 12px rgba(0,201,167,0.1);
+}
+
+/* Notification title on hover */
+.notif-link:hover .notif-title {
+    color: var(--teal);
+    transition: color 0.2s;
+}
     </style>
 </head>
 <body>
@@ -91,12 +163,10 @@
 
 <main>
     <div class="page-header">
-        <h1>🔔 Notifications</h1>
+        <h1>Notifications</h1>
         <button class="btn-mark-all" onclick="markAllRead()">Mark all as read</button>
     </div>
-    <div id="notif-list">
-        <div class="empty-state"><div class="empty-icon">⏳</div><p>Loading...</p></div>
-    </div>
+    <div id="notif-list"></div>
 </main>
 
 <script src="/js/utils.js"></script>
@@ -106,17 +176,19 @@
     requireAuth();
 
     const TYPE_ICON = {
-        NEW_MESSAGE:    { icon:'💬', cls:'icon-message'  },
-        NEW_PROPOSAL:   { icon:'📝', cls:'icon-proposal' },
-        PROPOSAL_ACCEPTED: { icon:'✅', cls:'icon-proposal' },
-        PROPOSAL_REJECTED: { icon:'❌', cls:'icon-proposal' },
-        PROJECT_UPDATE: { icon:'🚀', cls:'icon-project'  },
-        SYSTEM:         { icon:'⚙️', cls:'icon-system'   },
-    };
+    NEW_MESSAGE:       { svg:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>', cls:'icon-message' },
+    NEW_PROPOSAL:      { svg:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>', cls:'icon-proposal' },
+    PROPOSAL_ACCEPTED: { svg:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>', cls:'icon-proposal' },
+    PROPOSAL_REJECTED: { svg:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>', cls:'icon-proposal' },
+    PROJECT_UPDATE:    { svg:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>', cls:'icon-project' },
+    SYSTEM:            { svg:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>', cls:'icon-system' },
+};
 
     let notifications = [];
 
     async function loadNotifications() {
+        document.getElementById('notif-list').innerHTML =
+        '<div class="skeleton"></div>'.repeat(5);
         try {
             const [profileRes, notifRes] = await Promise.all([
                 api.get('/api/v1/profile'),
@@ -135,7 +207,14 @@
         } catch(e) {
             console.error(e);
             document.getElementById('notif-list').innerHTML =
-                `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Failed to load notifications.</p></div>`;
+                `<div class="empty-state">
+    <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <p>Failed to load notifications.</p>
+</div>`;
         }
     }
 
@@ -144,10 +223,13 @@
         if (notifications.length === 0) {
             list.innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-icon">🎉</div>
-                    <p>You're all caught up!</p>
-                    <p style="font-size:0.85rem;margin-top:0.5rem;">No notifications yet.</p>
-                </div>`;
+    <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+    <p style="font-size:1rem;font-weight:600;color:var(--text2);">You're all caught up!</p>
+    <p style="font-size:0.85rem;margin-top:0.5rem;">No notifications yet.</p>
+</div>`;
             return;
         }
 
@@ -163,7 +245,7 @@
                           onclick="markRead(${n.id})"
                           style="display:flex;gap:1rem;align-items:flex-start;flex:1;text-decoration:none;color:inherit;">`
                     : `<div style="display:flex;gap:1rem;align-items:flex-start;flex:1;">`}
-                    <div class="notif-icon ${meta.cls}">${meta.icon}</div>
+                    <div class="notif-icon ${meta.cls}">${meta.svg}</div>
                     <div class="notif-body">
                         <div class="notif-title">${escHtml(n.title||'Notification')}</div>
                         <div class="notif-text">${escHtml(n.message||'')}</div>
@@ -172,9 +254,19 @@
                 ${n.link ? '</a>' : '</div>'}
                 <div class="notif-actions">
                     ${unread
-                        ? `<button class="btn-notif" onclick="markRead(${n.id})" title="Mark as read">✓</button>`
+                        ? `<button class="btn-notif btn-read" onclick="markRead(${n.id})" title="Mark as read">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="20 6 9 17 4 12"/>
+    </svg>
+</button>`
                         : ''}
-                    <button class="btn-notif" onclick="deleteNotif(${n.id})" title="Delete">🗑</button>
+                    <button class="btn-notif" onclick="deleteNotif(${n.id})" title="Delete">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+    </svg>
+</button>
                 </div>
                 ${unread ? '<div class="unread-dot"></div>' : ''}
             </div>`;

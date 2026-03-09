@@ -44,19 +44,17 @@
           color:var(--text2); transition:all 0.2s; margin-bottom:-1px;
         }
         .tab-btn:hover { color:var(--teal); }
-        .tab-btn.active {
-          background:var(--card); border-color:var(--border2); color:var(--teal);
-          border-bottom-color:var(--card);
-        }
+       .tab-btn.active {
+  background:var(--card); border-color:var(--border2); color:var(--teal);
+  border-bottom-color:var(--card);
+  box-shadow:inset 0 -2px 0 var(--teal);
+}
         .tab-panel { display:none; }
         .tab-panel.active { display:block; }
 
         /* Stats grid */
         .stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; margin-bottom:2rem; }
-        .stat-card {
-          background:var(--card); border:1px solid var(--border2); border-radius:16px;
-          padding:1.25rem; text-align:center;
-        }
+
         .stat-num { font-family:'Syne',sans-serif; font-weight:800; font-size:1.75rem; }
         .stat-lbl { font-size:0.78rem; color:var(--text3); margin-top:0.2rem; }
         .stat-card.teal .stat-num { color:var(--teal); }
@@ -139,11 +137,21 @@
         .toast.success { border-color:rgba(0,201,167,0.3); color:var(--teal); }
         .toast.error   { border-color:rgba(255,107,138,0.3); color:var(--rose); }
 
-        .stat-card:hover {
-    border-color:var(--border2);
-    transform:translateY(-2px);
-    transition:transform 0.2s;
+       .stat-card {
+  background:var(--card); border:1px solid var(--border2); border-radius:16px;
+  padding:1.25rem; text-align:center; transition:transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  cursor:default;
 }
+.stat-card.teal:hover  { transform:translateY(-3px); border-color:rgba(0,201,167,0.4);  box-shadow:0 8px 24px rgba(0,201,167,0.08); }
+.stat-card.gold:hover  { transform:translateY(-3px); border-color:rgba(245,166,35,0.4); box-shadow:0 8px 24px rgba(245,166,35,0.08); }
+.stat-card.purple:hover{ transform:translateY(-3px); border-color:rgba(123,97,255,0.4); box-shadow:0 8px 24px rgba(123,97,255,0.08); }
+.stat-card.rose:hover  { transform:translateY(-3px); border-color:rgba(255,107,138,0.4);box-shadow:0 8px 24px rgba(255,107,138,0.08); }
+
+    /* ADD */
+tr { transition:all 0.15s; }
+tr:hover td { background:rgba(0,201,167,0.03); }
+tr:hover td:first-child { border-left:2px solid var(--teal); padding-left:calc(1rem - 2px); }
+
     </style>
 </head>
 <body>
@@ -159,11 +167,44 @@
 </nav>
 
 <main>
-    <div style="margin-bottom:1.75rem;">
-        <h1 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;margin-bottom:0.25rem;">
-            Admin Panel
-        </h1>
-        <p style="color:var(--text2);font-size:0.88rem;">Platform overview and management tools.</p>
+    <div style="background:linear-gradient(135deg,var(--card),var(--card2));
+    border:1px solid var(--border2);border-radius:16px;padding:1.5rem 2rem;
+    margin-bottom:1.75rem;display:flex;align-items:center;justify-content:space-between;
+    position:relative;overflow:hidden;">
+        <div style="position:absolute;right:-30px;top:-30px;width:150px;height:150px;border-radius:50%;
+        background:radial-gradient(circle,rgba(255,107,138,0.05),transparent);pointer-events:none;"></div>
+        <div>
+            <h1 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;margin-bottom:0.25rem;">
+                Admin Panel
+            </h1>
+            <p style="color:var(--text2);font-size:0.88rem;">Platform overview and management tools.</p>
+        </div>
+        <div style="display:flex;gap:0.5rem;">
+            <div style="text-align:center;padding:0.5rem 1rem;background:rgba(255,107,138,0.06);
+        border:1px solid rgba(255,107,138,0.15);border-radius:10px;
+        transition:all 0.2s;cursor:default;"
+                 onmouseover="this.style.background='rgba(255,107,138,0.12)';this.style.borderColor='rgba(255,107,138,0.3)'"
+                 onmouseout="this.style.background='rgba(255,107,138,0.06)';this.style.borderColor='rgba(255,107,138,0.15)'">
+                <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--rose);" id="hdr-users">—</div>
+                <div style="font-size:0.7rem;color:var(--text3);">Users</div>
+            </div>
+            <div style="text-align:center;padding:0.5rem 1rem;background:rgba(0,201,167,0.06);
+        border:1px solid rgba(0,201,167,0.15);border-radius:10px;
+        transition:all 0.2s;cursor:default;"
+                 onmouseover="this.style.background='rgba(0,201,167,0.12)';this.style.borderColor='rgba(0,201,167,0.3)'"
+                 onmouseout="this.style.background='rgba(0,201,167,0.06)';this.style.borderColor='rgba(0,201,167,0.15)'">
+                <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--teal);" id="hdr-jobs">—</div>
+                <div style="font-size:0.7rem;color:var(--text3);">Jobs</div>
+            </div>
+            <div style="text-align:center;padding:0.5rem 1rem;background:rgba(245,166,35,0.06);
+        border:1px solid rgba(245,166,35,0.15);border-radius:10px;
+        transition:all 0.2s;cursor:default;"
+                 onmouseover="this.style.background='rgba(245,166,35,0.12)';this.style.borderColor='rgba(245,166,35,0.3)'"
+                 onmouseout="this.style.background='rgba(245,166,35,0.06)';this.style.borderColor='rgba(245,166,35,0.15)'">
+                <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--gold);" id="hdr-projects">—</div>
+                <div style="font-size:0.7rem;color:var(--text3);">Projects</div>
+            </div>
+        </div>
     </div>
 
     <!-- Tabs -->
@@ -264,13 +305,14 @@
     async function loadStats() {
     try {
         const res  = await api.get('/api/v1/admin/stats');
-        const data = await res.json();
 
-        if (!res.ok) {
-            document.getElementById('stats-grid').innerHTML =
-                `<div class="empty-state">Access denied</div>`;
-            return;
-        }
+if (!res.ok) {
+    document.getElementById('stats-grid').innerHTML =
+        `<div class="empty-state">Access denied</div>`;
+    return;
+}
+
+const data = await res.json();
 
         const cards = [
             {
@@ -322,6 +364,10 @@
             rose:   { stroke:'var(--rose)',   bg:'rgba(255,107,138,0.08)' },
         };
 
+        document.getElementById('hdr-users').textContent   = data.totalUsers;
+document.getElementById('hdr-jobs').textContent    = data.totalJobs;
+document.getElementById('hdr-projects').textContent = data.totalProjects;
+
         document.getElementById('stats-grid').innerHTML = cards.map(c => {
             const col = colorMap[c.color];
             return `
@@ -360,7 +406,17 @@
             userTotalPages = data.totalPages || 0;
 
             if (users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">No users found.</div></td></tr>`;
+tbody.innerHTML = `<tr><td colspan="7">
+    <div class="empty-state" style="padding:2.5rem;">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.2" style="opacity:0.2;margin:0 auto 0.75rem;display:block;">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+        </svg>
+        <p style="font-weight:600;margin-bottom:0.25rem;">No users found</p>
+        <p style="font-size:0.8rem;">Try a different search term.</p>
+    </div>
+</td></tr>`;
                 document.getElementById('users-pagination').innerHTML = '';
                 return;
             }
@@ -372,7 +428,13 @@
                     <td>${escHtml(u.email||'')}</td>
                     <td><span class="role-badge role-${(u.role||'').toLowerCase()}">${u.role||'—'}</span></td>
                     <td class="${u.isActive ? 'status-active':'status-inactive'}">
-                        ${u.isActive ? '● Active' : '● Inactive'}
+                        ${u.isActive
+    ? `<span style="display:inline-flex;align-items:center;gap:0.35rem;">
+        <svg width="7" height="7" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="var(--teal)"/></svg>Active
+       </span>`
+    : `<span style="display:inline-flex;align-items:center;gap:0.35rem;">
+        <svg width="7" height="7" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="var(--rose)"/></svg>Inactive
+       </span>`}
                     </td>
                     <td>${formatDate(u.createdAt)}</td>
                     <td style="display:flex;gap:0.35rem;flex-wrap:wrap;">
@@ -434,8 +496,17 @@
             jobTotalPages = data.totalPages || 0;
 
             if (jobs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">No jobs found.</div></td></tr>`;
-                document.getElementById('jobs-pagination').innerHTML = '';
+tbody.innerHTML = `<tr><td colspan="8">
+    <div class="empty-state" style="padding:2.5rem;">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.2" style="opacity:0.2;margin:0 auto 0.75rem;display:block;">
+            <rect x="2" y="7" width="20" height="14" rx="2"/>
+            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+        </svg>
+        <p style="font-weight:600;margin-bottom:0.25rem;">No jobs found</p>
+        <p style="font-size:0.8rem;">The platform has no jobs yet.</p>
+    </div>
+</td></tr>`;                document.getElementById('jobs-pagination').innerHTML = '';
                 return;
             }
 
@@ -447,8 +518,14 @@
                     <td>${escHtml(j.clientName||'—')}</td>
                     <td>${j.category||'—'}</td>
                     <td>${j.budget ? '$'+Number(j.budget).toLocaleString() : '—'}</td>
-                    <td style="color:${j.status==='OPEN'?'var(--teal)':j.status==='CLOSED'?'var(--text3)':'var(--gold)'}">
-                        ${j.status||'—'}</td>
+                    <td>
+    <span style="padding:0.2rem 0.6rem;border-radius:99px;font-size:0.72rem;font-weight:700;
+        ${j.status==='OPEN'
+            ? 'background:rgba(0,201,167,0.1);color:var(--teal);border:1px solid rgba(0,201,167,0.2);'
+            : 'background:rgba(74,96,128,0.15);color:var(--text3);border:1px solid var(--border2);'}">
+        ${j.status||'—'}
+    </span>
+</td>
                     <td>${j.proposalCount||0}</td>
                     <td style="display:flex;gap:0.35rem;">
                         ${j.status === 'OPEN'
