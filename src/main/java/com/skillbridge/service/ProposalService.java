@@ -251,6 +251,19 @@ public class ProposalService {
         job.setProposalCount(Math.max(0, job.getProposalCount() - 1));
         jobRepository.save(job);
 
+        try {
+            sendNotification(
+                    job.getClient(),
+                    NotificationType.PROPOSAL_UPDATE,
+                    "Proposal withdrawn",
+                    proposal.getFreelancer().getName() +
+                            " withdrew their proposal for \"" + job.getTitle() + "\".",
+                    "/proposals-client.html?jobId=" + job.getId()
+            );
+        } catch (Exception e) {
+            log.warn("Could not send withdrawal notification: {}", e.getMessage());
+        }
+
         log.info("Proposal {} withdrawn by {}", proposalId, freelancerEmail);
     }
 
@@ -296,7 +309,7 @@ public class ProposalService {
         sendNotification(
                 proposal.getFreelancer(),
                 NotificationType.PROPOSAL_UPDATE,
-                "🎉 Proposal accepted!",
+                "Proposal accepted!",
                 "Your proposal for '" + job.getTitle() +
                         "' was accepted! The project is now active.",
                 "/dashboard-freelancer.html"

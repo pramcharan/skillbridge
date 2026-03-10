@@ -14,4 +14,8 @@ public interface RevokedTokenRepository extends JpaRepository<RevokedToken, Long
     @Modifying
     @Query("DELETE FROM RevokedToken t WHERE t.expiresAt < :now")
     void deleteExpiredTokens(@Param("now") Instant now);
+
+    @Modifying
+    @Query("DELETE FROM RevokedToken t WHERE t.revokedAt < :cutoff")
+    void deleteByRevokedAtBefore(@Param("cutoff") Instant cutoff);
 }

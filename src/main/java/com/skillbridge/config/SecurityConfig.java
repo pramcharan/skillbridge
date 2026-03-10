@@ -73,6 +73,12 @@ public class SecurityConfig {
                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
 
+                        .requestMatchers(
+                                "/forgot-password.html",
+                                "/reset-password.html",
+                                "/api/v1/auth/password/**"   // ← already under /auth/** so likely fine
+                        ).permitAll()
+
                         // ── Admin API only ────────────────────────────────────────────
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
 

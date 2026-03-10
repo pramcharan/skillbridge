@@ -18,6 +18,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Page<Project> findByFreelancer(User freelancer, Pageable pageable);
     Optional<Project> findByProposalId(Long proposalId);
 
+    List<Project> findByStatus(ProjectStatus status);
+
     @Query("SELECT p FROM Project p WHERE p.status = 'ACTIVE' AND " +
             "p.lastMessageAt < :cutoff")
     List<Project> findInactiveProjects(@Param("cutoff") Instant cutoff);

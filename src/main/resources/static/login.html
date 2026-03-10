@@ -138,13 +138,17 @@
 
         /* ── Login card ─────────────────────────────────────── */
         .login-card {
-          width: 100%; max-width: 440px;
-          background: var(--card);
-          border: 1px solid var(--border2);
-          border-radius: 20px;
-          padding: 2.5rem;
-          box-shadow: 0 24px 60px rgba(0,0,0,0.5);
-        }
+  width: 100%; max-width: 440px;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-top: 2px solid rgba(0,201,167,0.4);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+  animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
         .card-title {
           font-family: 'Syne', sans-serif; font-weight: 800;
           font-size: 1.6rem; letter-spacing: -0.02em;
@@ -194,7 +198,7 @@
         .btn-login {
           width: 100%; padding: 0.85rem;
           background: linear-gradient(135deg, var(--teal), var(--teal-dk));
-          color: #fff; border: none; border-radius: 10px;
+          color: #000; border: none; border-radius: 10px;
           font-size: 1rem; font-weight: 700; cursor: pointer;
           transition: all 0.25s; font-family: 'DM Sans', sans-serif;
           box-shadow: 0 4px 20px rgba(0,201,167,0.3);
@@ -255,9 +259,7 @@
         .page-footer a { color: var(--text3); text-decoration: none; transition: color 0.2s; }
         .page-footer a:hover { color: var(--teal); }
         /* Card entrance animation */
-.login-card {
-    animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
+
 @keyframes cardIn {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: none; }
@@ -273,11 +275,7 @@
 }
 
 /* Card top accent bar */
-.login-card {
-    border-top: 2px solid rgba(0,201,167,0.4);
-    position: relative;
-    overflow: hidden;
-}
+
 .login-card::before {
     content: '';
     position: absolute;
@@ -304,8 +302,8 @@
 }
 
 /* OAuth button Google/GitHub hover colors */
-.btn-oauth:first-child:hover { border-color: #4285F4; }
-.btn-oauth:last-child:hover  { border-color: #6e7681; }
+.oauth-btns .btn-oauth:nth-child(1):hover { border-color: #4285F4; }
+.oauth-btns .btn-oauth:nth-child(2):hover { border-color: #6e7681; }
 
 /* Login button — fix text color to match brand */
 .btn-login { color: #000; }
@@ -320,14 +318,12 @@
     text-decoration-color: var(--teal);
 }
 
-/* Alert icons — replace ⚠ with SVG feel */
-.alert-error::before {
-    content: '';
-    display: inline-block;
-    width: 14px; height: 14px; flex-shrink: 0;
-    background: var(--rose);
-    border-radius: 50%;
-    margin-right: 0.1rem;
+.nav-logo {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.35rem;
+  background: linear-gradient(135deg, var(--teal), var(--gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+  text-decoration: none; /* ← ADD */
 }
 
 /* Page footer links gap */
@@ -356,10 +352,26 @@
         <h2 class="lp-title">Welcome<br>back to<br><span class="accent">SkillBridge</span></h2>
         <p class="lp-sub">The AI-powered marketplace where talent meets opportunity — across every industry.</p>
         <div class="lp-features">
-            <div class="lp-feat"><div class="check">✓</div> AI scores every match instantly</div>
-            <div class="lp-feat"><div class="check">✓</div> Real-time project chat &amp; file sharing</div>
-            <div class="lp-feat"><div class="check">✓</div> Secure payments — release only when satisfied</div>
-            <div class="lp-feat"><div class="check">✓</div> Every skill. Every industry. One platform.</div>
+            <div class="lp-feat"><div class="check">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div> AI scores every match instantly</div>
+            <div class="lp-feat"><div class="check">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div> Real-time project chat &amp; file sharing</div>
+            <div class="lp-feat"><div class="check">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div> Secure payments — release only when satisfied</div>
+            <div class="lp-feat"><div class="check">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div> Every skill. Every industry. One platform.</div>
         </div>
     </div>
 
@@ -383,7 +395,7 @@
         </div>
 
         <div class="forgot-row">
-            <a href="#" class="forgot-link" id="forgot-link">Forgot password?</a>
+            <a href="/forgot-password.html" class="forgot-link">Forgot password?</a>
         </div>
 
         <button class="btn-login" id="login-btn">
@@ -430,88 +442,82 @@
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script>
-    // Login form handler
+    function showError(message) {
+        document.getElementById('alert-area').innerHTML = `
+            <div class="alert alert-error">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2.5" style="flex-shrink:0">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                ${message}
+            </div>`;
+    }
+
+    function showSuccess(message) {
+        document.getElementById('alert-area').innerHTML = `
+            <div class="alert alert-success">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2.5" style="flex-shrink:0">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                ${message}
+            </div>`;
+    }
+
     document.getElementById('login-btn').addEventListener('click', async () => {
-      const email    = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const btn      = document.getElementById('login-btn');
-      const alertEl  = document.getElementById('alert-area');
+        const email    = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const btn      = document.getElementById('login-btn');
 
-      // Clear previous alert
-      alertEl.innerHTML = '';
+        document.getElementById('alert-area').innerHTML = '';
 
-      // Basic validation
-      if (!email || !password) {
-        alertEl.innerHTML = '<div class="alert alert-error">⚠ Please enter your email and password.</div>';
-        return;
-      }
-
-      // Loading state
-      btn.disabled = true;
-      btn.classList.add('loading');
-
-      try {
-        const res = await fetch('/api/v1/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
-});
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          alertEl.innerHTML = `<div class="alert alert-error">⚠ ${data.message || 'Invalid email or password.'}</div>`;
-          return;
+        if (!email || !password) {
+            showError('Please enter your email and password.');
+            return;
         }
 
-        // Save JWT and role
-        saveAuth(data.token, data.role);
+        btn.disabled = true;
+        btn.classList.add('loading');
 
-        // Redirect based on role
-        alertEl.innerHTML = '<div class="alert alert-success">✓ Signed in! Redirecting…</div>';
-        setTimeout(() => {
-          if (data.role === 'FREELANCER') window.location.href = '/dashboard-freelancer.html';
-          else if (data.role === 'CLIENT')     window.location.href = '/dashboard-client.html';
-          else if (data.role === 'ADMIN')      window.location.href = '/admin.html';
-          else window.location.href = '/';
-        }, 800);
+        try {
+            const res  = await fetch('/api/v1/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
 
-      } catch (err) {
-        alertEl.innerHTML = '<div class="alert alert-error">⚠ Could not connect. Please try again.</div>';
-      } finally {
-        btn.disabled = false;
-        btn.classList.remove('loading');
-      }
+            if (!res.ok) {
+                showError(data.message || 'Invalid email or password.');
+                btn.disabled = false;
+                btn.classList.remove('loading');
+                return;
+            }
+
+            saveAuth(data.token, data.role);
+            showSuccess('Signed in! Redirecting…');
+
+            setTimeout(() => {
+                if      (data.role === 'FREELANCER') window.location.href = '/dashboard-freelancer.html';
+                else if (data.role === 'CLIENT')     window.location.href = '/dashboard-client.html';
+                else if (data.role === 'ADMIN')      window.location.href = '/admin.html';
+                else                                 window.location.href = '/';
+            }, 800);
+
+        } catch (err) {
+            showError('Could not connect. Please try again.');
+            btn.disabled = false;
+            btn.classList.remove('loading');
+        }
     });
 
-    // Allow Enter key to submit
-    ['email','password'].forEach(id => {
-      document.getElementById(id).addEventListener('keydown', e => {
-        if (e.key === 'Enter') document.getElementById('login-btn').click();
-      });
+    ['email', 'password'].forEach(id => {
+        document.getElementById(id).addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('login-btn').click();
+        });
     });
-
-    // Forgot password
-    document.getElementById('forgot-link').addEventListener('click', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const alertEl = document.getElementById('alert-area');
-      if (!email) {
-        alertEl.innerHTML = '<div class="alert alert-error">⚠ Enter your email above first, then click Forgot password.</div>';
-        return;
-      }
-      try {
-        await fetch('/api/v1/auth/forgot-password', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
-});
-        alertEl.innerHTML = '<div class="alert alert-success">✓ If that email exists, a reset link has been sent.</div>';
-      } catch {
-        alertEl.innerHTML = '<div class="alert alert-success">✓ If that email exists, a reset link has been sent.</div>';
-      }
-    });
-
 </script>
 </body>
 </html>

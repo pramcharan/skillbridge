@@ -430,6 +430,14 @@
     color:${statusColor};">
     ${p.status}
 </span>
+                ${p.status === 'PENDING' ? `
+                <button onclick="withdrawProposal(${p.id}, event)"
+                    style="padding:0.3rem 0.75rem;border-radius:7px;font-size:0.75rem;
+                           font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;
+                           background:rgba(255,107,138,0.08);color:var(--rose);
+                           border:1px solid rgba(255,107,138,0.2);transition:opacity 0.2s;">
+                    Withdraw
+                </button>` : ''}
               </div>
             </div>`;
         }).join('');
@@ -451,6 +459,40 @@
     }
   } catch(e) {}
 }, 30000);
+
+async function withdrawProposal(proposalId, e) {
+    e.stopPropagation();
+    if (!confirm('Are you sure you want to withdraw this proposal? This cannot be undone.')) return;
+    try {
+        const res = await api.delete(`/api/v1/proposals/${proposalId}/withdraw`);
+        if (res.ok) {
+            showToast('Proposal withdrawn successfully', 'success');
+            loadMyProposals();
+        } else {
+            const data = await res.json();
+            showToast(data.message || 'Failed to withdraw', 'error');
+        }
+    } catch(e) {
+        showToast('Network error', 'error');
+    }
+}
+
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;
+        padding:0.85rem 1.25rem;border-radius:12px;font-size:0.88rem;font-weight:600;
+        font-family:'DM Sans',sans-serif;
+        background:${type==='success' ? 'rgba(0,201,167,0.12)' : 'rgba(255,107,138,0.12)'};
+        border:1px solid ${type==='success' ? 'rgba(0,201,167,0.25)' : 'rgba(255,107,138,0.25)'};
+        color:${type==='success' ? '#00C9A7' : '#FF6B8A'};
+        box-shadow:0 8px 30px rgba(0,0,0,0.3);
+        animation:slideIn 0.3s ease;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
 
     loadDashboard();
 </script>
