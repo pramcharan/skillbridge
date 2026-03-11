@@ -40,4 +40,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "LOWER(u.email) LIKE LOWER(CONCAT('%',:q,'%')) " +
             "ORDER BY u.createdAt DESC")
     Page<User> searchUsers(@Param("q") String query, Pageable pageable);
+
+    Optional<User> findByNameIgnoreCase(String name);
+
+    @Query("""
+    SELECT u FROM User u
+    WHERE u.role = 'FREELANCER'
+    AND u.isActive = true
+    AND u.avgRating IS NOT NULL
+    ORDER BY u.avgRating DESC, u.reviewCount DESC
+    """)
+    List<User> findTopFreelancersForSpotlight(Pageable pageable);
+
 }

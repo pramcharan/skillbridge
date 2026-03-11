@@ -53,7 +53,10 @@ public class SecurityConfig {
                                 "/reset-password.html",
                                 "/project.html",
                                 "/my-projects.html",
-                                "/notifications.html"
+                                "/community.html",
+                                "/notifications.html",
+                                "/portfolio.html",
+                                "/forgot-password.html"
                         ).permitAll()
 
                         // ── Static assets ─────────────────────────────────────────────
@@ -75,12 +78,14 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 "/forgot-password.html",
-                                "/reset-password.html",
-                                "/api/v1/auth/password/**"   // ← already under /auth/** so likely fine
+                                "/api/v1/auth/password/**"
                         ).permitAll()
 
                         // ── Admin API only ────────────────────────────────────────────
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+
+                        .requestMatchers("/api/v1/community/**").authenticated()
+
 
                         // ── Everything else (all other /api/** routes) ────────────────
                         .anyRequest().authenticated()
@@ -144,14 +149,14 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    @Bean
-    public AuthenticationEntryPoint apiAuthenticationEntryPoint() {
-        return (request, response, authException) -> {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write(
-                    "{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}"
-            );
-        };
-    }
+//    @Bean
+//    public AuthenticationEntryPoint apiAuthenticationEntryPoint() {
+//        return (request, response, authException) -> {
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.setContentType("application/json");
+//            response.getWriter().write(
+//                    "{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}"
+//            );
+//        };
+//    }
 }

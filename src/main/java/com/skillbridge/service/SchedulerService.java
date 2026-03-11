@@ -26,6 +26,7 @@ public class SchedulerService {
     private final ProjectRepository projectRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final NotificationService          notificationService;
+    private static final long ONLINE_MINS = 5;
 
     // ── Auto-expire jobs every hour ───────────────────────────────────
     @Scheduled(fixedRate = 3600000) // every 1 hour
@@ -34,6 +35,16 @@ public class SchedulerService {
         log.info("Scheduler: checking for expired jobs...");
         jobService.expireOldJobs();
     }
+
+    // Runs every 2 minutes — marks users offline if no heartbeat
+    @Scheduled(fixedRate = 120_000)
+    @Transactional
+    public void cleanStalePresence() {
+        Instant cutoff = Instant.now()
+                .minus(ONLINE_MINS, ChronoUnit.MINUTES);
+        presenceRepository.markStaleOffline(cutoff);
+    }
+
 
     // ── Clean up old read notifications every day at 2am ─────────────
     @Scheduled(cron = "0 0 2 * * *")
