@@ -78,4 +78,15 @@ public class AdminController {
         adminService.deleteJob(id);
         return ResponseEntity.ok(Map.of("message", "Job deleted"));
     }
+
+    @GetMapping("/charts")
+    public ResponseEntity<Map<String, Object>> getChartData() {
+        return ResponseEntity.ok(adminService.getChartData());
+    }
+
+
+    @GetMapping("/ai-health")
+    public ResponseEntity<Map<String, Object>> getAiHealth() {
+        return ResponseEntity.ok(adminService.getAiHealthData());
+    }
 }

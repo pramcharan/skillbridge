@@ -15,15 +15,20 @@
           --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
           --border:#1A2D4A; --border2:#243650;
         }
+
         body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+        /* ── NAV ── */
         nav {
           display:flex; align-items:center; justify-content:space-between;
-          padding:0 5%; height:64px; background:rgba(6,13,26,0.95);
+          padding:0 5%; height:64px; background:rgba(6,13,26,0.97);
           border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;
+          backdrop-filter:blur(12px);
         }
         .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.35rem;
           background:linear-gradient(135deg,var(--teal),var(--gold));
-          -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+          -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+          text-decoration:none; }
         .nav-links { display:flex; gap:1.5rem; }
         .nav-links a { font-size:0.88rem; color:var(--text2); text-decoration:none; transition:color 0.2s; }
         .nav-links a:hover { color:var(--teal); }
@@ -31,345 +36,816 @@
         .btn-logout { background:transparent; border:1px solid var(--border2); color:var(--text2); transition:all 0.2s; }
         .btn-logout:hover { border-color:var(--rose); color:var(--rose); }
 
-        main { max-width:800px; margin:0 auto; padding:2rem 5%; }
-        .back-link { display:inline-flex; align-items:center; gap:0.4rem; color:var(--text2);
-          text-decoration:none; font-size:0.85rem; margin-bottom:1.5rem; transition:color 0.2s; }
+        /* ── LAYOUT ── */
+        main { max-width:860px; margin:0 auto; padding:2rem 5%; }
+
+        .back-link {
+          display:inline-flex; align-items:center; gap:0.5rem; color:var(--text2);
+          text-decoration:none; font-size:0.84rem; margin-bottom:1.75rem;
+          transition:color 0.2s;
+        }
         .back-link:hover { color:var(--teal); }
 
-        /* Avatar section */
-        .avatar-section {
-          background:var(--card); border:1px solid var(--border2); border-radius:20px;
-          padding:2rem; margin-bottom:1.25rem;
-          display:flex; align-items:center; gap:2rem;
+        /* ── HERO CARD ── */
+        .hero-card {
+          background:var(--card);
+          border:1px solid var(--border2);
+          border-radius:24px;
+          overflow:hidden;
+          margin-bottom:1.25rem;
+          animation: slideUp 0.45s ease both;
         }
-        .avatar-wrap { position:relative; flex-shrink:0; }
-        .avatar-img {
-          width:90px; height:90px; border-radius:50%; object-fit:cover;
-          border:3px solid var(--border2); background:var(--bg2);
-          display:flex; align-items:center; justify-content:center;
-          font-family:'Syne',sans-serif; font-weight:800; font-size:2rem; color:var(--teal);
+        .hero-banner {
+          height:90px;
+          background:linear-gradient(135deg,rgba(0,201,167,0.18) 0%,rgba(123,97,255,0.18) 50%,rgba(245,166,35,0.12) 100%);
+          position:relative;
         }
-        .avatar-img img { width:100%; height:100%; border-radius:50%; object-fit:cover; }
-        .avatar-upload-btn {
-          position:absolute; bottom:0; right:0;
-          width:28px; height:28px; border-radius:50%; border:none; cursor:pointer;
-          background:var(--teal); color:#000; font-size:0.9rem;
-          display:flex; align-items:center; justify-content:center;
-          transition:opacity 0.2s;
+        .hero-banner::after {
+          content:'';
+          position:absolute; inset:0;
+          background:repeating-linear-gradient(
+            45deg, transparent, transparent 12px,
+            rgba(255,255,255,0.015) 12px, rgba(255,255,255,0.015) 13px
+          );
         }
-        .avatar-upload-btn:hover { opacity:0.85; }
-        .avatar-info h2 { font-family:'Syne',sans-serif; font-weight:800; font-size:1.25rem; margin-bottom:0.25rem; }
-        .avatar-info p  { color:var(--text2); font-size:0.88rem; margin-bottom:0.75rem; }
+        .hero-body {
+          padding:0 2rem 1.75rem;
+          display:flex; align-items:flex-end; gap:1.5rem; flex-wrap:wrap;
+        }
 
-        /* Completion bar */
-        .completion-wrap { margin-top:0.5rem; }
-        .completion-label { display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text2); margin-bottom:0.35rem; }
-        .completion-bar {
-          height:6px; background:var(--border2); border-radius:99px; overflow:hidden;
+        /* ── AVATAR ── */
+        .avatar-wrap {
+          position:relative; flex-shrink:0;
+          margin-top:-40px;
         }
+        .avatar-ring {
+          width:88px; height:88px; border-radius:50%;
+          background:linear-gradient(135deg,var(--teal),var(--gold));
+          padding:3px;
+          box-shadow:0 0 0 4px var(--card), 0 8px 24px rgba(0,201,167,0.25);
+        }
+        .avatar-inner {
+          width:100%; height:100%; border-radius:50%;
+          background:var(--bg2);
+          display:flex; align-items:center; justify-content:center;
+          font-family:'Syne',sans-serif; font-weight:800; font-size:1.9rem; color:var(--teal);
+          overflow:hidden;
+        }
+        .avatar-inner img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+        .avatar-upload-btn {
+          position:absolute; bottom:2px; right:2px;
+          width:26px; height:26px; border-radius:50%; border:2px solid var(--card);
+          cursor:pointer; background:var(--teal); color:#000; font-size:0.75rem;
+          display:flex; align-items:center; justify-content:center;
+          transition:transform 0.2s, opacity 0.2s;
+          box-shadow:0 2px 8px rgba(0,201,167,0.45);
+        }
+        .avatar-upload-btn:hover { transform:scale(1.12); opacity:0.9; }
+
+        /* ── HERO INFO ── */
+        .hero-info { flex:1; padding-top:0.5rem; min-width:200px; }
+        .hero-name {
+          font-family:'Syne',sans-serif; font-weight:800; font-size:1.3rem;
+          margin-bottom:0.2rem; display:flex; align-items:center; gap:0.5rem;
+        }
+        .role-badge {
+          padding:0.2rem 0.65rem; border-radius:99px; font-size:0.7rem; font-weight:700;
+          text-transform:uppercase; letter-spacing:0.06em;
+        }
+        .role-badge.freelancer { background:rgba(0,201,167,0.12); color:var(--teal); border:1px solid rgba(0,201,167,0.25); }
+        .role-badge.client     { background:rgba(245,166,35,0.12); color:var(--gold); border:1px solid rgba(245,166,35,0.25); }
+        .hero-email { font-size:0.84rem; color:var(--text2); margin-bottom:0.85rem; }
+        .availability-dot {
+          display:inline-flex; align-items:center; gap:0.35rem;
+          font-size:0.78rem; font-weight:600; padding:0.2rem 0.65rem;
+          border-radius:99px;
+        }
+        .availability-dot.AVAILABLE   { background:rgba(0,201,167,0.1); color:var(--teal); }
+        .availability-dot.BUSY        { background:rgba(245,166,35,0.1); color:var(--gold); }
+        .availability-dot.NOT_AVAILABLE { background:rgba(255,107,138,0.1); color:var(--rose); }
+        .availability-dot::before {
+          content:''; width:6px; height:6px; border-radius:50%; background:currentColor;
+          animation:pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+        /* ── COMPLETION ── */
+        .completion-wrap { margin-top:0.85rem; }
+        .completion-label { display:flex; justify-content:space-between; font-size:0.78rem; color:var(--text3); margin-bottom:0.4rem; }
+        .completion-label strong { color:var(--teal); font-weight:700; }
+        .completion-bar { height:5px; background:var(--border2); border-radius:99px; overflow:hidden; }
         .completion-fill {
           height:100%; border-radius:99px;
           background:linear-gradient(90deg,var(--teal),var(--gold));
-          transition:width 0.5s ease;
+          transition:width 0.7s cubic-bezier(0.34,1.56,0.64,1);
         }
 
-        /* Form cards */
-        .form-card { background:var(--card); border:1px solid var(--border2); border-radius:20px; padding:1.75rem; margin-bottom:1.25rem; }
+        /* ── STATS ROW ── */
+        .stats-row {
+          display:grid; grid-template-columns:repeat(3,1fr); gap:0.85rem;
+          margin-bottom:1.25rem;
+          animation: slideUp 0.45s 0.08s ease both;
+        }
+        .stat-card {
+          background:var(--card); border:1px solid var(--border2); border-radius:16px;
+          padding:1.1rem 1rem; text-align:center;
+          transition:border-color 0.2s, transform 0.2s;
+          cursor:default;
+        }
+        .stat-card:hover { border-color:rgba(0,201,167,0.3); transform:translateY(-2px); }
+        .stat-icon {
+          width:32px; height:32px; border-radius:8px; margin:0 auto 0.5rem;
+          display:flex; align-items:center; justify-content:center;
+        }
+        .stat-num {
+          font-family:'Syne',sans-serif; font-weight:800; font-size:1.4rem;
+          background:linear-gradient(135deg,var(--teal),var(--gold));
+          -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+        }
+        .stat-lbl { font-size:0.74rem; color:var(--text3); margin-top:0.15rem; text-transform:uppercase; letter-spacing:0.05em; }
+
+        /* ── TABS ── */
+        .tab-bar {
+          display:flex; gap:0.25rem;
+          background:var(--card); border:1px solid var(--border2);
+          border-radius:14px; padding:0.35rem;
+          margin-bottom:1.25rem;
+          animation: slideUp 0.45s 0.1s ease both;
+        }
+        .tab-btn {
+          flex:1; padding:0.6rem; border-radius:10px; font-size:0.84rem; font-weight:600;
+          cursor:pointer; font-family:'DM Sans',sans-serif; border:none;
+          background:transparent; color:var(--text2);
+          display:flex; align-items:center; justify-content:center; gap:0.4rem;
+          transition:all 0.2s;
+        }
+        .tab-btn:hover { color:var(--text); background:rgba(255,255,255,0.04); }
+        .tab-btn.active { background:var(--card2); color:var(--teal); border:1px solid var(--border2); }
+
+        /* ── FORM PANEL ── */
+        .tab-panel { display:none; animation: slideUp 0.3s ease both; }
+        .tab-panel.active { display:block; }
+
+        .form-card {
+          background:var(--card); border:1px solid var(--border2);
+          border-top:2px solid rgba(0,201,167,0.15);
+          border-radius:20px; padding:1.75rem; margin-bottom:1.1rem;
+          transition:border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-card:focus-within {
+          border-top-color:rgba(0,201,167,0.4);
+          box-shadow:0 4px 28px rgba(0,0,0,0.25);
+        }
+
         .section-title {
-          font-family:'Syne',sans-serif; font-weight:700; font-size:0.82rem;
-          color:var(--teal); text-transform:uppercase; letter-spacing:0.08em;
-          margin-bottom:1.25rem; display:flex; align-items:center; gap:0.5rem;
+          font-family:'Syne',sans-serif; font-weight:700; font-size:0.78rem;
+          color:var(--teal); text-transform:uppercase; letter-spacing:0.1em;
+          margin-bottom:1.25rem; display:flex; align-items:center; gap:0.6rem;
         }
         .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
         .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-        @media(max-width:600px) { .form-row { grid-template-columns:1fr; } }
-        .form-group { margin-bottom:1.25rem; }
+        @media(max-width:580px) { .form-row { grid-template-columns:1fr; } }
+
+        .form-group { margin-bottom:1.1rem; }
         .form-group:last-child { margin-bottom:0; }
-        label { display:block; font-size:0.85rem; font-weight:600; color:var(--text2); margin-bottom:0.4rem; }
+
+        label { display:block; font-size:0.82rem; font-weight:600; color:var(--text2); margin-bottom:0.4rem; }
+
         input, textarea, select {
           width:100%; padding:0.75rem 1rem; border-radius:10px;
           background:var(--bg2); border:1px solid var(--border2);
           color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.9rem;
-          transition:border-color 0.2s; outline:none; -webkit-appearance:none;
+          transition:border-color 0.2s, box-shadow 0.2s; outline:none; -webkit-appearance:none;
         }
-        input:focus, textarea:focus, select:focus { border-color:var(--teal); box-shadow:0 0 0 3px rgba(0,201,167,0.1); }
+        input:focus, textarea:focus, select:focus {
+          border-color:var(--teal);
+          box-shadow:0 0 0 3px rgba(0,201,167,0.1);
+          border-left:3px solid var(--teal);
+          padding-left:calc(1rem - 2px);
+        }
         input::placeholder, textarea::placeholder { color:var(--text3); }
         textarea { resize:vertical; min-height:100px; line-height:1.6; }
         select option { background:var(--bg2); }
 
-        /* Skills chips */
+        /* ── SKILLS CHIPS ── */
         .skills-tags {
           display:flex; flex-wrap:wrap; gap:0.4rem;
           background:var(--bg2); border:1px solid var(--border2); border-radius:10px;
           padding:0.5rem; min-height:48px; cursor:text; transition:border-color 0.2s;
         }
-        .skills-tags:focus-within { border-color:var(--teal); box-shadow:0 0 0 3px rgba(0,201,167,0.1); }
+        .skills-tags:focus-within {
+          border-color:var(--teal); box-shadow:0 0 0 3px rgba(0,201,167,0.1);
+        }
         .skill-chip {
           display:inline-flex; align-items:center; gap:0.3rem;
-          background:rgba(123,97,255,0.15); border:1px solid rgba(123,97,255,0.3);
-          color:var(--purple); border-radius:99px; padding:0.2rem 0.65rem; font-size:0.78rem; font-weight:600;
+          background:rgba(123,97,255,0.12); border:1px solid rgba(123,97,255,0.25);
+          color:var(--purple); border-radius:99px;
+          padding:0.2rem 0.5rem 0.2rem 0.65rem; font-size:0.78rem; font-weight:600;
+          transition:transform 0.15s;
         }
-        .skill-chip button { background:none; border:none; color:var(--purple); cursor:pointer; font-size:0.9rem; padding:0; opacity:0.7; }
+        .skill-chip:hover { transform:translateY(-1px); }
+        .skill-chip button {
+          background:none; border:none; color:var(--purple); cursor:pointer;
+          font-size:1rem; padding:0; opacity:0.6; line-height:1;
+        }
         .skill-chip button:hover { opacity:1; }
-        .skills-input { border:none; background:transparent; outline:none; flex:1; min-width:120px; color:var(--text); font-size:0.85rem; padding:0.25rem 0.35rem; }
-        .hint { font-size:0.78rem; color:var(--text3); margin-top:0.35rem; }
-
-        /* Save button */
-        .save-row { display:flex; align-items:center; justify-content:space-between; margin-top:1.5rem; gap:1rem; }
-        .btn-save {
-          padding:0.85rem 2.5rem; border-radius:12px; font-size:0.95rem; font-weight:700;
-          cursor:pointer; font-family:'DM Sans',sans-serif; border:none;
-          background:linear-gradient(135deg,var(--teal),var(--teal-dk)); color:#000; transition:opacity 0.2s;
+        .skills-input {
+          border:none; background:transparent; outline:none; flex:1;
+          min-width:100px; color:var(--text); font-size:0.85rem; padding:0.25rem 0.35rem;
         }
-        .btn-save:hover { opacity:0.9; }
-        .btn-save:disabled { opacity:0.5; cursor:not-allowed; }
-        .save-status { font-size:0.85rem; }
+        .hint { font-size:0.76rem; color:var(--text3); margin-top:0.35rem; }
+
+        /* ── SAVE ROW ── */
+        .save-row {
+          display:flex; align-items:center; justify-content:space-between;
+          margin-top:1.5rem; gap:1rem;
+          background:var(--card); border:1px solid var(--border2);
+          border-radius:16px; padding:1.1rem 1.5rem;
+        }
+        .btn-save {
+          padding:0.8rem 2.25rem; border-radius:11px; font-size:0.92rem; font-weight:700;
+          cursor:pointer; font-family:'DM Sans',sans-serif; border:none;
+          background:linear-gradient(135deg,var(--teal),var(--teal-dk)); color:#000;
+          transition:opacity 0.2s, transform 0.15s;
+          animation: glow-pulse 2.5s ease-in-out infinite;
+        }
+        .btn-save:hover:not(:disabled) { opacity:0.9; transform:translateY(-1px); }
+        .btn-save:disabled { opacity:0.45; cursor:not-allowed; animation:none; }
+        @keyframes glow-pulse {
+          0%,100% { box-shadow:0 4px 18px rgba(0,201,167,0.3); }
+          50%      { box-shadow:0 4px 30px rgba(0,201,167,0.55); }
+        }
+        .save-status { font-size:0.84rem; font-weight:600; }
         .save-status.success { color:var(--teal); }
         .save-status.error   { color:var(--rose); }
 
-        /* Stats row */
-        .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.25rem; }
-        .stat-card {
-          background:var(--card); border:1px solid var(--border2); border-radius:16px;
-          padding:1.25rem; text-align:center;
+        /* ── PORTFOLIO PANEL ── */
+        .portfolio-header {
+          display:flex; align-items:center; justify-content:space-between;
+          margin-bottom:1.25rem;
         }
-        .stat-num { font-family:'Syne',sans-serif; font-weight:800; font-size:1.5rem; color:var(--teal); }
-        .stat-lbl { font-size:0.78rem; color:var(--text3); margin-top:0.2rem; }
+        .portfolio-header h3 {
+          font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; color:var(--text);
+        }
+        .portfolio-header p { font-size:0.82rem; color:var(--text2); margin-top:0.15rem; }
+        .btn-add-portfolio {
+          padding:0.55rem 1.15rem; border-radius:10px; font-size:0.84rem; font-weight:700;
+          cursor:pointer; font-family:'DM Sans',sans-serif; border:none;
+          background:linear-gradient(135deg,var(--teal),var(--teal-dk)); color:#000;
+          display:flex; align-items:center; gap:0.4rem; white-space:nowrap;
+          transition:opacity 0.2s, transform 0.15s; flex-shrink:0;
+        }
+        .btn-add-portfolio:hover { opacity:0.9; transform:translateY(-1px); }
 
-        /* Back link arrow */
-.back-link::before {
-    content: '';
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-left: 2px solid currentColor;
-    border-bottom: 2px solid currentColor;
-    transform: rotate(45deg) translateY(-1px);
-}
+        .portfolio-grid {
+          display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+          gap:1rem;
+        }
+        .pf-card {
+          background:var(--card2); border:1px solid var(--border2); border-radius:16px;
+          overflow:hidden; transition:border-color 0.2s, transform 0.2s;
+        }
+        .pf-card:hover { border-color:var(--teal); transform:translateY(-3px); }
+        .pf-thumb {
+          width:100%; height:150px; background:var(--bg2);
+          display:flex; align-items:center; justify-content:center;
+          color:var(--text3); font-size:0.78rem; position:relative; overflow:hidden;
+        }
+        .pf-thumb img { width:100%; height:100%; object-fit:cover; }
+        .pf-thumb-placeholder {
+          display:flex; flex-direction:column; align-items:center; gap:0.5rem;
+          color:var(--text3);
+        }
+        .pf-body { padding:1rem; }
+        .pf-category {
+          font-size:0.68rem; font-weight:700; letter-spacing:0.08em;
+          text-transform:uppercase; color:var(--teal); margin-bottom:0.35rem;
+        }
+        .pf-title { font-weight:700; font-size:0.9rem; margin-bottom:0.4rem; line-height:1.4; }
+        .pf-desc {
+          font-size:0.8rem; color:var(--text2); line-height:1.5; margin-bottom:0.7rem;
+          display:-webkit-box; -webkit-line-clamp:2;
+          -webkit-box-orient:vertical; overflow:hidden;
+        }
+        .pf-tags { display:flex; flex-wrap:wrap; gap:0.3rem; margin-bottom:0.8rem; }
+        .pf-tag {
+          padding:0.15rem 0.5rem; border-radius:99px; font-size:0.7rem; font-weight:600;
+          background:rgba(0,201,167,0.07); color:var(--teal);
+          border:1px solid rgba(0,201,167,0.15);
+        }
+        .pf-actions { display:flex; gap:0.4rem; }
+        .btn-pf {
+          flex:1; padding:0.4rem; border-radius:7px; font-size:0.75rem; font-weight:600;
+          cursor:pointer; font-family:'DM Sans',sans-serif;
+          border:1px solid var(--border2); background:transparent; color:var(--text2);
+          transition:all 0.2s;
+        }
+        .btn-pf:hover { border-color:var(--teal); color:var(--teal); }
+        .btn-pf.danger:hover { border-color:var(--rose); color:var(--rose); }
+        .btn-pf.primary {
+          background:linear-gradient(135deg,var(--teal),var(--teal-dk));
+          color:#000; border:none; font-weight:700;
+        }
 
-/* Avatar section entrance */
-.avatar-section {
-    animation: cardIn 0.4s ease both;
-    border-top: 2px solid rgba(0,201,167,0.2);
-}
-@keyframes cardIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: none; }
-}
+        /* Portfolio empty */
+        .pf-empty {
+          text-align:center; padding:3.5rem 2rem;
+          background:var(--card); border:1px dashed var(--border2); border-radius:20px;
+        }
+        .pf-empty-icon { color:var(--text3); margin-bottom:1rem; opacity:0.5; }
+        .pf-empty h4 { font-size:1rem; color:var(--text2); margin-bottom:0.4rem; }
+        .pf-empty p { font-size:0.83rem; color:var(--text3); }
 
-/* Form cards staggered entrance */
-.form-card {
-    animation: cardIn 0.4s ease both;
-    border-top: 2px solid rgba(0,201,167,0.15);
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-.form-card:focus-within {
-    border-color: rgba(0,201,167,0.35);
-    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
-}
-.form-card:nth-child(3) { animation-delay: 0.08s; }
-.form-card:nth-child(4) { animation-delay: 0.14s; }
+        /* ── DANGER ZONE ── */
+        .danger-zone {
+          background:var(--card); border:1px solid rgba(255,107,138,0.2);
+          border-radius:20px; padding:1.5rem;
+          margin-top:1.25rem;
+        }
+        .danger-title {
+          font-family:'Syne',sans-serif; font-weight:700; font-size:0.78rem;
+          color:var(--rose); text-transform:uppercase; letter-spacing:0.1em;
+          margin-bottom:1rem; display:flex; align-items:center; gap:0.6rem;
+        }
+        .danger-title::after { content:''; flex:1; height:1px; background:rgba(255,107,138,0.15); }
+        .danger-row { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+        .danger-text p { font-size:0.84rem; color:var(--text2); }
+        .danger-text span { font-size:0.76rem; color:var(--text3); }
+        .btn-danger {
+          padding:0.6rem 1.25rem; border-radius:10px; font-size:0.84rem; font-weight:700;
+          cursor:pointer; font-family:'DM Sans',sans-serif;
+          background:rgba(255,107,138,0.08); border:1px solid rgba(255,107,138,0.25);
+          color:var(--rose); transition:all 0.2s; white-space:nowrap;
+        }
+        .btn-danger:hover { background:rgba(255,107,138,0.18); border-color:var(--rose); }
 
-/* Section title — remove emoji, add line already there, improve */
-.section-title {
-    font-size: 0.78rem;
-    letter-spacing: 0.1em;
-}
+        /* ── MODAL ── */
+        .modal-overlay {
+          position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000;
+          display:flex; align-items:center; justify-content:center; padding:1rem;
+          backdrop-filter:blur(4px);
+        }
+        .modal {
+          background:var(--card); border:1px solid var(--border2); border-radius:22px;
+          padding:2rem; width:100%; max-width:500px; max-height:90vh; overflow-y:auto;
+        }
+        .modal-head {
+          display:flex; align-items:center; justify-content:space-between;
+          margin-bottom:1.5rem;
+        }
+        .modal-head h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.05rem; }
+        .modal-close {
+          width:30px; height:30px; border-radius:8px; border:1px solid var(--border2);
+          background:transparent; color:var(--text2); cursor:pointer; font-size:1.1rem;
+          display:flex; align-items:center; justify-content:center; transition:all 0.2s;
+        }
+        .modal-close:hover { border-color:var(--rose); color:var(--rose); }
+        .modal-actions { display:flex; gap:0.75rem; margin-top:1.25rem; }
+        .btn-cancel {
+          flex:1; padding:0.75rem; border-radius:10px; font-size:0.88rem; font-weight:600;
+          cursor:pointer; font-family:'DM Sans',sans-serif;
+          border:1px solid var(--border2); background:transparent; color:var(--text2);
+          transition:border-color 0.2s;
+        }
+        .btn-cancel:hover { border-color:var(--text2); }
+        .btn-modal-save {
+          flex:2; padding:0.75rem; border-radius:10px; font-size:0.88rem; font-weight:700;
+          cursor:pointer; font-family:'DM Sans',sans-serif; border:none;
+          background:linear-gradient(135deg,var(--teal),var(--teal-dk)); color:#000;
+          transition:opacity 0.2s;
+        }
+        .btn-modal-save:hover { opacity:0.9; }
+        .btn-modal-save:disabled { opacity:0.5; cursor:not-allowed; }
 
-/* Stat cards hover */
-.stat-card {
-    transition: border-color 0.2s, transform 0.15s;
-}
-.stat-card:hover {
-    border-color: rgba(0,201,167,0.3);
-    transform: translateY(-2px);
-}
-.stat-num {
-    background: linear-gradient(135deg, var(--teal), var(--gold));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+        /* ── TOAST ── */
+        .toast {
+          position:fixed; bottom:1.5rem; right:1.5rem; z-index:2000;
+          padding:0.8rem 1.25rem; border-radius:12px; font-size:0.86rem; font-weight:600;
+          opacity:0; transform:translateY(10px) scale(0.97);
+          transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); pointer-events:none;
+        }
+        .toast.show { opacity:1; transform:translateY(0) scale(1); }
+        .toast.success { background:#0A2420; color:var(--teal); border:1px solid rgba(0,201,167,0.25); }
+        .toast.error   { background:#280D18; color:var(--rose); border:1px solid rgba(255,107,138,0.25); }
 
-/* Avatar ring glow */
-.avatar-img {
-    box-shadow: 0 0 0 3px rgba(0,201,167,0.15);
-    transition: box-shadow 0.2s;
-}
-.avatar-wrap:hover .avatar-img {
-    box-shadow: 0 0 0 4px rgba(0,201,167,0.35);
-}
+        /* ── ANIMATIONS ── */
+        @keyframes slideUp {
+          from { opacity:0; transform:translateY(16px); }
+          to   { opacity:1; transform:none; }
+        }
+        .hero-card { animation-delay:0s; }
+        .stats-row { animation-delay:0.08s; }
 
-/* Avatar upload button — teal glow */
-.avatar-upload-btn {
-    box-shadow: 0 2px 8px rgba(0,201,167,0.4);
-}
-
-/* Completion bar label */
-.completion-label span:last-child {
-    font-weight: 700;
-    color: var(--teal);
-}
-
-/* Save button glow */
-@keyframes glow-pulse {
-    0%,100% { box-shadow: 0 4px 20px rgba(0,201,167,0.3); }
-    50%      { box-shadow: 0 4px 32px rgba(0,201,167,0.55); }
-}
-.btn-save:not(:disabled) {
-    animation: glow-pulse 2.5s ease-in-out infinite;
-}
-
-/* Save status slide in */
-.save-status {
-    animation: fadeIn 0.3s ease;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateX(-6px); }
-    to   { opacity: 1; transform: none; }
-}
-
-/* Skill chip hover */
-.skill-chip {
-    transition: transform 0.15s;
-}
-.skill-chip:hover {
-    transform: translateY(-1px);
-}
-
-/* Input focus left accent */
-input:focus, textarea:focus {
-    border-left: 3px solid var(--teal);
-    padding-left: calc(1rem - 2px);
-}
-
-/* Portfolio URL input — gold focus */
-#portfolio-url:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(245,166,35,0.1);
-    border-left: 3px solid var(--gold);
-}
-
-/* Stats row entrance */
-.stats-row {
-    animation: cardIn 0.4s 0.05s ease both;
-}
-
+        /* ── SKELETON ── */
+        .skeleton {
+          background:linear-gradient(90deg,var(--border) 25%,var(--border2) 50%,var(--border) 75%);
+          background-size:200% 100%;
+          animation:shimmer 1.4s infinite;
+          border-radius:6px;
+        }
+        @keyframes shimmer { to { background-position:-200% 0; } }
     </style>
 </head>
 <body>
+
 <nav>
     <a href="/" class="nav-logo">SkillBridge</a>
     <div class="nav-links">
         <a href="#" id="dashboard-link">Dashboard</a>
+        <a href="/jobs.html">Browse Jobs</a>
+        <a href="/notifications.html" style="position:relative;">
+            Notifications
+            <span id="nav-notif-badge"
+                  style="display:none;position:absolute;top:-4px;right:-8px;
+                 width:8px;height:8px;border-radius:50%;
+                 background:var(--rose);"></span>
+        </a>
     </div>
     <div style="display:flex;align-items:center;gap:0.75rem;">
         <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
     </div>
+
 </nav>
 
 <main>
-    <a href="#" id="back-link" class="back-link">Back to Dashboard</a>
+    <a href="#" id="back-link" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back to Dashboard
+    </a>
 
-    <!-- Avatar Section -->
-    <div class="avatar-section">
-        <div class="avatar-wrap">
-            <div class="avatar-img" id="avatar-display">?</div>
-            <button class="avatar-upload-btn" onclick="document.getElementById('avatar-input').click()" title="Upload photo">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                </svg>
-            </button>
-            <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
-        </div>
-        <div class="avatar-info" style="flex:1;">
-            <h2 id="profile-name">Loading...</h2>
-            <p id="profile-email"></p>
-            <div class="completion-wrap">
-                <div class="completion-label">
-                    <span>Profile completion</span>
-                    <span id="completion-pct">0%</span>
+    <!-- ── HERO CARD ── -->
+    <div class="hero-card">
+        <div class="hero-banner"></div>
+        <div class="hero-body">
+            <div class="avatar-wrap">
+                <div class="avatar-ring">
+                    <div class="avatar-inner" id="avatar-display">?</div>
                 </div>
-                <div class="completion-bar">
-                    <div class="completion-fill" id="completion-fill" style="width:0%"></div>
+                <button class="avatar-upload-btn"
+                        onclick="document.getElementById('avatar-input').click()"
+                        title="Upload photo">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                </button>
+                <input type="file" id="avatar-input" accept="image/*"
+                       style="display:none" onchange="uploadAvatar(this)">
+            </div>
+
+            <div class="hero-info">
+                <div class="hero-name">
+                    <span id="profile-name">Loading…</span>
+                    <span class="role-badge" id="role-badge">—</span>
+                </div>
+                <div class="hero-email" id="profile-email"></div>
+                <div id="availability-badge" style="display:none;"></div>
+                <div class="completion-wrap">
+                    <div class="completion-label">
+                        <span>Profile completion</span>
+                        <strong id="completion-pct">0%</strong>
+                    </div>
+                    <div class="completion-bar">
+                        <div class="completion-fill" id="completion-fill" style="width:0%"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Stats -->
+    <!-- ── STATS ── -->
     <div class="stats-row" id="stats-row" style="display:none;">
         <div class="stat-card">
+            <div class="stat-icon" id="stat1-icon"
+                 style="background:rgba(0,201,167,0.1);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="var(--teal)" stroke-width="2">
+                    <rect x="2" y="7" width="20" height="14" rx="2"/>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+            </div>
             <div class="stat-num" id="stat1-num">0</div>
             <div class="stat-lbl" id="stat1-lbl">—</div>
         </div>
         <div class="stat-card">
-            <div class="stat-num" id="stat2-num">0</div>
-            <div class="stat-lbl" id="stat2-lbl">—</div>
+            <div class="stat-icon" style="background:rgba(245,166,35,0.1);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="var(--gold)" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+            </div>
+            <div class="stat-num" id="stat2-num">—</div>
+            <div class="stat-lbl" id="stat2-lbl">Avg Rating</div>
         </div>
         <div class="stat-card">
-            <div class="stat-num" id="stat3-num">0</div>
-            <div class="stat-lbl" id="stat3-lbl">Member since</div>
+            <div class="stat-icon" style="background:rgba(123,97,255,0.1);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="var(--purple)" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+            </div>
+            <div class="stat-num" id="stat3-num">—</div>
+            <div class="stat-lbl">Member Since</div>
         </div>
     </div>
 
-    <!-- Basic Info -->
-    <div class="form-card">
-        <div class="section-title">Basic Info</div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" id="name" placeholder="Your full name">
+    <!-- ── TABS ── -->
+    <div class="tab-bar">
+        <button class="tab-btn active" id="tab-edit" onclick="switchTab('edit')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Edit Profile
+        </button>
+        <button class="tab-btn" id="tab-portfolio" onclick="switchTab('portfolio')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M3 9h18M9 21V9"/>
+            </svg>
+            Portfolio
+            <span id="portfolio-count-badge" style="display:none;
+                background:rgba(0,201,167,0.15);color:var(--teal);
+                border-radius:99px;padding:0.05rem 0.45rem;font-size:0.7rem;
+                font-weight:700;"></span>
+        </button>
+        <button class="tab-btn" id="tab-settings" onclick="switchTab('settings')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            Settings
+        </button>
+    </div>
+
+    <!-- ════════════ TAB: EDIT PROFILE ════════════ -->
+    <div id="panel-edit" class="tab-panel active">
+
+        <!-- Basic Info -->
+        <div class="form-card">
+            <div class="section-title">Basic Info</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="name" placeholder="Your full name">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="location" placeholder="e.g. Mumbai, India">
+                </div>
             </div>
             <div class="form-group">
-                <label>Location</label>
-                <input type="text" id="location" placeholder="e.g. Mumbai, India">
+                <label>Bio</label>
+                <textarea id="bio" rows="4"
+                          placeholder="Tell clients about yourself, your expertise, and what makes you unique…"></textarea>
             </div>
         </div>
-        <div class="form-group">
-            <label>Bio</label>
-            <textarea id="bio" placeholder="Tell clients about yourself, your expertise and what makes you unique..."></textarea>
+
+        <!-- Skills & Rate (freelancer only) -->
+        <div class="form-card" id="freelancer-section" style="display:none;">
+            <div class="section-title">Skills & Rate</div>
+            <div class="form-group">
+                <label>Skills</label>
+                <div class="skills-tags" id="skills-tags"
+                     onclick="document.getElementById('skill-input').focus()">
+                    <input type="text" id="skill-input" class="skills-input"
+                           placeholder="Type a skill and press Enter…"
+                           onkeydown="handleSkillKey(event)">
+                </div>
+                <div class="hint">Press Enter or comma after each skill. Max 15.</div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Hourly Rate (USD)</label>
+                    <input type="number" id="hourly-rate" placeholder="e.g. 45" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Availability</label>
+                    <select id="availability">
+                        <option value="">Select availability</option>
+                        <option value="AVAILABLE">Available for work</option>
+                        <option value="BUSY">Busy — limited hours</option>
+                        <option value="NOT_AVAILABLE">Not available</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save -->
+        <div class="save-row">
+            <span class="save-status" id="save-status"></span>
+            <button class="btn-save" id="save-btn" onclick="saveProfile()">
+                Save Changes
+            </button>
         </div>
     </div>
 
-    <!-- Skills & Rate (freelancer only) -->
-    <div class="form-card" id="freelancer-section" style="display:none;">        <div class="section-title">Skills & Rate</div>
-        <div class="form-group">
-            <label>Skills</label>
-            <div class="skills-tags" id="skills-tags" onclick="document.getElementById('skill-input').focus()">
-                <input type="text" id="skill-input" class="skills-input"
-                       placeholder="Type a skill and press Enter…"
-                       onkeydown="handleSkillKey(event)">
+    <!-- ════════════ TAB: PORTFOLIO ════════════ -->
+    <div id="panel-portfolio" class="tab-panel">
+
+        <div style="background:var(--card);border:1px solid var(--border2);
+                    border-radius:20px;padding:1.5rem;">
+            <div class="portfolio-header">
+                <div>
+                    <h3>Portfolio Projects</h3>
+                    <p id="pf-subtitle">Showcase your best work to attract clients</p>
+                </div>
+                <button class="btn-add-portfolio" onclick="openPfModal()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Add Project
+                </button>
             </div>
-            <div class="hint">Press Enter after each skill.</div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Hourly Rate (USD)</label>
-                <input type="number" id="hourly-rate" placeholder="e.g. 45" min="1">
+
+            <!-- Grid -->
+            <div class="portfolio-grid" id="portfolio-grid"></div>
+
+            <!-- Empty -->
+            <div class="pf-empty" id="pf-empty" style="display:none;">
+                <div class="pf-empty-icon">
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <path d="M3 9h18M9 21V9"/>
+                    </svg>
+                </div>
+                <h4>No portfolio items yet</h4>
+                <p>Add your first project to showcase your skills</p>
             </div>
-            <div class="form-group">
-                <label>Availability</label>
-                <select id="availability">
-                    <option value="">Select availability</option>
-                    <option value="AVAILABLE">Available</option>
-                    <option value="BUSY">Busy</option>
-                    <option value="NOT_AVAILABLE">Not Available</option>
-                </select>
+
+            <!-- Loading -->
+            <div id="pf-loading" style="display:grid;
+                grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;">
+                <div class="skeleton" style="height:220px;border-radius:16px;"></div>
+                <div class="skeleton" style="height:220px;border-radius:16px;"></div>
+                <div class="skeleton" style="height:220px;border-radius:16px;"></div>
             </div>
-        </div>
-        <div class="form-group">
-            <label>Portfolio URL</label>
-            <input type="url" id="portfolio-url" placeholder="https://github.com/yourname">
-            <div class="hint">Link to your GitHub, Behance, Dribbble, or personal site.</div>
         </div>
     </div>
 
-    <!-- Save -->
-    <div class="save-row">
-        <span class="save-status" id="save-status"></span>
-        <button class="btn-save" id="save-btn" onclick="saveProfile()">Save Changes</button>
+    <!-- ════════════ TAB: SETTINGS ════════════ -->
+    <div id="panel-settings" class="tab-panel">
+
+        <!-- Account Info -->
+        <div class="form-card">
+            <div class="section-title">Account Info</div>
+            <div style="display:flex;flex-direction:column;gap:0.85rem;">
+                <div style="display:flex;justify-content:space-between;
+                            align-items:center;padding:0.75rem 1rem;
+                            background:var(--bg2);border-radius:10px;
+                            border:1px solid var(--border2);">
+                    <div>
+                        <div style="font-size:0.82rem;font-weight:600;color:var(--text2);">Email Address</div>
+                        <div style="font-size:0.9rem;color:var(--text);" id="settings-email">—</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.35rem;
+                                font-size:0.74rem;font-weight:600;color:var(--teal);">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        Verified
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;
+                            align-items:center;padding:0.75rem 1rem;
+                            background:var(--bg2);border-radius:10px;
+                            border:1px solid var(--border2);">
+                    <div>
+                        <div style="font-size:0.82rem;font-weight:600;color:var(--text2);">Account Role</div>
+                        <div style="font-size:0.9rem;color:var(--text);" id="settings-role">—</div>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;
+                            align-items:center;padding:0.75rem 1rem;
+                            background:var(--bg2);border-radius:10px;
+                            border:1px solid var(--border2);">
+                    <div>
+                        <div style="font-size:0.82rem;font-weight:600;color:var(--text2);">Member Since</div>
+                        <div style="font-size:0.9rem;color:var(--text);" id="settings-joined">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-card">
+            <div class="section-title">Security</div>
+            <div style="display:flex;align-items:center;
+                        justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+                <div>
+                    <div style="font-size:0.9rem;font-weight:600;">Password</div>
+                    <div style="font-size:0.82rem;color:var(--text2);margin-top:0.2rem;">
+                        Change your login password
+                    </div>
+                </div>
+                <a href="/forgot-password.html">
+                    <button class="btn-sm" style="background:transparent;
+                        border:1px solid var(--border2);color:var(--text2);
+                        padding:0.55rem 1.1rem;border-radius:9px;font-weight:600;
+                        cursor:pointer;font-family:'DM Sans',sans-serif;
+                        transition:all 0.2s;"
+                            onmouseover="this.style.borderColor='var(--teal)';this.style.color='var(--teal)'"
+                            onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">
+                        Reset Password
+                    </button>
+                </a>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="danger-zone">
+            <div class="danger-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                Danger Zone
+            </div>
+            <div class="danger-row">
+                <div class="danger-text">
+                    <p style="font-size:0.88rem;font-weight:600;">Deactivate Account</p>
+                    <span>Your data will be anonymized and you won't be able to log in.</span>
+                </div>
+                <button class="btn-danger" onclick="confirmDeactivate()">
+                    Deactivate Account
+                </button>
+            </div>
+        </div>
     </div>
+
 </main>
+
+<!-- ── PORTFOLIO MODAL ── -->
+<div class="modal-overlay" id="pf-modal" style="display:none;"
+     onclick="if(event.target===this)closePfModal()">
+    <div class="modal">
+        <div class="modal-head">
+            <h3 id="pf-modal-title">Add Portfolio Item</h3>
+            <button class="modal-close" onclick="closePfModal()">×</button>
+        </div>
+
+        <div class="form-group">
+            <label>Project Title *</label>
+            <input type="text" id="pf-title" placeholder="e.g. E-commerce Platform">
+        </div>
+        <div class="form-group">
+            <label>Category</label>
+            <select id="pf-category">
+                <option value="">Select category</option>
+                <option value="WEB_DEV">Web Development</option>
+                <option value="MOBILE">Mobile App</option>
+                <option value="DESIGN">Design / UI</option>
+                <option value="DATA">Data / Analytics</option>
+                <option value="WRITING">Writing / Content</option>
+                <option value="VIDEO">Video / Animation</option>
+                <option value="OTHER">Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea id="pf-description" rows="3"
+                      placeholder="What did you build? What technologies did you use?"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Live URL <span style="color:var(--text3);font-weight:400;">(optional)</span></label>
+            <input type="url" id="pf-projectUrl" placeholder="https://yourproject.com">
+        </div>
+        <div class="form-group">
+            <label>Thumbnail URL <span style="color:var(--text3);font-weight:400;">(optional)</span></label>
+            <input type="url" id="pf-imageUrl" placeholder="https://i.imgur.com/example.png">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Tags <span style="color:var(--text3);font-weight:400;">(comma-separated)</span></label>
+            <input type="text" id="pf-tags" placeholder="React, Node.js, MongoDB">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closePfModal()">Cancel</button>
+            <button class="btn-modal-save" id="pf-save-btn" onclick="savePfItem()">
+                Save Project
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script src="/js/utils.js"></script>
 <script src="/js/api.js"></script>
@@ -377,23 +853,38 @@ input:focus, textarea:focus {
 <script>
     requireAuth();
 
-    let skills = [];
+    /* ══════════════════════════════════════════════
+       STATE
+    ══════════════════════════════════════════════ */
+    let skills        = [];
     let currentProfile = null;
+    let portfolioItems = [];
+    let editingPfId    = null;
+    let pfLoaded       = false;
 
+    /* ══════════════════════════════════════════════
+       BOOT
+    ══════════════════════════════════════════════ */
     async function loadProfile() {
         try {
-            const res     = await api.get('/api/v1/profile');
+            const res      = await api.get('/api/v1/profile');
             currentProfile = await res.json();
             populateForm(currentProfile);
         } catch(e) {
             console.error('Failed to load profile:', e);
+            showToast('Failed to load profile', 'error');
         }
     }
 
+    /* ══════════════════════════════════════════════
+       POPULATE FORM
+    ══════════════════════════════════════════════ */
     function populateForm(p) {
-        // Nav
         const role = p.role || localStorage.getItem('sb_role');
-        const dash = role === 'CLIENT' ? '/dashboard-client.html' : '/dashboard-freelancer.html';
+        const dash = role === 'CLIENT'
+            ? '/dashboard-client.html'
+            : '/dashboard-freelancer.html';
+
         document.getElementById('dashboard-link').href = dash;
         document.getElementById('back-link').href      = dash;
 
@@ -402,14 +893,28 @@ input:focus, textarea:focus {
         if (p.avatarUrl) {
             avatarEl.innerHTML = `<img src="${p.avatarUrl}" alt="Avatar">`;
         } else {
-            avatarEl.textContent = (p.name||'?')[0].toUpperCase();
+            avatarEl.textContent = (p.name || '?')[0].toUpperCase();
         }
 
-        // Header
-        document.getElementById('profile-name').textContent  = p.name || '—';
+        // Hero info
+        document.getElementById('profile-name').textContent  = p.name  || '—';
         document.getElementById('profile-email').textContent = p.email || '';
 
-        // Completion
+        // Role badge
+        const badge = document.getElementById('role-badge');
+        badge.textContent = role === 'CLIENT' ? 'Client' : 'Freelancer';
+        badge.className   = 'role-badge ' + (role === 'CLIENT' ? 'client' : 'freelancer');
+
+        // Availability badge
+        if (role !== 'CLIENT' && p.availabilityStatus) {
+            const avEl  = document.getElementById('availability-badge');
+            const labels = { AVAILABLE:'Available for work', BUSY:'Busy', NOT_AVAILABLE:'Not available' };
+            avEl.className   = 'availability-dot ' + p.availabilityStatus;
+            avEl.textContent = labels[p.availabilityStatus] || p.availabilityStatus;
+            avEl.style.display = 'inline-flex';
+        }
+
+        // Completion bar
         const pct = p.profileCompletionPct || 0;
         document.getElementById('completion-pct').textContent  = pct + '%';
         document.getElementById('completion-fill').style.width = pct + '%';
@@ -419,54 +924,70 @@ input:focus, textarea:focus {
         document.getElementById('location').value = p.location || '';
         document.getElementById('bio').value      = p.bio      || '';
 
-        // Freelancer section
+        // Freelancer fields
         if (role !== 'CLIENT') {
             document.getElementById('freelancer-section').style.display = 'block';
-            document.getElementById('hourly-rate').value    = p.hourlyRate    || '';
-            document.getElementById('availability').value   = p.availabilityStatus  || '';
-            document.getElementById('portfolio-url').value  = p.portfolioUrl  || '';
+            document.getElementById('hourly-rate').value  = p.hourlyRate  || '';
+            document.getElementById('availability').value = p.availabilityStatus || '';
 
-            // Skills
-            // Handle both array (from your API) and string (fallback)
-skills = Array.isArray(p.skills)
-    ? p.skills.filter(Boolean)
-    : (p.skills ? p.skills.split(',').map(s=>s.trim()).filter(Boolean) : []);
+            skills = Array.isArray(p.skills)
+                ? p.skills.filter(Boolean)
+                : (p.skills ? p.skills.split(',').map(s => s.trim()).filter(Boolean) : []);
             renderSkills();
-        } else {
-            document.getElementById('freelancer-section').style.display = 'none';
         }
 
         // Stats
         const statsRow = document.getElementById('stats-row');
         statsRow.style.display = 'grid';
+
         if (role === 'CLIENT') {
             document.getElementById('stat1-num').textContent = p.totalJobs || 0;
-document.getElementById('stat1-lbl').textContent = 'Jobs Posted';
-document.getElementById('stat2-num').textContent = p.totalProposals || 0;
-document.getElementById('stat2-lbl').textContent = 'Total Proposals';
+            document.getElementById('stat1-lbl').textContent = 'Jobs Posted';
+            document.getElementById('stat2-num').textContent = p.totalProposals || 0;
+            document.getElementById('stat2-lbl').textContent = 'Proposals Received';
         } else {
-            document.getElementById('stat1-num').textContent = p.totalProposals|| 0;
+            document.getElementById('stat1-num').textContent = p.totalProposals || 0;
             document.getElementById('stat1-lbl').textContent = 'Proposals Sent';
-            // Add after stats section in populateForm()
-if (role !== 'CLIENT' && p.avgRating) {
-
-    document.getElementById('stat2-num').textContent = p.avgRating.toFixed(1) + '/5';
-    document.getElementById('stat2-lbl').textContent = 'Avg Rating';
-}
-else {
-    document.getElementById('stat2-num').textContent = '—';
-    document.getElementById('stat2-lbl').textContent = 'Avg Rating';
-}
+            document.getElementById('stat2-num').textContent =
+                p.avgRating ? p.avgRating.toFixed(1) + '/5' : '—';
+            document.getElementById('stat2-lbl').textContent = 'Avg Rating';
         }
+
         document.getElementById('stat3-num').textContent = p.createdAt
             ? new Date(p.createdAt).getFullYear() : '—';
+
+        // Settings tab
+        document.getElementById('settings-email').textContent  = p.email || '—';
+        document.getElementById('settings-role').textContent   = role || '—';
+        document.getElementById('settings-joined').textContent = p.createdAt
+            ? new Date(p.createdAt).toLocaleDateString('en-US',
+                { year:'numeric', month:'long', day:'numeric' })
+            : '—';
     }
 
-    // Skills
+    /* ══════════════════════════════════════════════
+       TABS
+    ══════════════════════════════════════════════ */
+    function switchTab(tab) {
+        ['edit','portfolio','settings'].forEach(t => {
+            document.getElementById('panel-' + t).classList.remove('active');
+            document.getElementById('tab-'   + t).classList.remove('active');
+        });
+        document.getElementById('panel-' + tab).classList.add('active');
+        document.getElementById('tab-'   + tab).classList.add('active');
+
+        if (tab === 'portfolio' && !pfLoaded) {
+            loadPortfolio();
+        }
+    }
+
+    /* ══════════════════════════════════════════════
+       SKILLS
+    ══════════════════════════════════════════════ */
     function handleSkillKey(e) {
         if (e.key === 'Enter' || e.key === ',') {
             e.preventDefault();
-            const val = e.target.value.trim().replace(/,$/,'').trim();
+            const val = e.target.value.trim().replace(/,$/, '').trim();
             if (!val || skills.length >= 15 || skills.includes(val)) return;
             skills.push(val.charAt(0).toUpperCase() + val.slice(1));
             renderSkills();
@@ -474,7 +995,10 @@ else {
         }
     }
 
-    function removeSkill(s) { skills = skills.filter(x=>x!==s); renderSkills(); }
+    function removeSkill(s) {
+        skills = skills.filter(x => x !== s);
+        renderSkills();
+    }
 
     function renderSkills() {
         const input = document.getElementById('skill-input');
@@ -483,38 +1007,42 @@ else {
         skills.forEach(s => {
             const chip = document.createElement('span');
             chip.className = 'skill-chip';
-            chip.innerHTML = escHtml(s) + `<button onclick="removeSkill('${escHtml(s)}')" title="Remove">×</button>`;
+            chip.innerHTML = escHtml(s) +
+                `<button onclick="removeSkill('${escHtml(s)}')" title="Remove">×</button>`;
             tags.appendChild(chip);
         });
         tags.appendChild(input);
     }
 
-    // Save
+    /* ══════════════════════════════════════════════
+       SAVE PROFILE
+    ══════════════════════════════════════════════ */
     async function saveProfile() {
         const btn    = document.getElementById('save-btn');
         const status = document.getElementById('save-status');
-        btn.disabled = true;
+        btn.disabled    = true;
         btn.textContent = 'Saving…';
         status.textContent = '';
 
         const payload = {
-            name:       document.getElementById('name').value.trim(),
-            bio:        document.getElementById('bio').value.trim(),
-            location:   document.getElementById('location').value.trim(),
-            skills:     skills.join(','),
-            hourlyRate: document.getElementById('hourly-rate').value
-                            ? Number(document.getElementById('hourly-rate').value) : null,
-            availabilityStatus: document.getElementById('availability').value || null,
-            portfolioUrl: document.getElementById('portfolio-url').value.trim() || null
+            name:               document.getElementById('name').value.trim(),
+            bio:                document.getElementById('bio').value.trim(),
+            location:           document.getElementById('location').value.trim(),
+            skills:             skills.join(','),
+            hourlyRate:         document.getElementById('hourly-rate').value
+                                    ? Number(document.getElementById('hourly-rate').value) : null,
+            availabilityStatus: document.getElementById('availability').value || null
         };
 
         try {
             const res  = await api.put('/api/v1/profile', payload);
             const data = await res.json();
             if (res.ok) {
+                currentProfile = data;
                 populateForm(data);
-                status.textContent = 'Saved successfully!';
+                status.textContent = '✓ Saved successfully!';
                 status.className   = 'save-status success';
+                showToast('Profile saved!', 'success');
             } else {
                 status.textContent = data.message || 'Save failed.';
                 status.className   = 'save-status error';
@@ -523,13 +1051,15 @@ else {
             status.textContent = 'Network error.';
             status.className   = 'save-status error';
         } finally {
-            btn.disabled = false;
+            btn.disabled    = false;
             btn.textContent = 'Save Changes';
-            setTimeout(() => status.textContent = '', 4000);
+            setTimeout(() => { status.textContent = ''; }, 4000);
         }
     }
 
-    // Avatar upload
+    /* ══════════════════════════════════════════════
+       AVATAR UPLOAD
+    ══════════════════════════════════════════════ */
     async function uploadAvatar(input) {
         const file = input.files[0];
         if (!file) return;
@@ -537,24 +1067,255 @@ else {
         const formData = new FormData();
         formData.append('file', file);
 
+        showToast('Uploading photo…', 'success');
+
         try {
             const token = localStorage.getItem('sb_jwt');
             const res   = await fetch('/api/v1/profile/avatar', {
-                method: 'POST',
+                method:  'POST',
                 headers: { Authorization: 'Bearer ' + token },
-                body: formData
+                body:    formData
             });
             const data = await res.json();
             if (res.ok) {
                 populateForm(data);
+                showToast('Photo updated!', 'success');
             } else {
-                alert('Upload failed: ' + (data.message || 'Unknown error'));
+                showToast(data.message || 'Upload failed', 'error');
             }
         } catch(e) {
-            alert('Upload failed. Please try again.');
+            showToast('Upload failed. Try again.', 'error');
         }
     }
 
+    /* ══════════════════════════════════════════════
+       PORTFOLIO
+    ══════════════════════════════════════════════ */
+    const CAT_LABELS = {
+        WEB_DEV:'Web Development', MOBILE:'Mobile App',
+        DESIGN:'Design / UI', DATA:'Data / Analytics',
+        WRITING:'Writing', VIDEO:'Video', OTHER:'Other'
+    };
+
+    async function loadPortfolio() {
+        pfLoaded = true;
+        document.getElementById('pf-loading').style.display = 'grid';
+        document.getElementById('portfolio-grid').innerHTML = '';
+        document.getElementById('pf-empty').style.display   = 'none';
+
+        try {
+            const res  = await api.get('/api/v1/portfolio/me');
+            portfolioItems = await res.json();
+            renderPortfolio();
+        } catch(e) {
+            showToast('Failed to load portfolio', 'error');
+            pfLoaded = false;
+        } finally {
+            document.getElementById('pf-loading').style.display = 'none';
+        }
+    }
+
+    function renderPortfolio() {
+        const grid    = document.getElementById('portfolio-grid');
+        const empty   = document.getElementById('pf-empty');
+        const sub     = document.getElementById('pf-subtitle');
+        const badge   = document.getElementById('portfolio-count-badge');
+
+        // Update count badge on tab
+        if (portfolioItems.length > 0) {
+            badge.textContent    = portfolioItems.length;
+            badge.style.display  = 'inline';
+        } else {
+            badge.style.display  = 'none';
+        }
+
+        sub.textContent = portfolioItems.length > 0
+            ? `${portfolioItems.length} project${portfolioItems.length !== 1 ? 's' : ''} · Visible on your public profile`
+            : 'Showcase your best work to attract clients';
+
+        if (portfolioItems.length === 0) {
+            grid.innerHTML     = '';
+            empty.style.display = 'block';
+            return;
+        }
+        empty.style.display = 'none';
+
+        grid.innerHTML = portfolioItems.map(item => `
+            <div class="pf-card">
+                <div class="pf-thumb">
+                    ${item.imageUrl
+                        ? `<img src="${item.imageUrl}" alt="${escHtml(item.title)}"
+                                onerror="this.parentElement.innerHTML='<div class=pf-thumb-placeholder><svg width=28 height=28 viewBox=\\'0 0 24 24\\' fill=none stroke=currentColor stroke-width=1.5><rect x=3 y=3 width=18 height=18 rx=2/><path d=\\'M3 9h18M9 21V9\\'/></svg><span>No preview</span></div>'">`
+                        : `<div class="pf-thumb-placeholder">
+                               <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.5">
+                                   <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                   <path d="M3 9h18M9 21V9"/>
+                               </svg>
+                               <span>No preview</span>
+                           </div>`
+                    }
+                </div>
+                <div class="pf-body">
+                    ${item.category
+                        ? `<div class="pf-category">${CAT_LABELS[item.category] || item.category}</div>`
+                        : ''}
+                    <div class="pf-title">${escHtml(item.title)}</div>
+                    ${item.description
+                        ? `<div class="pf-desc">${escHtml(item.description)}</div>`
+                        : ''}
+                    ${item.tags && item.tags.length
+                        ? `<div class="pf-tags">
+                               ${item.tags.map(t =>
+                                   `<span class="pf-tag">${escHtml(t)}</span>`
+                               ).join('')}
+                           </div>`
+                        : ''}
+                    <div class="pf-actions">
+                        ${item.projectUrl
+                            ? `<a href="${item.projectUrl}" target="_blank"
+                                  style="flex:1;text-decoration:none;">
+                                   <button class="btn-pf primary" style="width:100%;">
+                                       View Live
+                                   </button>
+                               </a>`
+                            : ''}
+                        <button class="btn-pf" onclick="openPfModal(${item.id})">Edit</button>
+                        <button class="btn-pf danger"
+                                onclick="deletePfItem(${item.id})">Delete</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function openPfModal(id) {
+        editingPfId = id || null;
+        document.getElementById('pf-modal-title').textContent =
+            editingPfId ? 'Edit Portfolio Item' : 'Add Portfolio Item';
+
+        if (editingPfId) {
+            const item = portfolioItems.find(i => i.id === editingPfId);
+            if (item) {
+                document.getElementById('pf-title').value       = item.title       || '';
+                document.getElementById('pf-category').value    = item.category    || '';
+                document.getElementById('pf-description').value = item.description || '';
+                document.getElementById('pf-projectUrl').value  = item.projectUrl  || '';
+                document.getElementById('pf-imageUrl').value    = item.imageUrl    || '';
+                document.getElementById('pf-tags').value        = (item.tags || []).join(', ');
+            }
+        } else {
+            ['pf-title','pf-description','pf-projectUrl','pf-imageUrl','pf-tags']
+                .forEach(id => { document.getElementById(id).value = ''; });
+            document.getElementById('pf-category').value = '';
+        }
+        document.getElementById('pf-modal').style.display = 'flex';
+    }
+
+    function closePfModal() {
+        document.getElementById('pf-modal').style.display = 'none';
+        editingPfId = null;
+    }
+
+    async function savePfItem() {
+        const title = document.getElementById('pf-title').value.trim();
+        if (!title) { showToast('Title is required', 'error'); return; }
+
+        const payload = {
+            title,
+            category:    document.getElementById('pf-category').value,
+            description: document.getElementById('pf-description').value.trim(),
+            projectUrl:  document.getElementById('pf-projectUrl').value.trim(),
+            imageUrl:    document.getElementById('pf-imageUrl').value.trim(),
+            tags:        document.getElementById('pf-tags').value.trim()
+        };
+
+        const btn = document.getElementById('pf-save-btn');
+        btn.disabled    = true;
+        btn.textContent = 'Saving…';
+
+        try {
+            const res = editingPfId
+                ? await api.put(`/api/v1/portfolio/${editingPfId}`, payload)
+                : await api.post('/api/v1/portfolio', payload);
+
+            if (res.ok) {
+                showToast(editingPfId ? 'Project updated!' : 'Project added!', 'success');
+                closePfModal();
+                pfLoaded = false;
+                loadPortfolio();
+            } else {
+                const data = await res.json();
+                showToast(data.message || 'Save failed', 'error');
+            }
+        } catch(e) {
+            showToast('Network error', 'error');
+        } finally {
+            btn.disabled    = false;
+            btn.textContent = 'Save Project';
+        }
+    }
+
+    async function deletePfItem(id) {
+        if (!confirm('Delete this portfolio item? This cannot be undone.')) return;
+        try {
+            const res = await api.delete(`/api/v1/portfolio/${id}`);
+            if (res.ok) {
+                showToast('Project deleted', 'success');
+                pfLoaded = false;
+                loadPortfolio();
+            }
+        } catch(e) {
+            showToast('Network error', 'error');
+        }
+    }
+
+    /* ══════════════════════════════════════════════
+       ACCOUNT DEACTIVATION
+    ══════════════════════════════════════════════ */
+    async function confirmDeactivate() {
+        const confirmed = confirm(
+            '⚠️ Deactivate your account?\n\n' +
+            'Your data will be anonymized and you will be logged out. ' +
+            'This action cannot be undone.\n\n' +
+            'Type "DEACTIVATE" to confirm.'
+        );
+        if (!confirmed) return;
+
+        const input = prompt('Type DEACTIVATE to confirm:');
+        if (input !== 'DEACTIVATE') {
+            showToast('Deactivation cancelled', 'error');
+            return;
+        }
+
+        try {
+            const res = await api.delete('/api/v1/profile/deactivate');
+            if (res.ok) {
+                showToast('Account deactivated. Goodbye.', 'success');
+                setTimeout(() => {
+                    localStorage.clear();
+                    window.location.replace('/login.html');
+                }, 2000);
+            }
+        } catch(e) {
+            showToast('Deactivation failed. Try again.', 'error');
+        }
+    }
+
+    /* ══════════════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════════════ */
+    function showToast(msg, type = 'success') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className   = `toast ${type} show`;
+        clearTimeout(t._timer);
+        t._timer = setTimeout(() => t.classList.remove('show'), 3200);
+    }
+
+    /* ══════════════════════════════════════════════
+       INIT
+    ══════════════════════════════════════════════ */
     loadProfile();
 </script>
 </body>

@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface PortfolioItemRepository extends JpaRepository<PortfolioItem, Long> {
     List<PortfolioItem> findByUserOrderByCreatedAtDesc(User user);
+    List<PortfolioItem> findByUserIdOrderByCreatedAtDesc(Long userId);
+
+    long countByUserId(Long userId);
 }

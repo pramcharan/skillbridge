@@ -32,6 +32,7 @@ public class PortfolioItem {
 
     // Comma-separated tags e.g. "React,Mobile,UI Design"
     private String tags;
+    private String category;
 
     @CreationTimestamp
     @Column(updatable = false)

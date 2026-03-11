@@ -85,4 +85,45 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
     @Query("SELECT p FROM Proposal p JOIN FETCH p.job j JOIN FETCH j.client " +
             "WHERE p.freelancer.email = :email ORDER BY p.createdAt DESC")
     List<Proposal> findByFreelancerEmailWithDetails(@Param("email") String email);
+
+
+    @Query("SELECT p.status, COUNT(p) FROM Proposal p GROUP BY p.status")
+    List<Object[]> countGroupByStatus();
+
+
+
+    @Query("SELECT AVG(p.aiScore) FROM Proposal p WHERE p.status = :status AND p.aiScore IS NOT NULL")
+    Optional<Double> avgScoreByStatus(@Param("status") ProposalStatus status);
+
+    @Query("""
+    SELECT
+      CASE
+        WHEN p.aiScore BETWEEN 0  AND 20  THEN '0–20'
+        WHEN p.aiScore BETWEEN 21 AND 40  THEN '21–40'
+        WHEN p.aiScore BETWEEN 41 AND 60  THEN '41–60'
+        WHEN p.aiScore BETWEEN 61 AND 80  THEN '61–80'
+        ELSE '81–100'
+      END,
+      COUNT(p)
+    FROM Proposal p
+    WHERE p.aiScore IS NOT NULL
+    GROUP BY 1
+    ORDER BY 1
+    """)
+    List<Object[]> scoreDistribution();
+
+    @Query("""
+    SELECT j.title, AVG(p.aiScore)
+    FROM Proposal p JOIN p.job j
+    WHERE p.aiScore IS NOT NULL
+    GROUP BY j.id, j.title
+    ORDER BY AVG(p.aiScore) DESC
+    """)
+    List<Object[]> topJobsByAvgScore(Pageable pageable);
+
+    default List<Object[]> topJobsByAvgScore() {
+        return topJobsByAvgScore(
+                org.springframework.data.domain.PageRequest.of(0, 5));
+    }
+
 }

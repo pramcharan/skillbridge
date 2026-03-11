@@ -26,8 +26,7 @@ public class ProfileService {
 
     private final UserRepository userRepository;
     private final AuthService    authService;
-    // Add to the existing fields at top
-    private final FileStorageService fileStorageService;
+    private final FileUploadService fileUploadService;
     private final JobRepository jobRepository;
     private final ProposalRepository proposalRepository;
 
@@ -60,6 +59,8 @@ public class ProfileService {
         if (request.getAvatarUrl()          != null) user.setAvatarUrl(request.getAvatarUrl());
         if (request.getAvailabilityStatus() != null) user.setAvailabilityStatus(
                 request.getAvailabilityStatus());
+        if (request.getLocation() != null)
+            user.setLocation(request.getLocation().trim());
 
         // Recalculate completion percentage
         user.setProfileCompletionPct(authService.calculateCompletion(user));
@@ -71,16 +72,11 @@ public class ProfileService {
 
     // Add this new method inside the class
     @Transactional
-    public UserProfileResponse uploadAvatar(String email, MultipartFile file) throws IOException {
+    public UserProfileResponse uploadAvatar(String email,
+                                            MultipartFile file) throws IOException {
         User user = findByEmail(email);
 
-        // Delete old avatar if it's a stored file
-        if (user.getAvatarUrl() != null &&
-                user.getAvatarUrl().startsWith("/uploads/")) {
-            fileStorageService.delete(user.getAvatarUrl());
-        }
-
-        String url = fileStorageService.storeAvatar(file);
+        String url = fileUploadService.uploadAvatar(file, user.getId());
         user.setAvatarUrl(url);
         user.setProfileCompletionPct(authService.calculateCompletion(user));
 
@@ -110,6 +106,7 @@ public class ProfileService {
         r.setName(user.getName());
         r.setEmail(user.getEmail());
         r.setRole(user.getRole());
+        r.setLocation(user.getLocation());
         r.setBio(user.getBio());
         r.setAvatarUrl(user.getAvatarUrl());
         r.setSkills(splitSkills(user.getSkills()));
@@ -121,6 +118,8 @@ public class ProfileService {
         r.setIsEmailVerified(user.getIsEmailVerified());
         r.setCreatedAt(user.getCreatedAt());
         r.setLastActive(user.getLastActive());
+        r.setTotalJobs(jobRepository.countByClientId(user.getId()));
+        r.setTotalProposals(proposalRepository.countByFreelancerId(user.getId()));
         return r;
     }
 

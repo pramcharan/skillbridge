@@ -13,6 +13,7 @@ public class UserProfileResponse {
     private String             name;
     private String             email;
     private Role               role;
+    private String location;
     private String             bio;
     private String             avatarUrl;
     private List<String>       skills;
@@ -24,5 +25,7 @@ public class UserProfileResponse {
     private Boolean            isEmailVerified;
     private Instant            createdAt;
     private Instant            lastActive;
+    private long totalJobs;
+    private long totalProposals;
     // Sensitive fields (email, passwordHash) are NEVER included
 }

@@ -101,4 +101,9 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             @Param("minBudget") Double minBudget,
             @Param("maxBudget") Double maxBudget,
             Pageable pageable);
+
+
+    @Query("SELECT j.category, COUNT(j) FROM Job j GROUP BY j.category ORDER BY COUNT(j) DESC")
+    List<Object[]> countGroupByCategory();
+
 }

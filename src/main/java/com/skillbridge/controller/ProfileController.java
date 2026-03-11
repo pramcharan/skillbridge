@@ -2,7 +2,11 @@ package com.skillbridge.controller;
 
 import com.skillbridge.dto.request.UpdateProfileRequest;
 import com.skillbridge.dto.response.UserProfileResponse;
+import com.skillbridge.entity.User;
+import com.skillbridge.exception.ResourceNotFoundException;
+import com.skillbridge.repository.UserRepository;
 import com.skillbridge.service.ProfileService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -21,6 +25,7 @@ import java.util.Map;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final UserRepository userRepository;
 
     // ── GET my profile ────────────────────────────────────────────────
     @GetMapping
@@ -57,5 +62,24 @@ public class ProfileController {
             @AuthenticationPrincipal String email) {
         profileService.deactivateAccount(email);
         return ResponseEntity.ok(Map.of("message", "Account deactivated successfully"));
+    }
+
+    @DeleteMapping("/deactivate")
+    @Transactional
+    public ResponseEntity<Map<String,String>> deactivate(
+            @AuthenticationPrincipal String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // Anonymize and deactivate
+        user.setIsActive(false);
+        user.setName("Deleted User");
+        user.setBio(null);
+        user.setAvatarUrl(null);
+        user.setSkills(null);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(
+                Map.of("message", "Account deactivated successfully."));
     }
 }

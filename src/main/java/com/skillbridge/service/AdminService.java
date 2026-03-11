@@ -5,6 +5,7 @@ import com.skillbridge.entity.Job;
 import com.skillbridge.entity.User;
 import com.skillbridge.entity.enums.JobStatus;
 import com.skillbridge.entity.enums.ProjectStatus;
+import com.skillbridge.entity.enums.ProposalStatus;
 import com.skillbridge.entity.enums.Role;
 import com.skillbridge.exception.ResourceNotFoundException;
 import com.skillbridge.repository.*;
@@ -13,6 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -26,6 +35,7 @@ public class AdminService {
     private final ReviewRepository   reviewRepository;
 
     // ── PLATFORM STATS ────────────────────────────────────────────────
+    @Transactional(readOnly = true)
     public AdminStatsResponse getPlatformStats() {
         AdminStatsResponse s = new AdminStatsResponse();
 
@@ -177,5 +187,111 @@ public class AdminService {
             r.setClientEmail(j.getClient().getEmail());
         }
         return r;
+    }
+
+    public Map<String, Object> getChartData() {
+        Map<String, Object> charts = new HashMap<>();
+
+        charts.put("userRegistrations",  getUserRegistrationsLast7Days());
+        charts.put("jobsByCategory",     getJobsByCategory());
+        charts.put("proposalsByStatus",  getProposalsByStatus());
+        charts.put("revenueByWeek",      getProjectsCompletedLast8Weeks());
+
+        return charts;
+    }
+
+    private Map<String, Object> getUserRegistrationsLast7Days() {
+        List<String> labels = new ArrayList<>();
+        List<Long>   data   = new ArrayList<>();
+
+        for (int i = 6; i >= 0; i--) {
+            LocalDate date  = LocalDate.now(ZoneOffset.UTC).minusDays(i);
+            Instant   start = date.atStartOfDay().toInstant(ZoneOffset.UTC);
+            Instant   end   = date.plusDays(1).atStartOfDay()
+                    .toInstant(ZoneOffset.UTC);
+            long count = userRepository.countByCreatedAtBetween(start, end);
+            labels.add(date.getDayOfWeek().name().substring(0,3));
+            data.add(count);
+        }
+        return Map.of("labels", labels, "data", data);
+    }
+
+    private Map<String, Object> getJobsByCategory() {
+        List<Object[]> rows = jobRepository.countGroupByCategory();
+        List<String> labels = new ArrayList<>();
+        List<Long>   data   = new ArrayList<>();
+        for (Object[] row : rows) {
+            labels.add(row[0].toString());
+            data.add(((Number) row[1]).longValue());
+        }
+        return Map.of("labels", labels, "data", data);
+    }
+
+    private Map<String, Object> getProposalsByStatus() {
+        List<Object[]> rows = proposalRepository.countGroupByStatus();
+        List<String> labels = new ArrayList<>();
+        List<Long>   data   = new ArrayList<>();
+        for (Object[] row : rows) {
+            labels.add(row[0].toString());
+            data.add(((Number) row[1]).longValue());
+        }
+        return Map.of("labels", labels, "data", data);
+    }
+
+    private Map<String, Object> getProjectsCompletedLast8Weeks() {
+        List<String> labels = new ArrayList<>();
+        List<Long>   data   = new ArrayList<>();
+        for (int i = 7; i >= 0; i--) {
+            LocalDate weekStart = LocalDate.now(ZoneOffset.UTC)
+                    .minusWeeks(i).with(java.time.DayOfWeek.MONDAY);
+            Instant start = weekStart.atStartOfDay()
+                    .toInstant(ZoneOffset.UTC);
+            Instant end   = weekStart.plusWeeks(1).atStartOfDay()
+                    .toInstant(ZoneOffset.UTC);
+            long count = projectRepository
+                    .countByStatusAndCreatedAtBetween(
+                            ProjectStatus.COMPLETED, start, end);
+            labels.add("W" + (8 - i));
+            data.add(count);
+        }
+        return Map.of("labels", labels, "data", data);
+    }
+
+    public Map<String, Object> getAiHealthData() {
+        // Avg AI score for ACCEPTED proposals
+        Double acceptedAvg = proposalRepository
+                .avgScoreByStatus(ProposalStatus.ACCEPTED)
+                .orElse(0.0);
+
+        // Avg AI score for REJECTED proposals
+        Double rejectedAvg = proposalRepository
+                .avgScoreByStatus(ProposalStatus.REJECTED)
+                .orElse(0.0);
+
+        // Score distribution buckets: 0-20, 21-40, 41-60, 61-80, 81-100
+        List<Object[]> distribution = proposalRepository.scoreDistribution();
+        List<String>   distLabels   = new ArrayList<>();
+        List<Long>     distData     = new ArrayList<>();
+        for (Object[] row : distribution) {
+            distLabels.add(row[0].toString());
+            distData.add(((Number) row[1]).longValue());
+        }
+
+        // Top 5 jobs by avg proposal score
+        List<Object[]> topJobs = proposalRepository.topJobsByAvgScore();
+        List<Map<String,Object>> topJobsList = new ArrayList<>();
+        for (Object[] row : topJobs) {
+            topJobsList.add(Map.of(
+                    "jobTitle", row[0].toString(),
+                    "avgScore", ((Number) row[1]).doubleValue()
+            ));
+        }
+
+        return Map.of(
+                "acceptedAvgScore",  Math.round(acceptedAvg * 10.0) / 10.0,
+                "rejectedAvgScore",  Math.round(rejectedAvg * 10.0) / 10.0,
+                "scoreDistribution", Map.of("labels", distLabels, "data", distData),
+                "topJobsByScore",    topJobsList
+        );
     }
 }

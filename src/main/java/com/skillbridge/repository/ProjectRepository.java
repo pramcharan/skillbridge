@@ -57,4 +57,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
             "WHERE p.id = :id")
     java.util.Optional<Project> findByIdWithDetails(@Param("id") Long id);
 
+
+    long countByStatusAndCreatedAtBetween(
+            ProjectStatus status, Instant start, Instant end);
+
 }

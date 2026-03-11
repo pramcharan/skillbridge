@@ -5,6 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel — SkillBridge</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -152,6 +153,24 @@ tr { transition:all 0.15s; }
 tr:hover td { background:rgba(0,201,167,0.03); }
 tr:hover td:first-child { border-left:2px solid var(--teal); padding-left:calc(1rem - 2px); }
 
+        .chart-card {
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+.chart-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.chart-wrap {
+    position: relative;
+    height: 220px;
+}
     </style>
 </head>
 <body>
@@ -209,17 +228,21 @@ tr:hover td:first-child { border-left:2px solid var(--teal); padding-left:calc(1
 
     <!-- Tabs -->
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('stats')">
+        <button class="tab-btn active" id="tab-btn-stats" onclick="switchTab('stats')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle"><rect x="18" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="2" y="13" width="4" height="8"/></svg>
             Stats
         </button>
-        <button class="tab-btn" onclick="switchTab('users')">
+        <button class="tab-btn" id="tab-btn-users" onclick="switchTab('users')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             Users
         </button>
-        <button class="tab-btn" onclick="switchTab('jobs')">
+        <button class="tab-btn" id="tab-btn-jobs" onclick="switchTab('jobs')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
             Jobs
+        </button>
+        <button class="tab-btn" id="tab-btn-analytics" onclick="switchTab('analytics')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Analytics
         </button>
     </div>
 
@@ -263,15 +286,110 @@ tr:hover td:first-child { border-left:2px solid var(--teal); padding-left:calc(1
                 <thead>
                 <tr>
                     <th>ID</th><th>Title</th><th>Client</th><th>Category</th>
-                    <th>Budget</th><th>Status</th><th>Proposals</th><th>Actions</th>
+                    <th>Budget</th><th>Status</th><th>Deadline</th>
+                    <th>Proposals</th><th>Actions</th>
                 </tr>
                 </thead>
                 <tbody id="jobs-tbody">
-                <tr><td colspan="8"><div class="skeleton"></div></td></tr>
+                <tr><td colspan="9"><div class="skeleton"></div></td></tr>
                 </tbody>
             </table>
         </div>
         <div class="pagination" id="jobs-pagination"></div>
+    </div>
+
+    <!-- Analytics Tab Panel -->
+    <div id="tab-analytics" class="tab-panel">
+
+        <!-- Row 1: Registrations + Jobs by Category -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;
+                gap:1.25rem;margin-bottom:1.25rem;">
+
+            <div class="chart-card">
+                <div class="chart-title">User Registrations — Last 7 Days</div>
+                <div class="chart-wrap">
+                    <canvas id="chartRegistrations"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-title">Jobs by Category</div>
+                <div class="chart-wrap">
+                    <canvas id="chartJobsCategory"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2: Proposals by Status + Completed Projects -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;
+                gap:1.25rem;margin-bottom:1.25rem;">
+
+            <div class="chart-card">
+                <div class="chart-title">Proposals by Status</div>
+                <div class="chart-wrap">
+                    <canvas id="chartProposalStatus"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-title">Projects Completed — Last 8 Weeks</div>
+                <div class="chart-wrap">
+                    <canvas id="chartProjectsCompleted"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- AI Health Section — add after the 2nd chart row div -->
+        <div style="margin-top:1.25rem;">
+            <div style="font-size:1rem;font-weight:700;color:var(--text);
+                margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                     stroke="var(--teal)" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                AI Health Monitor
+            </div>
+
+            <!-- Score summary cards -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;
+                gap:1rem;margin-bottom:1.25rem;">
+                <div class="chart-card" style="text-align:center;">
+                    <div class="chart-title">Avg Score — Accepted</div>
+                    <div style="font-size:2.5rem;font-weight:800;color:var(--teal);"
+                         id="ai-accepted-score">—</div>
+                    <div style="font-size:0.78rem;color:var(--text3);">out of 100</div>
+                </div>
+                <div class="chart-card" style="text-align:center;">
+                    <div class="chart-title">Avg Score — Rejected</div>
+                    <div style="font-size:2.5rem;font-weight:800;color:var(--rose);"
+                         id="ai-rejected-score">—</div>
+                    <div style="font-size:0.78rem;color:var(--text3);">out of 100</div>
+                </div>
+                <div class="chart-card" style="text-align:center;">
+                    <div class="chart-title">Score Difference</div>
+                    <div style="font-size:2.5rem;font-weight:800;color:var(--gold);"
+                         id="ai-score-diff">—</div>
+                    <div style="font-size:0.78rem;color:var(--text3);">
+                        higher = AI working well
+                    </div>
+                </div>
+            </div>
+
+            <!-- Distribution + Top Jobs -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+                <div class="chart-card">
+                    <div class="chart-title">Score Distribution</div>
+                    <div class="chart-wrap">
+                        <canvas id="chartScoreDistribution"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Top Jobs by Avg Proposal Score</div>
+                    <div id="top-jobs-list"
+                         style="display:flex;flex-direction:column;gap:0.6rem;
+                        margin-top:0.5rem;"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </main>
 
@@ -281,32 +399,251 @@ tr:hover td:first-child { border-left:2px solid var(--teal); padding-left:calc(1
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script>
+
+    // Safety fallbacks
+if (typeof escHtml === 'undefined') {
+    window.escHtml = s => String(s ?? '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+if (typeof formatDate === 'undefined') {
+    window.formatDate = iso => iso
+        ? new Date(iso).toLocaleDateString('en-US',
+            { year:'numeric', month:'short', day:'numeric' })
+        : '—';
+}
+if (typeof logout === 'undefined') {
+    window.logout = () => {
+        localStorage.removeItem('sb_jwt');
+        localStorage.removeItem('sb_role');
+        localStorage.removeItem('sb_email');
+        window.location.replace('/login.html');
+    };
+}
+
     // Admin only — check role
     const token = localStorage.getItem('sb_jwt');
-    const role  = localStorage.getItem('sb_role');
-    if (!token) window.location.replace('/login.html');
+const role  = localStorage.getItem('sb_role');
+if (!token) window.location.replace('/login.html');
+if (role !== 'ADMIN') window.location.replace('/login.html');
 
     let userPage = 0, userTotalPages = 0;
     let jobPage  = 0, jobTotalPages  = 0;
 
+    let chartsLoaded = false;
+
+async function loadCharts() {
+    if (chartsLoaded) return;
+    chartsLoaded = true;
+
+    const TEAL   = '#00C9A7';
+    const GOLD   = '#F5A623';
+    const ROSE   = '#FF6B8A';
+    const BLUE   = '#4A90E2';
+    const PURPLE = '#9B59B6';
+
+    const defaults = {
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { grid:  { color:'rgba(255,255,255,0.04)' },
+                 ticks: { color:'#8BA3C7', font:{ size:11 } } },
+            y: { grid:  { color:'rgba(255,255,255,0.04)' },
+                 ticks: { color:'#8BA3C7', font:{ size:11 } },
+                 beginAtZero: true }
+        }
+    };
+
+    try {
+        const res  = await api.get('/api/v1/admin/charts');
+        if (!res.ok) throw new Error('Charts API failed');
+        const data = await res.json();
+
+        // 1. User Registrations — Bar chart
+        new Chart(document.getElementById('chartRegistrations'), {
+            type: 'bar',
+            data: {
+                labels: data.userRegistrations.labels,
+                datasets: [{
+                    data: data.userRegistrations.data,
+                    backgroundColor: TEAL + '33',
+                    borderColor: TEAL,
+                    borderWidth: 2,
+                    borderRadius: 6
+                }]
+            },
+            options: { ...defaults, responsive: true, maintainAspectRatio: false }
+        });
+
+        // 2. Jobs by Category — Horizontal Bar
+        new Chart(document.getElementById('chartJobsCategory'), {
+            type: 'bar',
+            data: {
+                labels: data.jobsByCategory.labels,
+                datasets: [{
+                    data: data.jobsByCategory.data,
+                    backgroundColor: [TEAL+'55',GOLD+'55',ROSE+'55',BLUE+'55',PURPLE+'55','#E67E22'+'55','#1ABC9C'+'55'],
+                    borderColor:     [TEAL,GOLD,ROSE,BLUE,PURPLE,'#E67E22','#1ABC9C'],
+                    borderWidth: 2,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                ...defaults,
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color:'rgba(255,255,255,0.04)' }, ticks: { color:'#8BA3C7', font:{ size:11 } }, beginAtZero: true },
+                    y: { grid: { color:'rgba(255,255,255,0.04)' }, ticks: { color:'#8BA3C7', font:{ size:11 } } }
+                }
+            }
+        });
+
+        // 3. Proposals by Status — Doughnut
+        const statusColors = { PENDING:GOLD, ACCEPTED:TEAL, REJECTED:ROSE, WITHDRAWN:'#4A6080' };
+        new Chart(document.getElementById('chartProposalStatus'), {
+            type: 'doughnut',
+            data: {
+                labels: data.proposalsByStatus.labels,
+                datasets: [{
+                    data: data.proposalsByStatus.data,
+                    backgroundColor: data.proposalsByStatus.labels.map(l => (statusColors[l]||'#8BA3C7')+'99'),
+                    borderColor:     data.proposalsByStatus.labels.map(l =>  statusColors[l]||'#8BA3C7'),
+                    borderWidth: 2,
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, position: 'bottom',
+                              labels: { color:'#8BA3C7', font:{ size:11 }, padding:12 } }
+                },
+                cutout: '65%'
+            }
+        });
+
+        // 4. Completed Projects — Line chart
+        new Chart(document.getElementById('chartProjectsCompleted'), {
+            type: 'line',
+            data: {
+                labels: data.revenueByWeek.labels,
+                datasets: [{
+                    data: data.revenueByWeek.data,
+                    borderColor: GOLD,
+                    backgroundColor: GOLD + '22',
+                    borderWidth: 2,
+                    pointBackgroundColor: GOLD,
+                    pointRadius: 4,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: { ...defaults, responsive: true, maintainAspectRatio: false }
+        });
+
+        // 5. AI Health Data
+        try {
+            const aiRes  = await api.get('/api/v1/admin/ai-health');
+            const aiData = await aiRes.json();
+
+            document.getElementById('ai-accepted-score').textContent = aiData.acceptedAvgScore ?? '—';
+            document.getElementById('ai-rejected-score').textContent = aiData.rejectedAvgScore ?? '—';
+
+            const diff = (aiData.acceptedAvgScore && aiData.rejectedAvgScore)
+                ? (aiData.acceptedAvgScore - aiData.rejectedAvgScore).toFixed(1)
+                : null;
+            document.getElementById('ai-score-diff').textContent =
+                diff !== null ? '+' + diff : '—';
+
+            new Chart(document.getElementById('chartScoreDistribution'), {
+                type: 'bar',
+                data: {
+                    labels: aiData.scoreDistribution.labels,
+                    datasets: [{
+                        data: aiData.scoreDistribution.data,
+                        backgroundColor: [ROSE+'55',ROSE+'44',GOLD+'55',TEAL+'55',TEAL+'88'],
+                        borderColor:     [ROSE,ROSE,GOLD,TEAL,TEAL],
+                        borderWidth: 2,
+                        borderRadius: 6
+                    }]
+                },
+                options: { ...defaults, responsive: true, maintainAspectRatio: false }
+            });
+
+            const topList = document.getElementById('top-jobs-list');
+            topList.innerHTML = (aiData.topJobsByScore || []).map((j, i) => `
+                <div style="display:flex;align-items:center;justify-content:space-between;
+                            padding:0.5rem 0.75rem;background:var(--card);
+                            border-radius:8px;border:1px solid var(--border);">
+                    <div style="font-size:0.82rem;color:var(--text);max-width:65%;
+                                white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        ${i+1}. ${escHtml(j.jobTitle)}
+                    </div>
+                    <div style="font-size:0.85rem;font-weight:700;color:var(--teal);">
+                        ${j.avgScore.toFixed(1)}
+                    </div>
+                </div>
+            `).join('');
+        } catch(aiErr) {
+            console.warn('AI health data unavailable:', aiErr.message);
+        }
+
+    } catch(e) {
+        chartsLoaded = false;
+        console.error('Charts failed to load:', e.message);
+        document.getElementById('tab-analytics').innerHTML = `
+            <div class="empty-state" style="padding:3rem;">
+                <p style="color:var(--rose);font-weight:600;">Failed to load analytics. Try again.</p>
+                <button onclick="chartsLoaded=false;loadCharts()"
+                    style="margin-top:1rem;padding:0.6rem 1.25rem;border-radius:10px;
+                           background:var(--teal);color:#000;font-weight:700;
+                           border:none;cursor:pointer;">
+                    Retry
+                </button>
+            </div>`;
+    }
+}
+
     // ── Tabs ───────────────────────────────────────────────────────────────
     function switchTab(name) {
-        document.querySelectorAll('.tab-btn').forEach((b,i) =>
-            b.classList.toggle('active', ['stats','users','jobs'][i] === name));
-        document.querySelectorAll('.tab-panel').forEach(p =>
-            p.classList.toggle('active', p.id === 'tab-'+name));
+    // Hide all panels
+    document.querySelectorAll('.tab-panel').forEach(p => {
+        p.classList.remove('active');
+    });
 
-        if (name === 'stats') loadStats();
-        if (name === 'users') loadUsers(0);
-        if (name === 'jobs')  loadJobs(0);
-    }
+    // Deactivate all tab buttons
+    document.querySelectorAll('.tab-btn').forEach(b =>
+        b.classList.remove('active'));
 
+    // Show correct panel
+    const panel = document.getElementById('tab-' + name);
+    if (panel) { panel.classList.add('active'); }
+
+    // Activate correct button
+    const btn = document.getElementById('tab-btn-' + name);
+    if (btn) btn.classList.add('active');
+
+    // Load data
+    if (name === 'stats')     loadStats();
+    if (name === 'users')     loadUsers(0);
+    if (name === 'jobs')      loadJobs(0);
+    if (name === 'analytics') loadCharts();
+}
+
+let statsLoaded = false;
     // ── Stats ──────────────────────────────────────────────────────────────
     async function loadStats() {
+
+    if (statsLoaded) return;
+    statsLoaded = true;
     try {
         const res  = await api.get('/api/v1/admin/stats');
 
 if (!res.ok) {
+statsLoaded = false;
     document.getElementById('stats-grid').innerHTML =
         `<div class="empty-state">Access denied</div>`;
     return;
@@ -355,6 +692,10 @@ const data = await res.json();
                 label: 'Reviews', value: data.totalReviews, color: 'rose',
                 svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`
             },
+            {
+    label: 'Active Users', value: data.activeUsers, color: 'teal',
+    svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+},
         ];
 
         const colorMap = {
@@ -385,6 +726,7 @@ document.getElementById('hdr-projects').textContent = data.totalProjects;
         }).join('');
 
     } catch(e) {
+    statsLoaded = false;
         console.error(e);
     }
 }
@@ -487,7 +829,7 @@ tbody.innerHTML = `<tr><td colspan="7">
     async function loadJobs(page) {
         jobPage = page;
         const tbody = document.getElementById('jobs-tbody');
-        tbody.innerHTML = `<tr><td colspan="8"><div class="skeleton"></div></td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9"><div class="skeleton"></div></td></tr>`;
 
         try {
             const res  = await api.get(`/api/v1/admin/jobs?page=${page}&size=20`);
@@ -496,7 +838,7 @@ tbody.innerHTML = `<tr><td colspan="7">
             jobTotalPages = data.totalPages || 0;
 
             if (jobs.length === 0) {
-tbody.innerHTML = `<tr><td colspan="8">
+tbody.innerHTML = `<tr><td colspan="9">
     <div class="empty-state" style="padding:2.5rem;">
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="1.2" style="opacity:0.2;margin:0 auto 0.75rem;display:block;">
@@ -526,6 +868,8 @@ tbody.innerHTML = `<tr><td colspan="8">
         ${j.status||'—'}
     </span>
 </td>
+
+                <td>${j.deadline ? formatDate(j.deadline) : '—'}</td>
                     <td>${j.proposalCount||0}</td>
                     <td style="display:flex;gap:0.35rem;">
                         ${j.status === 'OPEN'
@@ -537,7 +881,7 @@ tbody.innerHTML = `<tr><td colspan="8">
 
             renderPagination('jobs-pagination', page, jobTotalPages, loadJobs);
         } catch(e) {
-            tbody.innerHTML = `<tr><td colspan="8" class="empty-state">Failed to load jobs.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" class="empty-state">Failed to load jobs.</td></tr>`;
         }
     }
 

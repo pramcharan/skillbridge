@@ -42,6 +42,8 @@ public class ChatMessage {
     // File attachment URL (Cloudinary)
     private String fileUrl;
     private String fileName;
+    private String fileType;     // image/png, application/pdf etc
+    private boolean isFile = false;
 
     @Column(nullable = false)
     private Boolean isPinned = false;
