@@ -3,8 +3,12 @@ package com.skillbridge.service;
 import com.skillbridge.dto.request.UpdateProfileRequest;
 import com.skillbridge.dto.response.UserProfileResponse;
 import com.skillbridge.entity.User;
+import com.skillbridge.entity.enums.ProjectStatus;
+import com.skillbridge.entity.enums.Role;
+import com.skillbridge.exception.BadRequestException;
 import com.skillbridge.exception.ResourceNotFoundException;
 import com.skillbridge.repository.JobRepository;
+import com.skillbridge.repository.ProjectRepository;
 import com.skillbridge.repository.ProposalRepository;
 import com.skillbridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,6 +34,7 @@ public class ProfileService {
     private final FileUploadService fileUploadService;
     private final JobRepository jobRepository;
     private final ProposalRepository proposalRepository;
+    private final ProjectRepository projectRepository;
 
     // ── GET my profile ────────────────────────────────────────────────
     public UserProfileResponse getMyProfile(String email) {
@@ -91,6 +97,98 @@ public class ProfileService {
         user.setEmail("deleted_" + user.getId() + "@removed.com");
         userRepository.save(user);
         log.info("Account deactivated: userId={}", user.getId());
+    }
+
+    // ── Soft account deletion ───────────────────────────────────────────────────
+    @Transactional
+    public void softDeleteAccount(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        long activeProjects =
+                projectRepository.countByClientIdAndStatus(
+                        user.getId(), ProjectStatus.ACTIVE) +
+                        projectRepository.countByFreelancerIdAndStatus(
+                                user.getId(), ProjectStatus.ACTIVE);
+
+        if (activeProjects > 0)
+            throw new BadRequestException(
+                    "Cannot delete account with active projects. " +
+                            "Please complete or cancel all active projects first.");
+
+        user.setIsActive(false);
+        user.setEmail("deleted_" + user.getId() + "@deleted.skillbridge");
+        user.setName("Deleted User");
+        user.setAvatarUrl(null);
+        user.setBio(null);
+        user.setSkills(null);
+        user.setLocation(null);
+
+        userRepository.save(user);
+        log.info("Account soft-deleted for user id={}", user.getId());
+    }
+
+    // ── Link OAuth provider ─────────────────────────────────────────────────────
+    @Transactional
+    public Map<String, String> linkOAuthProvider(String email,
+                                                 String provider,
+                                                 String providerEmail) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        userRepository.findByEmail(providerEmail).ifPresent(existing -> {
+            if (!existing.getId().equals(user.getId())) {
+                throw new BadRequestException(
+                        "This " + provider + " account is already " +
+                                "linked to a different SkillBridge account.");
+            }
+        });
+
+        switch (provider.toLowerCase()) {
+            case "github" -> user.setLinkedGithub(providerEmail);
+            case "google" -> user.setLinkedGoogle(providerEmail);
+            default -> throw new BadRequestException("Unknown provider: " + provider);
+        }
+
+        userRepository.save(user);
+        return Map.of("message", provider + " account linked successfully.");
+    }
+
+    // ── Unlink OAuth provider ───────────────────────────────────────────────────
+    @Transactional
+    public Map<String, String> unlinkOAuthProvider(String email, String provider) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.getPasswordHash() == null || user.getPasswordHash().isBlank())
+            throw new BadRequestException(
+                    "Set a password before unlinking OAuth providers.");
+
+        switch (provider.toLowerCase()) {
+            case "github" -> user.setLinkedGithub(null);
+            case "google" -> user.setLinkedGoogle(null);
+            default -> throw new BadRequestException("Unknown provider: " + provider);
+        }
+
+        userRepository.save(user);
+        return Map.of("message", provider + " account unlinked successfully.");
+    }
+
+
+    // ── Update role (OAuth new user flow) ──────────────────────────────────────
+    @Transactional
+    public Map<String, String> updateRole(String email, String roleName) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        try {
+            user.setRole(Role.valueOf(roleName.toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid role: " + roleName);
+        }
+
+        userRepository.save(user);
+        return Map.of("message", "Role updated successfully.");
     }
 
     // ── HELPERS ───────────────────────────────────────────────────────

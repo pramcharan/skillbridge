@@ -56,7 +56,8 @@ public class SecurityConfig {
                                 "/community.html",
                                 "/notifications.html",
                                 "/portfolio.html",
-                                "/forgot-password.html"
+                                "/forgot-password.html",
+                                "/disputes.html"
                         ).permitAll()
 
                         // ── Static assets ─────────────────────────────────────────────

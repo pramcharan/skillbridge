@@ -244,6 +244,15 @@ tr:hover td:first-child { border-left:2px solid var(--teal); padding-left:calc(1
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             Analytics
         </button>
+        <button class="tab-btn" onclick="switchTab('disputes')" id="tab-btn-disputes">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Disputes
+        </button>
     </div>
 
     <!-- Stats Tab -->
@@ -296,6 +305,19 @@ tr:hover td:first-child { border-left:2px solid var(--teal); padding-left:calc(1
             </table>
         </div>
         <div class="pagination" id="jobs-pagination"></div>
+    </div>
+
+    <div id="tab-disputes" class="tab-panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;
+                margin-bottom:1.25rem;">
+            <h3 style="font-family:'Syne',sans-serif;font-size:1rem;">
+                All Disputes
+            </h3>
+            <span id="disputes-open-count"
+                  style="font-size:0.82rem;color:var(--rose);font-weight:600;">
+        </span>
+        </div>
+        <div id="admin-disputes-list"></div>
     </div>
 
     <!-- Analytics Tab Panel -->
@@ -552,11 +574,11 @@ async function loadCharts() {
             document.getElementById('ai-accepted-score').textContent = aiData.acceptedAvgScore ?? '—';
             document.getElementById('ai-rejected-score').textContent = aiData.rejectedAvgScore ?? '—';
 
-            const diff = (aiData.acceptedAvgScore && aiData.rejectedAvgScore)
-                ? (aiData.acceptedAvgScore - aiData.rejectedAvgScore).toFixed(1)
-                : null;
-            document.getElementById('ai-score-diff').textContent =
-                diff !== null ? '+' + diff : '—';
+            const diff = (aiData.acceptedAvgScore != null && aiData.rejectedAvgScore != null)
+    ? (aiData.acceptedAvgScore - aiData.rejectedAvgScore).toFixed(1)
+    : null;
+document.getElementById('ai-score-diff').textContent =
+    diff !== null ? (diff >= 0 ? '+' + diff : String(diff)) : '—';
 
             new Chart(document.getElementById('chartScoreDistribution'), {
                 type: 'bar',
@@ -607,6 +629,70 @@ async function loadCharts() {
     }
 }
 
+// 1. FIX: use data.content, add disputesLoaded guard, fix XSS, fix sign
+let disputesLoaded = false;
+
+async function loadAdminDisputes() {
+    if (disputesLoaded) return;
+    disputesLoaded = true;
+
+    const list = document.getElementById('admin-disputes-list');
+    list.innerHTML = `<div class="skeleton"></div>`;
+    try {
+        const res  = await api.get('/api/v1/disputes/admin/all?page=0&size=50');
+        if (!res.ok) throw new Error('Failed');
+        const page = await res.json();
+        const data = page.content || [];  // ← was: page directly
+
+        const openCount = data.filter(d =>
+            d.status === 'OPEN' || d.status === 'UNDER_REVIEW').length;
+        document.getElementById('disputes-open-count').textContent =
+            openCount + ' require attention';
+
+        if (data.length === 0) {
+            list.innerHTML = `<div style="text-align:center;padding:3rem;
+                color:var(--text3);">No disputes filed yet.</div>`;
+            return;
+        }
+
+        const statusColor = {
+            OPEN: 'var(--rose)', UNDER_REVIEW: 'var(--gold)',
+            RESOLVED: 'var(--teal)', CLOSED: 'var(--text3)'
+        };
+
+        list.innerHTML = data.map(d => `
+            <div style="background:var(--card2);border:1px solid var(--border2);
+                        border-radius:12px;padding:1.1rem;margin-bottom:0.75rem;
+                        cursor:pointer;transition:border-color 0.2s;"
+                 onclick="window.open('/disputes.html?id=${d.id}','_blank')"
+                 onmouseover="this.style.borderColor='var(--teal)'"
+                 onmouseout="this.style.borderColor='var(--border2)'">
+                <div style="display:flex;align-items:flex-start;
+                            justify-content:space-between;gap:0.75rem;">
+                    <div>
+                        <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.2rem;">
+                            ${escHtml(d.reason)}
+                        </div>
+                        <div style="font-size:0.78rem;color:var(--text2);">
+                            Project: ${escHtml(d.projectTitle)} ·
+                            ${escHtml(d.reporterName)} vs ${escHtml(d.respondentName)}
+                        </div>
+                    </div>
+                    <span style="font-size:0.72rem;font-weight:700;
+                                 color:${statusColor[d.status] || 'var(--text2)'};
+                                 white-space:nowrap;">
+                        ${d.status.replace('_',' ')}
+                    </span>
+                </div>
+            </div>
+        `).join('');
+    } catch(e) {
+        disputesLoaded = false;  // allow retry
+        list.innerHTML = `<div class="empty-state">Failed to load disputes.</div>`;
+    }
+}
+
+
     // ── Tabs ───────────────────────────────────────────────────────────────
     function switchTab(name) {
     // Hide all panels
@@ -631,6 +717,7 @@ async function loadCharts() {
     if (name === 'users')     loadUsers(0);
     if (name === 'jobs')      loadJobs(0);
     if (name === 'analytics') loadCharts();
+    if (name === 'disputes')  loadAdminDisputes();
 }
 
 let statsLoaded = false;

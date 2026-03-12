@@ -52,4 +52,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     """)
     List<User> findTopFreelancersForSpotlight(Pageable pageable);
 
+    Optional<User> findFirstByRole(Role role);
 }

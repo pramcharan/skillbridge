@@ -82,4 +82,41 @@ public class ProfileController {
         return ResponseEntity.ok(
                 Map.of("message", "Account deactivated successfully."));
     }
+
+
+    // DELETE /api/v1/profile/me
+    @DeleteMapping("/me")
+    public ResponseEntity<Map<String, String>> deleteAccount(
+            @AuthenticationPrincipal String email) {
+        profileService.softDeleteAccount(email);
+        return ResponseEntity.ok(
+                Map.of("message", "Your account has been deleted successfully."));
+    }
+
+    // POST /api/v1/profile/me/link/{provider}?providerEmail=...
+    @PostMapping("/me/link/{provider}")
+    public ResponseEntity<Map<String, String>> linkProvider(
+            @PathVariable String provider,
+            @RequestParam String providerEmail,
+            @AuthenticationPrincipal String email) {
+        return ResponseEntity.ok(
+                profileService.linkOAuthProvider(email, provider, providerEmail));
+    }
+
+    // DELETE /api/v1/profile/me/link/{provider}
+    @DeleteMapping("/me/link/{provider}")
+    public ResponseEntity<Map<String, String>> unlinkProvider(
+            @PathVariable String provider,
+            @AuthenticationPrincipal String email) {
+        return ResponseEntity.ok(
+                profileService.unlinkOAuthProvider(email, provider));
+    }
+
+    // PUT /api/v1/profile/me/role  (OAuth new user role selection)
+    @PutMapping("/me/role")
+    public ResponseEntity<Map<String, String>> updateRole(
+            @RequestParam String role,
+            @AuthenticationPrincipal String email) {
+        return ResponseEntity.ok(profileService.updateRole(email, role));
+    }
 }

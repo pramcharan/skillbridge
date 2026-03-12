@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">    <script>
-        (function() {
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
+    <script>
+        (function () {
           var token = localStorage.getItem('sb_jwt');
           var role  = localStorage.getItem('sb_role');
           if (token && role) {
@@ -17,426 +18,793 @@
     <title>Create Account — SkillBridge</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         :root {
           --bg: #060D1A; --bg2: #0B1425; --card: #0D1829; --card2: #111f38;
           --teal: #00C9A7; --teal-dk: #00A389; --gold: #F5A623; --purple: #7B61FF;
           --rose: #FF6B8A; --text: #E8F0FE; --text2: #8BA3C7; --text3: #4A6080;
           --border: #1A2D4A; --border2: #243650; --radius: 12px;
         }
+
         body {
-          font-family: 'DM Sans', sans-serif; background: var(--bg);
-          color: var(--text); min-height: 100vh; display: flex; flex-direction: column;
+          font-family: 'DM Sans', sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
         }
+
+        /* ── Background ── */
         .page-bg {
           position: fixed; inset: 0; z-index: 0; pointer-events: none;
           background:
-            radial-gradient(ellipse 60% 50% at 80% 20%, rgba(123,97,255,0.06) 0%, transparent 60%),
-            radial-gradient(ellipse 50% 40% at 20% 80%, rgba(0,201,167,0.05) 0%, transparent 60%);
+            radial-gradient(ellipse 60% 50% at 80% 15%, rgba(123,97,255,0.07) 0%, transparent 60%),
+            radial-gradient(ellipse 50% 40% at 15% 85%, rgba(0,201,167,0.06) 0%, transparent 60%);
         }
+        /* subtle grid texture */
+        .page-bg::after {
+          content: '';
+          position: absolute; inset: 0;
+          background-image:
+            linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+          background-size: 40px 40px;
+        }
+
+        /* ── Nav ── */
         nav {
           position: relative; z-index: 10;
           display: flex; align-items: center; justify-content: space-between;
           padding: 0 5%; height: 64px;
           border-bottom: 1px solid var(--border);
-          background: rgba(6,13,26,0.8); backdrop-filter: blur(16px);
+          background: rgba(6,13,26,0.85); backdrop-filter: blur(16px);
         }
         .nav-logo {
           font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.35rem;
           background: linear-gradient(135deg, var(--teal), var(--gold));
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          text-decoration: none;
         }
-        .nav-link { font-size: 0.88rem; color: var(--text2); }
-        .nav-link a { color: inherit; text-decoration: none; transition: color 0.2s; }
-        .nav-link a:hover { color: var(--teal); }
+        .nav-cta { font-size: 0.85rem; color: var(--text2); }
+        .nav-cta a {
+          color: var(--teal); font-weight: 600; text-decoration: none;
+          transition: opacity 0.2s;
+        }
+        .nav-cta a:hover { opacity: 0.8; }
+
+        /* ── Main ── */
         main {
           position: relative; z-index: 1; flex: 1;
           display: flex; align-items: center; justify-content: center;
           padding: 2.5rem 1.5rem;
         }
+
+        /* ── Card ── */
         .register-card {
-          width: 100%; max-width: 480px; background: var(--card);
-          border: 1px solid var(--border2); border-radius: 20px;
-          padding: 2.5rem; box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+          width: 100%; max-width: 488px;
+          background: var(--card);
+          border: 1px solid var(--border2);
+          border-top: 2px solid rgba(0,201,167,0.25);
+          border-radius: 20px;
+          padding: 2.5rem;
+          box-shadow: 0 24px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,201,167,0.04);
+          animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
+        @keyframes cardIn {
+          from { opacity: 0; transform: translateY(24px) scale(0.975); }
+          to   { opacity: 1; transform: none; }
+        }
+
+        /* ── Card Header ── */
+        .card-header { margin-bottom: 1.75rem; }
         .card-title {
           font-family: 'Syne', sans-serif; font-weight: 800;
-          font-size: 1.6rem; letter-spacing: -0.02em;
-          color: var(--text); margin-bottom: 0.35rem;
+          font-size: 1.65rem; letter-spacing: -0.03em;
+          background: linear-gradient(135deg, #E8F0FE 0%, #8BA3C7 100%);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          margin-bottom: 0.35rem;
         }
-        .card-sub { font-size: 0.9rem; color: var(--text2); margin-bottom: 1.5rem; }
+        .card-sub { font-size: 0.88rem; color: var(--text2); margin-bottom: 1rem; }
 
-        /* Role selector */
-        .role-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; }
+        /* social proof pill */
+        .trust-pill {
+          display: inline-flex; align-items: center; gap: 0.45rem;
+          background: rgba(0,201,167,0.08); border: 1px solid rgba(0,201,167,0.18);
+          border-radius: 99px; padding: 0.3rem 0.75rem;
+          font-size: 0.75rem; color: var(--teal); font-weight: 600;
+        }
+        .trust-pill .dot {
+          width: 6px; height: 6px; border-radius: 50%;
+          background: var(--teal);
+          box-shadow: 0 0 6px var(--teal);
+          animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+          0%,100% { opacity: 1; }
+          50%      { opacity: 0.4; }
+        }
+
+        /* ── Role Selector ── */
+        .role-selector {
+          display: grid; grid-template-columns: 1fr 1fr;
+          gap: 0.75rem; margin-bottom: 1.5rem;
+        }
         .role-option { display: none; }
         .role-label {
-          display: flex; flex-direction: column; align-items: center; justify-content: center;
-          gap: 0.4rem; padding: 1rem; border-radius: 12px; cursor: pointer;
-          border: 1.5px solid var(--border2); background: var(--bg2);
-          transition: all 0.2s; text-align: center;
+          display: flex; flex-direction: column; align-items: center;
+          gap: 0.35rem; padding: 1rem 0.75rem;
+          border-radius: 12px; cursor: pointer;
+          border: 1.5px solid var(--border2);
+          background: var(--bg2);
+          transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+          text-align: center;
+        }
+        .role-label:hover {
+          border-color: rgba(0,201,167,0.35);
+          background: rgba(0,201,167,0.04);
         }
         .role-icon { color: var(--text3); transition: color 0.2s; }
-        .role-label .role-name { font-size: 0.88rem; font-weight: 700; color: var(--text); }
-        .role-label .role-desc { font-size: 0.75rem; color: var(--text3); line-height: 1.3; }
+        .role-label .role-name { font-size: 0.875rem; font-weight: 700; color: var(--text); }
+        .role-label .role-desc { font-size: 0.73rem; color: var(--text3); line-height: 1.3; }
         .role-option:checked + .role-label {
-          border-color: var(--teal); background: rgba(0,201,167,0.08);
-          box-shadow: 0 0 0 3px rgba(0,201,167,0.1);
+          border-color: var(--teal);
+          background: rgba(0,201,167,0.08);
+          box-shadow: 0 0 0 3px rgba(0,201,167,0.12), 0 4px 16px rgba(0,201,167,0.1);
         }
-.role-option:checked + .role-label .role-icon { color: var(--teal); }
-        /* Form elements */
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-        .form-group { margin-bottom: 1rem; }
+        .role-option:checked + .role-label .role-icon { color: var(--teal); }
+        .role-option:checked + .role-label .role-name { color: var(--teal); }
+
+        /* ── Form ── */
+        .form-group { margin-bottom: 1rem; position: relative; }
         .form-group label {
-          display: block; font-size: 0.85rem; font-weight: 600;
-          color: var(--text2); margin-bottom: 0.4rem;
+          display: flex; align-items: center; gap: 0.4rem;
+          font-size: 0.82rem; font-weight: 600;
+          color: var(--text2); margin-bottom: 0.45rem;
+        }
+        .input-wrap { position: relative; }
+        .input-icon {
+          position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%);
+          color: var(--text3); pointer-events: none; transition: color 0.2s;
         }
         .form-control {
-          width: 100%; padding: 0.7rem 1rem;
-          background: var(--bg2); border: 1.5px solid var(--border2);
-          border-radius: 10px; font-size: 0.95rem; color: var(--text);
-          outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+          width: 100%;
+          padding: 0.72rem 1rem 0.72rem 2.5rem;
+          background: var(--bg2);
+          border: 1.5px solid var(--border2);
+          border-radius: 10px;
+          font-size: 0.93rem; color: var(--text);
+          outline: none;
+          transition: border-color 0.2s, box-shadow 0.2s, padding-left 0.15s;
           font-family: 'DM Sans', sans-serif;
         }
         .form-control::placeholder { color: var(--text3); }
-        .form-control:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,201,167,0.1); }
+        .form-control:focus {
+          border-color: var(--teal);
+          border-left-width: 3px;
+          padding-left: calc(2.5rem - 1px);
+          box-shadow: 0 0 0 3px rgba(0,201,167,0.1);
+        }
+        .form-control:focus ~ .input-icon,
+        .input-wrap:focus-within .input-icon { color: var(--teal); }
         .form-control.error { border-color: var(--rose); }
 
-        /* Password strength */
-        .pwd-strength { height: 3px; border-radius: 99px; margin-top: 0.4rem; background: var(--border2); overflow: hidden; }
-        .pwd-strength-fill { height: 100%; border-radius: 99px; transition: width 0.3s, background 0.3s; width: 0; }
-        .pwd-hint { font-size: 0.75rem; margin-top: 0.3rem; }
+        /* password toggle */
+        .pwd-toggle {
+          position: absolute; right: 0.85rem; top: 50%; transform: translateY(-50%);
+          background: none; border: none; cursor: pointer;
+          color: var(--text3); padding: 0; transition: color 0.2s;
+          display: flex; align-items: center;
+        }
+        .pwd-toggle:hover { color: var(--text2); }
+        .form-control.has-toggle { padding-right: 2.75rem; }
 
-        /* Buttons */
+        /* password strength */
+        .pwd-strength {
+          height: 3px; border-radius: 99px;
+          margin-top: 0.45rem; background: var(--border2); overflow: hidden;
+        }
+        .pwd-strength-fill {
+          height: 100%; border-radius: 99px;
+          transition: width 0.35s ease, background 0.35s ease;
+          width: 0%;
+        }
+        .pwd-hint {
+          font-size: 0.73rem; margin-top: 0.3rem;
+          min-height: 1em; transition: color 0.2s;
+        }
+
+        /* ── Terms ── */
+        .terms-row {
+          display: flex; align-items: flex-start; gap: 0.6rem;
+          margin-bottom: 1rem; margin-top: 0.25rem;
+        }
+        .terms-check {
+          width: 16px; height: 16px; min-width: 16px; margin-top: 2px;
+          accent-color: var(--teal); cursor: pointer;
+        }
+        .terms-text {
+          font-size: 0.78rem; color: var(--text3); line-height: 1.5;
+        }
+        .terms-text a { color: var(--text2); text-decoration: underline; text-underline-offset: 2px; }
+        .terms-text a:hover { color: var(--teal); }
+
+        /* ── Buttons ── */
         .btn-register {
-          width: 100%; padding: 0.85rem; margin-top: 0.5rem;
+          width: 100%; padding: 0.88rem;
           background: linear-gradient(135deg, var(--teal), var(--teal-dk));
           color: #000; border: none; border-radius: 10px;
-          font-size: 1rem; font-weight: 700; cursor: pointer;
-          transition: all 0.25s; font-family: 'DM Sans', sans-serif;
+          font-size: 0.97rem; font-weight: 700; cursor: pointer;
+          transition: transform 0.2s, box-shadow 0.2s;
+          font-family: 'DM Sans', sans-serif;
           box-shadow: 0 4px 20px rgba(0,201,167,0.3);
           display: flex; align-items: center; justify-content: center; gap: 0.5rem;
         }
-        .btn-register:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(0,201,167,0.4); }
-        .btn-register:disabled { opacity: 0.65; transform: none; cursor: not-allowed; }
+        .btn-register:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 8px 32px rgba(0,201,167,0.45);
+        }
+        .btn-register:active:not(:disabled) { transform: translateY(0); }
+        .btn-register:disabled { opacity: 0.55; cursor: not-allowed; }
         .spinner {
           width: 16px; height: 16px; border-radius: 50%;
-          border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff;
-          animation: spin 0.7s linear infinite; display: none;
+          border: 2px solid rgba(0,0,0,0.25); border-top-color: #000;
+          animation: spin 0.7s linear infinite; display: none; flex-shrink: 0;
         }
         .btn-register.loading .spinner { display: block; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .divider { display: flex; align-items: center; gap: 1rem; margin: 1.25rem 0; }
-        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border2); }
-        .divider span { font-size: 0.8rem; color: var(--text3); }
+        /* ── Divider ── */
+        .divider {
+          display: flex; align-items: center; gap: 1rem;
+          margin: 1.25rem 0;
+        }
+        .divider::before, .divider::after {
+          content: ''; flex: 1; height: 1px; background: var(--border2);
+        }
+        .divider span { font-size: 0.78rem; color: var(--text3); white-space: nowrap; }
 
+        /* ── OAuth ── */
         .oauth-btns { display: flex; gap: 0.65rem; }
         .btn-oauth {
-          flex: 1; padding: 0.72rem; background: var(--bg2);
-          border: 1.5px solid var(--border2); border-radius: 10px;
+          flex: 1; padding: 0.72rem 0.5rem;
+          background: var(--bg2);
+          border: 1.5px solid var(--border2);
+          border-radius: 10px;
           font-size: 0.85rem; font-weight: 600; color: var(--text2);
-          cursor: pointer; transition: all 0.2s;
+          cursor: pointer; transition: border-color 0.2s, color 0.2s, background 0.2s;
           display: flex; align-items: center; justify-content: center; gap: 0.5rem;
           font-family: 'DM Sans', sans-serif; text-decoration: none;
         }
-        .btn-oauth:hover { border-color: var(--teal); color: var(--text); }
+        .btn-oauth:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+        .btn-oauth.google:hover  { border-color: #4285F4; }
+        .btn-oauth.github:hover  { border-color: #8b949e; }
 
-        .alert { padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.88rem; font-weight: 500; margin-bottom: 1rem; }
-        .alert-error   { background: rgba(255,107,138,0.1); color: var(--rose); border: 1px solid rgba(255,107,138,0.2); }
-        .alert-success { background: rgba(0,201,167,0.1);   color: var(--teal); border: 1px solid rgba(0,201,167,0.2); }
+        /* ── Alerts ── */
+        .alert {
+          padding: 0.75rem 1rem; border-radius: 10px;
+          font-size: 0.85rem; font-weight: 500;
+          margin-bottom: 1rem;
+          animation: alertIn 0.25s ease both;
+        }
+        @keyframes alertIn {
+          from { opacity: 0; transform: translateY(-4px); }
+          to   { opacity: 1; transform: none; }
+        }
+        .alert-error   { background: rgba(255,107,138,0.1); color: var(--rose);  border: 1px solid rgba(255,107,138,0.2); }
+        .alert-success { background: rgba(0,201,167,0.1);   color: var(--teal);  border: 1px solid rgba(0,201,167,0.25); }
 
-        .card-footer-link { text-align: center; margin-top: 1.25rem; font-size: 0.88rem; color: var(--text3); }
-        .card-footer-link a { color: var(--teal); font-weight: 700; text-decoration: none; }
+        /* ── Footer inside card ── */
+        .card-footer-link {
+          text-align: center; margin-top: 1.25rem;
+          font-size: 0.85rem; color: var(--text3);
+        }
+        .card-footer-link a {
+          color: var(--teal); font-weight: 700;
+          text-decoration: none; transition: opacity 0.2s;
+        }
+        .card-footer-link a:hover { opacity: 0.8; text-decoration: underline; }
 
+        /* ── Page footer ── */
         .page-footer {
-          position: relative; z-index: 1; text-align: center;
-          padding: 1.25rem; border-top: 1px solid var(--border);
-          font-size: 0.8rem; color: var(--text3);
+          position: relative; z-index: 1;
+          text-align: center; padding: 1.25rem;
+          border-top: 1px solid var(--border);
+          font-size: 0.78rem; color: var(--text3);
         }
         .page-footer a { color: var(--text3); text-decoration: none; }
         .page-footer a:hover { color: var(--teal); }
 
-        /* Card entrance animation */
-.register-card {
-    animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-    border-top: 2px solid rgba(0,201,167,0.2);
-}
-@keyframes cardIn {
-    from { opacity: 0; transform: translateY(20px) scale(0.98); }
-    to   { opacity: 1; transform: none; }
-}
+        /* ═══════════════════════════════════════════════
+           OAuth Role Selection Section
+        ═══════════════════════════════════════════════ */
+        .oauth-role-section { display: none; }
+        .oauth-welcome-block {
+          text-align: center; margin-bottom: 2rem;
+        }
+        .oauth-avatar {
+          width: 52px; height: 52px; border-radius: 50%;
+          background: linear-gradient(135deg, rgba(0,201,167,0.2), rgba(123,97,255,0.2));
+          border: 2px solid rgba(0,201,167,0.25);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 1.5rem; margin: 0 auto 0.85rem;
+        }
+        .oauth-title {
+          font-family: 'Syne', sans-serif; font-weight: 800;
+          font-size: 1.3rem; letter-spacing: -0.02em;
+          color: var(--text); margin-bottom: 0.35rem;
+        }
+        .oauth-subtitle { font-size: 0.87rem; color: var(--text2); }
 
-/* Title gradient */
-.card-title {
-    background: linear-gradient(135deg, var(--text), var(--text2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+        /* Step indicator */
+        .step-indicator {
+          display: flex; align-items: center; justify-content: center;
+          gap: 0.5rem; margin-bottom: 1.75rem;
+        }
+        .step {
+          display: flex; align-items: center; gap: 0.4rem;
+          font-size: 0.75rem; font-weight: 600;
+        }
+        .step-num {
+          width: 20px; height: 20px; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 0.7rem; font-weight: 700;
+        }
+        .step.done .step-num  { background: var(--teal); color: #000; }
+        .step.active .step-num { background: var(--teal); color: #000; box-shadow: 0 0 0 3px rgba(0,201,167,0.2); }
+        .step.done .step-label  { color: var(--teal); }
+        .step.active .step-label { color: var(--text); }
+        .step-sep { width: 28px; height: 1px; background: var(--border2); }
 
-/* Role label hover */
-.role-label:hover {
-    border-color: rgba(0,201,167,0.3);
-    background: rgba(0,201,167,0.04);
-}
+        .oauth-role-grid {
+          display: grid; grid-template-columns: 1fr 1fr;
+          gap: 0.85rem; margin-bottom: 1.5rem;
+        }
+        .oauth-role-card {
+          padding: 1.25rem 1rem; border-radius: 14px;
+          background: var(--card2);
+          border: 2px solid var(--border2);
+          cursor: pointer; text-align: center;
+          transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+        }
+        .oauth-role-card:hover {
+          border-color: rgba(0,201,167,0.35);
+          background: rgba(0,201,167,0.04);
+        }
+        .oauth-role-card.selected {
+          border-color: var(--teal);
+          background: rgba(0,201,167,0.08);
+          box-shadow: 0 0 0 3px rgba(0,201,167,0.12);
+        }
+        .oauth-role-card.selected .oauth-role-label { color: var(--teal); }
+        .oauth-role-emoji { font-size: 1.75rem; margin-bottom: 0.6rem; }
+        .oauth-role-label {
+          font-weight: 700; font-size: 0.9rem;
+          color: var(--text); margin-bottom: 0.25rem;
+          transition: color 0.2s;
+        }
+        .oauth-role-desc { font-size: 0.73rem; color: var(--text3); line-height: 1.35; }
 
-/* Role label checked glow */
-.role-option:checked + .role-label {
-    box-shadow: 0 0 0 3px rgba(0,201,167,0.1), 0 4px 16px rgba(0,201,167,0.1);
-}
-
-/* Input focus left accent */
-.form-control:focus {
-    border-left: 3px solid var(--teal);
-    padding-left: calc(1rem - 2px);
-}
-
-/* Register button glow pulse */
-@keyframes glow-pulse {
-    0%,100% { box-shadow: 0 4px 20px rgba(0,201,167,0.3); }
-    50%      { box-shadow: 0 4px 32px rgba(0,201,167,0.55); }
-}
-.btn-register:not(:disabled) {
-    animation: glow-pulse 2.5s ease-in-out infinite;
-}
-
-/* OAuth button Google hover */
-.btn-oauth:first-child:hover { border-color: #4285F4; }
-
-/* OAuth button GitHub hover */
-.btn-oauth:last-child:hover { border-color: #6e7681; }
-
-/* Password strength bar rounded */
-.pwd-strength { margin-top: 0.5rem; }
-
-/* Alert slide in */
-.alert {
-    animation: alertIn 0.25s ease both;
-}
-@keyframes alertIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: none; }
-}
-
-/* Footer links */
-.card-footer-link a:hover {
-    text-decoration: underline;
-}
-
-/* Nav link arrow on sign in */
-.nav-link a::after {
-    content: '';
-    display: inline-block;
-    width: 5px; height: 5px;
-    border-right: 1.5px solid currentColor;
-    border-top: 1.5px solid currentColor;
-    transform: rotate(45deg) translateY(-1px);
-    margin-left: 4px;
-}
-
-/* Remove arrow from nav-link in HTML and card-footer-link */
-/* (the → arrows are text — replace with CSS) */
+        .btn-oauth-continue {
+          width: 100%; padding: 0.88rem;
+          border-radius: 12px; border: none;
+          background: linear-gradient(135deg, var(--teal), var(--teal-dk));
+          color: #000; font-size: 0.95rem; font-weight: 700;
+          cursor: pointer; font-family: 'DM Sans', sans-serif;
+          transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+          display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        .btn-oauth-continue:disabled {
+          opacity: 0.35; cursor: not-allowed;
+        }
+        .btn-oauth-continue:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 8px 28px rgba(0,201,167,0.4);
+        }
     </style>
 </head>
 <body>
 <div class="page-bg"></div>
+
 <nav>
     <a href="/" class="nav-logo">SkillBridge</a>
-    <div class="nav-link">Already have an account? <a href="/login.html">Sign in</a></div>
+    <div class="nav-cta">Already have an account? <a href="/login.html">Sign in</a></div>
 </nav>
 
 <main>
     <div class="register-card">
-        <h1 class="card-title">Create Account</h1>
-        <p class="card-sub">Join SkillBridge free — no credit card required</p>
 
-        <div id="alert-area"></div>
-
-        <!-- Role selection -->
-        <div class="role-selector">
-            <input type="radio" name="role" id="role-freelancer"
-                   class="role-option" value="FREELANCER" checked>
-            <label for="role-freelancer" class="role-label">
-                <span class="role-icon">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="2" y="7" width="20" height="14" rx="2"/>
-        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-    </svg>
-</span>
-                <span class="role-name">I'm a Freelancer</span>
-                <span class="role-desc">I want to find work and clients</span>
-            </label>
-
-            <input type="radio" name="role" id="role-client"
-                   class="role-option" value="CLIENT">
-            <label for="role-client" class="role-label">
-                <span class="role-icon">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-    </svg>
-</span>
-                <span class="role-name">I'm a Client</span>
-                <span class="role-desc">I want to hire talent</span>
-            </label>
-        </div>
-
-        <!-- Name -->
-        <div class="form-group">
-            <label for="name">Full Name</label>
-            <input type="text" id="name" class="form-control"
-                   placeholder="Arjun Sharma" autocomplete="name">
-        </div>
-
-        <!-- Email -->
-        <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" class="form-control"
-                   placeholder="you@example.com" autocomplete="email">
-        </div>
-
-        <!-- Password -->
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" class="form-control"
-                   placeholder="Min. 8 characters" autocomplete="new-password">
-            <div class="pwd-strength">
-                <div class="pwd-strength-fill" id="pwd-bar"></div>
+        <!-- ── Normal registration ─────────────────────────────── -->
+        <div id="register-form">
+            <div class="card-header">
+                <h1 class="card-title">Create Account</h1>
+                <p class="card-sub">Join SkillBridge free — no credit card required</p>
+                <div class="trust-pill">
+                    <span class="dot"></span>
+                    12,400+ professionals on the platform
+                </div>
             </div>
-            <div class="pwd-hint" id="pwd-hint"></div>
-        </div>
 
-        <button class="btn-register" id="register-btn">
-            <div class="spinner"></div>
-            <span class="btn-text">Create Account</span>
-        </button>
+            <div id="alert-area"></div>
 
-        <div class="divider"><span>or sign up with</span></div>
+            <!-- Role selection -->
+            <div class="role-selector">
+                <input type="radio" name="role" id="radio-freelancer" class="role-option" value="FREELANCER" checked>
+                <label for="radio-freelancer" class="role-label">
+          <span class="role-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2"/>
+              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+              <line x1="12" y1="12" x2="12" y2="16"/>
+              <line x1="10" y1="14" x2="14" y2="14"/>
+            </svg>
+          </span>
+                    <span class="role-name">Freelancer</span>
+                    <span class="role-desc">Find work &amp; grow your career</span>
+                </label>
 
-        <div class="oauth-btns">
-            <a href="/oauth2/authorization/google" class="btn-oauth">
-                <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
-                    <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
-                    <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
-                    <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
-                    <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+                <input type="radio" name="role" id="radio-client" class="role-option" value="CLIENT">
+                <label for="radio-client" class="role-label">
+          <span class="role-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </span>
+                    <span class="role-name">Client</span>
+                    <span class="role-desc">Hire top talent fast</span>
+                </label>
+            </div>
+
+            <!-- Full Name -->
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <div class="input-wrap">
+          <span class="input-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+                    <input type="text" id="name" class="form-control"
+                           placeholder="Arjun Sharma" autocomplete="name">
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-wrap">
+          <span class="input-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </span>
+                    <input type="email" id="email" class="form-control"
+                           placeholder="you@example.com" autocomplete="email">
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+          <span class="input-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </span>
+                    <input type="password" id="password" class="form-control has-toggle"
+                           placeholder="Min. 8 characters" autocomplete="new-password">
+                    <button type="button" class="pwd-toggle" id="pwd-toggle" aria-label="Toggle password visibility" tabindex="-1">
+                        <!-- Eye icon (show) -->
+                        <svg id="eye-show" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        <!-- Eye-off icon (hide) — hidden initially -->
+                        <svg id="eye-hide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                            <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                            <line x1="1" y1="1" x2="23" y2="23"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="pwd-strength"><div class="pwd-strength-fill" id="pwd-bar"></div></div>
+                <div class="pwd-hint" id="pwd-hint"></div>
+            </div>
+
+            <!-- Terms -->
+            <div class="terms-row">
+                <input type="checkbox" id="terms-check" class="terms-check">
+                <label for="terms-check" class="terms-text">
+                    I agree to SkillBridge's <a href="/terms.html" target="_blank">Terms of Service</a>
+                    and <a href="/privacy.html" target="_blank">Privacy Policy</a>
+                </label>
+            </div>
+
+            <button class="btn-register" id="register-btn">
+                <div class="spinner"></div>
+                <span class="btn-text">Create Account</span>
+            </button>
+
+            <div class="divider"><span>or continue with</span></div>
+
+            <div class="oauth-btns">
+                <a href="/oauth2/authorization/google" class="btn-oauth google">
+                    <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+                        <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+                        <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+                        <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+                        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+                    </svg>
+                    Google
+                </a>
+                <a href="/oauth2/authorization/github" class="btn-oauth github">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+
+            <div class="card-footer-link">
+                Already have an account? <a href="/login.html">Sign in</a>
+            </div>
+        </div><!-- /#register-form -->
+
+
+        <!-- ── OAuth Role Selection ─────────────────────────────── -->
+        <div id="oauth-role-section" class="oauth-role-section">
+
+            <div class="step-indicator">
+                <div class="step done">
+                    <div class="step-num">
+                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="2,6 5,9 10,3"/>
+                        </svg>
+                    </div>
+                    <span class="step-label" style="color:var(--teal);font-size:0.75rem;font-weight:600;">Connected</span>
+                </div>
+                <div class="step-sep"></div>
+                <div class="step active">
+                    <div class="step-num" style="font-size:0.7rem;">2</div>
+                    <span class="step-label" style="font-size:0.75rem;font-weight:600;">Choose role</span>
+                </div>
+                <div class="step-sep"></div>
+                <div class="step">
+                    <div class="step-num" style="background:var(--border2);color:var(--text3);font-size:0.7rem;">3</div>
+                    <span class="step-label" style="color:var(--text3);font-size:0.75rem;font-weight:600;">Dashboard</span>
+                </div>
+            </div>
+
+            <div class="oauth-welcome-block">
+                <div class="oauth-avatar">👋</div>
+                <h2 class="oauth-title" id="oauth-welcome">Welcome to SkillBridge!</h2>
+                <p class="oauth-subtitle">One last step — how will you use SkillBridge?</p>
+            </div>
+
+            <div id="alert-area-oauth"></div>
+
+            <div class="oauth-role-grid">
+                <div id="oauth-card-freelancer" class="oauth-role-card" onclick="selectOAuthRole('FREELANCER')">
+                    <div class="oauth-role-emoji">💼</div>
+                    <div class="oauth-role-label">I'm a Freelancer</div>
+                    <div class="oauth-role-desc">Find work &amp; grow my career</div>
+                </div>
+                <div id="oauth-card-client" class="oauth-role-card" onclick="selectOAuthRole('CLIENT')">
+                    <div class="oauth-role-emoji">🏢</div>
+                    <div class="oauth-role-label">I'm a Client</div>
+                    <div class="oauth-role-desc">Hire top freelance talent</div>
+                </div>
+            </div>
+
+            <button id="oauth-continue-btn" class="btn-oauth-continue" onclick="continueOAuthSetup()" disabled>
+                <div class="spinner" id="oauth-spinner"></div>
+                <span id="oauth-btn-text">Continue to Dashboard</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="oauth-arrow">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12,5 19,12 12,19"/>
                 </svg>
-                Google
-            </a>
-            <a href="/oauth2/authorization/github" class="btn-oauth">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-                </svg>
-                GitHub
-            </a>
-        </div>
+            </button>
 
-        <div class="card-footer-link">
-            Already have an account? <a href="/login.html">Sign in</a>
-        </div>
-    </div>
+        </div><!-- /#oauth-role-section -->
+
+    </div><!-- /.register-card -->
 </main>
 
 <div class="page-footer">
-    <p>© 2026 SkillBridge &nbsp;·&nbsp; <a href="/privacy.html">Privacy Policy</a></p>
+    © 2026 SkillBridge &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a> &nbsp;·&nbsp;
+    <a href="/terms.html">Terms</a>
 </div>
 
 <script src="/js/utils.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script>
-    // ── Password strength indicator ──────────────────────────────────
+    // ── Password strength ────────────────────────────────────────────
     document.getElementById('password').addEventListener('input', function () {
-      const val = this.value;
+      const val  = this.value;
       const bar  = document.getElementById('pwd-bar');
       const hint = document.getElementById('pwd-hint');
+      if (!val) { bar.style.width = '0%'; hint.textContent = ''; return; }
+
       let strength = 0;
-      let label = '', color = '';
+      if (val.length >= 8)          strength++;
+      if (/[A-Z]/.test(val))        strength++;
+      if (/[0-9]/.test(val))        strength++;
+      if (/[^A-Za-z0-9]/.test(val)) strength++;
 
-      if (val.length >= 8)               strength++;
-      if (/[A-Z]/.test(val))             strength++;
-      if (/[0-9]/.test(val))             strength++;
-      if (/[^A-Za-z0-9]/.test(val))      strength++;
-
-      switch (strength) {
-        case 0: case 1:
-          label = 'Too weak'; color = '#FF6B8A'; bar.style.width = '25%'; break;
-        case 2:
-          label = 'Fair';     color = '#F5A623'; bar.style.width = '50%'; break;
-        case 3:
-          label = 'Good';     color = '#00C9A7'; bar.style.width = '75%'; break;
-        case 4:
-          label = 'Strong'; color = '#16a34a'; bar.style.width = '100%'; break;
-      }
-      bar.style.background = color;
-      hint.textContent  = val.length > 0 ? label : '';
-      hint.style.color  = color;
+      const levels = [
+        { label: 'Too weak', color: '#FF6B8A', width: '25%' },
+        { label: 'Too weak', color: '#FF6B8A', width: '25%' },
+        { label: 'Fair',     color: '#F5A623', width: '50%' },
+        { label: 'Good',     color: '#00C9A7', width: '75%' },
+        { label: 'Strong',   color: '#16a34a', width: '100%' },
+      ];
+      const l = levels[strength];
+      bar.style.width      = l.width;
+      bar.style.background = l.color;
+      hint.textContent     = l.label;
+      hint.style.color     = l.color;
     });
 
-    // ── Register form submit ──────────────────────────────────────────
+    // ── Password show/hide toggle ────────────────────────────────────
+    document.getElementById('pwd-toggle').addEventListener('click', function () {
+      const input = document.getElementById('password');
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      document.getElementById('eye-show').style.display = isHidden ? 'none'  : 'block';
+      document.getElementById('eye-hide').style.display = isHidden ? 'block' : 'none';
+    });
+
+    // ── Register submit ──────────────────────────────────────────────
     document.getElementById('register-btn').addEventListener('click', async () => {
-      const name     = document.getElementById('name').value.trim();
-      const email    = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const role     = document.querySelector('input[name="role"]:checked').value;
-      const btn      = document.getElementById('register-btn');
-      const alertEl  = document.getElementById('alert-area');
+      const name      = document.getElementById('name').value.trim();
+      const email     = document.getElementById('email').value.trim();
+      const password  = document.getElementById('password').value;
+      const role      = document.querySelector('input[name="role"]:checked').value;
+      const agreed    = document.getElementById('terms-check').checked;
+      const btn       = document.getElementById('register-btn');
+      const alertEl   = document.getElementById('alert-area');
 
       alertEl.innerHTML = '';
 
-      // Client-side validation
-      if (!name)               return alertEl.innerHTML = '<div class="alert alert-error">Please enter your name.</div>';
-      if (!email)              return alertEl.innerHTML = '<div class="alert alert-error">Please enter your email.</div>';
+      if (!name)               return alertEl.innerHTML = '<div class="alert alert-error">Please enter your full name.</div>';
+      if (!email)              return alertEl.innerHTML = '<div class="alert alert-error">Please enter your email address.</div>';
       if (password.length < 8) return alertEl.innerHTML = '<div class="alert alert-error">Password must be at least 8 characters.</div>';
+      if (!agreed)             return alertEl.innerHTML = '<div class="alert alert-error">Please accept the Terms of Service to continue.</div>';
 
       btn.disabled = true;
       btn.classList.add('loading');
 
       try {
         const res  = await api.post('/api/v1/auth/register', { name, email, password, role });
-const data = await res.json();
+        const data = await res.json();
 
         if (!res.ok) {
-          alertEl.innerHTML = `<div class="alert alert-error">${data.message || 'Registration failed.'}</div>`;
+          alertEl.innerHTML = `<div class="alert alert-error">${data.message || 'Registration failed. Please try again.'}</div>`;
+          btn.disabled = false;
+          btn.classList.remove('loading');
           return;
         }
 
-        // Save auth and redirect
         saveAuth(data.token, data.role, data.userId);
-        alertEl.innerHTML = '<div class="alert alert-success">Account created! Redirecting…</div>';
+        alertEl.innerHTML = '<div class="alert alert-success">Account created! Taking you to your dashboard…</div>';
 
         setTimeout(() => {
-          if (data.role === 'FREELANCER') window.location.href = '/dashboard-freelancer.html';
-          else                            window.location.href = '/dashboard-client.html';
+          window.location.href = data.role === 'FREELANCER'
+            ? '/dashboard-freelancer.html'
+            : '/dashboard-client.html';
         }, 800);
 
       } catch (err) {
-        alertEl.innerHTML = '<div class="alert alert-error">Could not connect. Please try again.</div>';
+        alertEl.innerHTML = '<div class="alert alert-error">Could not connect to the server. Please try again.</div>';
         btn.disabled = false;
         btn.classList.remove('loading');
       }
     });
 
-    // Allow Enter key
+    // Enter key submits
     document.addEventListener('keydown', e => {
-      if (e.key === 'Enter') document.getElementById('register-btn').click();
+      if (e.key === 'Enter') {
+        if (document.getElementById('register-form').style.display !== 'none') {
+          document.getElementById('register-btn').click();
+        }
+      }
     });
 
-    // ── Handle OAuth redirect with token ─────────────────────────────
-    // When OAuth2SuccessHandler redirects back with ?token=...
-    const params = new URLSearchParams(window.location.search);
-    const oauthToken = params.get('token');
-    if (oauthToken) {
-      // Decode role from token (it's in the JWT payload)
+    // ── OAuth redirect (existing user — token already in URL) ────────
+    // Handles: /register.html?token=<jwt>  (user already has a role, go straight to dashboard)
+    (function handleOAuthToken() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('oauth')) return; // handled by initOAuthFlow below
+      const token = params.get('token');
+      if (!token) return;
       try {
-        const payload = JSON.parse(atob(oauthToken.split('.')[1]));
-        saveAuth(oauthToken, payload.role, payload.userId);
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        saveAuth(token, payload.role, payload.userId);
         window.location.href = payload.role === 'FREELANCER'
           ? '/dashboard-freelancer.html'
           : '/dashboard-client.html';
-      } catch(e) {
+      } catch (e) {
         console.error('OAuth token parse error', e);
+      }
+    })();
+
+    // ── OAuth new-user role-selection flow ───────────────────────────
+    // Handles: /register.html?oauth=true&token=<jwt>&name=<name>
+    (function initOAuthFlow() {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.get('oauth')) return;
+
+      const token = params.get('token');
+      const name  = params.get('name');
+
+      // Stash token under the correct key
+      if (token) localStorage.setItem('sb_jwt', token);
+
+      // Swap views
+      document.getElementById('register-form').style.display      = 'none';
+      document.getElementById('oauth-role-section').style.display = 'block';
+
+      if (name) {
+        document.getElementById('oauth-welcome').textContent =
+          `Welcome, ${decodeURIComponent(name)}!`;
+      }
+    })();
+
+    let selectedOAuthRole = null;
+
+    function selectOAuthRole(role) {
+      selectedOAuthRole = role;
+      document.getElementById('oauth-card-freelancer').classList.toggle('selected', role === 'FREELANCER');
+      document.getElementById('oauth-card-client').classList.toggle('selected', role === 'CLIENT');
+      const btn = document.getElementById('oauth-continue-btn');
+      btn.disabled = false;
+    }
+
+    async function continueOAuthSetup() {
+      if (!selectedOAuthRole) return;
+
+      const btn      = document.getElementById('oauth-continue-btn');
+      const spinner  = document.getElementById('oauth-spinner');
+      const btnText  = document.getElementById('oauth-btn-text');
+      const arrow    = document.getElementById('oauth-arrow');
+      const alertEl  = document.getElementById('alert-area-oauth');
+
+      btn.disabled     = true;
+      spinner.style.display = 'block';
+      btnText.textContent   = 'Setting up your account…';
+      arrow.style.display   = 'none';
+
+      try {
+        const res = await fetch(`/api/v1/profile/me/role?role=${selectedOAuthRole}`, {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + localStorage.getItem('sb_jwt') }
+        });
+
+        if (res.ok) {
+          // Persist the role so guard scripts work immediately
+          localStorage.setItem('sb_role', selectedOAuthRole);
+          window.location.href = selectedOAuthRole === 'CLIENT'
+            ? '/dashboard-client.html'
+            : '/dashboard-freelancer.html';
+        } else {
+          throw new Error('Server error ' + res.status);
+        }
+      } catch (e) {
+        alertEl.innerHTML = '<div class="alert alert-error">Something went wrong. Please refresh and try again.</div>';
+        btn.disabled            = false;
+        spinner.style.display   = 'none';
+        btnText.textContent     = 'Continue to Dashboard';
+        arrow.style.display     = 'block';
       }
     }
 </script>

@@ -64,6 +64,10 @@ public class User {
     private String googleId;
     private String githubId;
 
+    // OAuth account linking (for users who registered with email/password)
+    private String linkedGoogle;   // linked Google email
+    private String linkedGithub;   // linked GitHub email/login
+
     @Column(nullable = false)
     private Boolean isActive = true;
 

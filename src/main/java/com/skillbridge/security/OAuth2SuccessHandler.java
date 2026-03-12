@@ -32,11 +32,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
 
-        // Extract email — works for both Google and GitHub
-        String email = extractEmail(oauthUser);
-        String name  = extractName(oauthUser);
-        String providerId = extractProviderId(oauthUser, request);
         String provider   = detectProvider(request);
+        String email      = extractEmail(oauthUser, provider);
+        String name       = extractName(oauthUser);
+        String providerId = extractProviderId(oauthUser, provider);
 
         if (email == null) {
             log.error("OAuth2 login: could not extract email from provider {}", provider);
@@ -44,22 +43,25 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             return;
         }
 
-        // Find or create user
         Optional<User> existingUser = userRepository.findByEmail(email);
         User user;
 
         if (existingUser.isPresent()) {
             user = existingUser.get();
-            // Link provider ID if not already linked
+
+            // Link provider ID if not already set
+            boolean updated = false;
             if ("google".equals(provider) && user.getGoogleId() == null) {
                 user.setGoogleId(providerId);
-                userRepository.save(user);
+                updated = true;
             } else if ("github".equals(provider) && user.getGithubId() == null) {
                 user.setGithubId(providerId);
-                userRepository.save(user);
+                updated = true;
             }
+            if (updated) userRepository.save(user);
+
         } else {
-            // New OAuth user — needs role selection
+            // New OAuth user — create with default FREELANCER role
             user = new User();
             user.setEmail(email);
             user.setName(name != null ? name : email.split("@")[0]);
@@ -69,19 +71,19 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             user.setAvgRating(0.0);
             user.setReviewCount(0);
             user.setProfileCompletionPct(0);
+            user.setRole(Role.FREELANCER);  // default; user can change on next page
 
             if ("google".equals(provider)) user.setGoogleId(providerId);
             else                           user.setGithubId(providerId);
 
-            // Temporarily set role to null — user selects it on next page
-            user.setRole(Role.FREELANCER); // Default, user can change
             user = userRepository.save(user);
 
-            // Redirect to role selection for new users
+            // Send new user to role selection page
             String tempToken = jwtUtil.generateToken(
                     user.getEmail(), user.getRole().name(), user.getId());
             response.sendRedirect(
-                    "/register.html?oauth=true&token=" + tempToken + "&name=" + encode(name));
+                    "/register.html?oauth=true&token=" + tempToken
+                            + "&name=" + encode(name));
             return;
         }
 
@@ -90,7 +92,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             return;
         }
 
-        // Generate JWT and redirect to dashboard
+        // Existing user — generate JWT and redirect to dashboard
         String token = jwtUtil.generateToken(
                 user.getEmail(), user.getRole().name(), user.getId());
 
@@ -103,38 +105,43 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.sendRedirect(dashboard + "?token=" + token);
     }
 
-    // ── Helpers ─────────────────────────────────────────────────────
+    // ── Helpers ────────────────────────────────────────────────────────────────
 
-    private String extractEmail(OAuth2User user) {
-        // Google provides "email" directly
+    private String extractEmail(OAuth2User user, String provider) {
         String email = user.getAttribute("email");
-        if (email != null) return email;
-        // GitHub may provide it in different formats
-        Object emailObj = user.getAttribute("email");
-        return emailObj != null ? emailObj.toString() : null;
+        if (email != null && !email.isBlank()) return email;
+
+        // GitHub: email may be null if user set it to private
+        if ("github".equals(provider)) {
+            String login = user.getAttribute("login");
+            if (login != null) return login + "@github.placeholder";
+        }
+        return null;
     }
 
     private String extractName(OAuth2User user) {
         String name = user.getAttribute("name");
-        if (name != null) return name;
-        name = user.getAttribute("login"); // GitHub username
-        return name;
+        if (name != null && !name.isBlank()) return name;
+        return user.getAttribute("login");  // GitHub fallback
     }
 
-    private String extractProviderId(OAuth2User user, HttpServletRequest request) {
-        Object id = user.getAttribute("sub"); // Google
-        if (id != null) return id.toString();
-        id = user.getAttribute("id");         // GitHub
+    private String extractProviderId(OAuth2User user, String provider) {
+        if ("google".equals(provider)) {
+            Object sub = user.getAttribute("sub");
+            return sub != null ? sub.toString() : null;
+        }
+        // GitHub
+        Object id = user.getAttribute("id");
         return id != null ? id.toString() : null;
     }
 
     private String detectProvider(HttpServletRequest request) {
+        // Spring Security sets the registrationId in the request URI
         String uri = request.getRequestURI();
         if (uri.contains("google")) return "google";
         if (uri.contains("github")) return "github";
-        // Check referer as fallback
-        String referer = request.getHeader("Referer");
-        if (referer != null && referer.contains("google")) return "google";
+
+        // Fallback: check the OAuth2User attributes
         return "github";
     }
 
