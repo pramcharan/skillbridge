@@ -38,3 +38,9 @@ application-secrets.properties
 *.env
 
 uploads/
+
+node_modules/
+.env
+target/
+build/
+dist/
