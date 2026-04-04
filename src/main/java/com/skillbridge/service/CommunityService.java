@@ -1,6 +1,5 @@
 package com.skillbridge.service;
 
-import com.skillbridge.dto.*;
 import com.skillbridge.dto.request.CommunityMessageRequest;
 import com.skillbridge.dto.response.CommunityMessageResponse;
 import com.skillbridge.dto.response.PresenceResponse;

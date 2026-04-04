@@ -1,6 +1,8 @@
 package com.skillbridge.service;
 
 import com.skillbridge.dto.response.*;
+import com.skillbridge.entity.ChatMessage;
+import com.skillbridge.entity.CommunityMessage;
 import com.skillbridge.entity.Job;
 import com.skillbridge.entity.User;
 import com.skillbridge.entity.enums.JobStatus;
@@ -11,7 +13,10 @@ import com.skillbridge.exception.ResourceNotFoundException;
 import com.skillbridge.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +38,14 @@ public class AdminService {
     private final ProposalRepository proposalRepository;
     private final ProjectRepository  projectRepository;
     private final ReviewRepository   reviewRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final CommunityMessageRepository communityMessageRepository;
+    private final CommunityReactionRepository communityReactionRepository;
+
+    @Autowired
+    @Lazy
+    private final SimpMessagingTemplate messagingTemplate;
+
 
     // ── PLATFORM STATS ────────────────────────────────────────────────
     @Transactional(readOnly = true)
@@ -258,32 +271,46 @@ public class AdminService {
     }
 
     public Map<String, Object> getAiHealthData() {
-        // Avg AI score for ACCEPTED proposals
+
         Double acceptedAvg = proposalRepository
                 .avgScoreByStatus(ProposalStatus.ACCEPTED)
                 .orElse(0.0);
 
-        // Avg AI score for REJECTED proposals
         Double rejectedAvg = proposalRepository
                 .avgScoreByStatus(ProposalStatus.REJECTED)
                 .orElse(0.0);
 
-        // Score distribution buckets: 0-20, 21-40, 41-60, 61-80, 81-100
-        List<Object[]> distribution = proposalRepository.scoreDistribution();
-        List<String>   distLabels   = new ArrayList<>();
-        List<Long>     distData     = new ArrayList<>();
-        for (Object[] row : distribution) {
-            distLabels.add(row[0].toString());
-            distData.add(((Number) row[1]).longValue());
+        // Single row with 5 bucket columns
+        List<String> distLabels = List.of("0-20", "21-40", "41-60", "61-80", "81-100");
+        List<Long>   distData   = new ArrayList<>();
+        try {
+            Object[] distribution = proposalRepository.scoreDistribution();
+            // Hibernate sometimes wraps single-row result in another Object[]
+            if (distribution != null && distribution.length > 0
+                    && distribution[0] instanceof Object[]) {
+                distribution = (Object[]) distribution[0];
+            }
+            for (int i = 0; i < 5; i++) {
+                if (distribution != null && i < distribution.length
+                        && distribution[i] != null) {
+                    distData.add(((Number) distribution[i]).longValue());
+                } else {
+                    distData.add(0L);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("scoreDistribution failed: {}", e.getMessage());
+            for (int i = 0; i < 5; i++) distData.add(0L);
         }
 
-        // Top 5 jobs by avg proposal score
-        List<Object[]> topJobs = proposalRepository.topJobsByAvgScore();
-        List<Map<String,Object>> topJobsList = new ArrayList<>();
+        // Top 5 jobs — returns (id, title, avgScore)
+        List<Object[]> topJobs = proposalRepository
+                .topJobsByAvgScore(PageRequest.of(0, 5));
+        List<Map<String, Object>> topJobsList = new ArrayList<>();
         for (Object[] row : topJobs) {
             topJobsList.add(Map.of(
-                    "jobTitle", row[0].toString(),
-                    "avgScore", ((Number) row[1]).doubleValue()
+                    "jobTitle", row[1].toString(),                       // index 1 = title
+                    "avgScore", Math.round(((Number) row[2]).doubleValue() * 10.0) / 10.0  // index 2 = avg
             ));
         }
 
@@ -293,5 +320,80 @@ public class AdminService {
                 "scoreDistribution", Map.of("labels", distLabels, "data", distData),
                 "topJobsByScore",    topJobsList
         );
+    }
+
+
+    // ── Project Chat ──────────────────────────────────────────────
+
+    @Transactional
+    public void deleteProjectChatMessage(Long messageId, Long projectId) {
+        ChatMessage message = chatMessageRepository
+                .findByIdAndProjectId(messageId, projectId)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+
+        chatMessageRepository.deleteByMessageId(messageId);
+
+        // Notify connected clients to remove the message from UI
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("type", "MESSAGE_DELETED");
+        payload.put("messageId", messageId);
+        messagingTemplate.convertAndSend("/topic/chat." + projectId, (Object) payload);
+    }
+
+// ── Community Chat ────────────────────────────────────────────
+
+    @Transactional
+    public void deleteCommunityMessage(Long messageId, String room) {
+        CommunityMessage message = communityMessageRepository
+                .findByIdAndRoom(messageId, room)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+
+        // Delete child reactions FIRST — otherwise FK constraint fails
+        communityReactionRepository.deleteByMessageId(messageId);
+
+        // Now safe to delete the parent message
+        communityMessageRepository.deleteById(messageId);
+
+        // Broadcast deletion to connected clients
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("type",      "MESSAGE_DELETED");
+        payload.put("messageId", messageId);
+        messagingTemplate.convertAndSend("/topic/community." + room, (Object) payload);
+    }
+
+// ── Fetch messages for admin review ──────────────────────────
+
+    public List<Map<String, Object>> getProjectChatMessages(Long projectId, int page) {
+        Pageable pageable = PageRequest.of(page, 50,
+                Sort.by("createdAt").descending());
+        return chatMessageRepository.findByProjectIdPaged(projectId, pageable)
+                .stream()
+                .map(m -> Map.<String, Object>of(
+                        "id",        m.getId(),
+                        "sender",    m.getSender().getName(),
+                        "content",   m.getContent() != null ? m.getContent() : "",
+                        "isFile",    m.isFile(),
+                        "fileName",  m.getFileName() != null ? m.getFileName() : "",
+                        "createdAt", m.getCreatedAt().toString()
+                ))
+                .toList();
+    }
+
+    public List<Map<String, Object>> getCommunityRoomMessages(String room, int page) {
+        Pageable pageable = PageRequest.of(page, 50,
+                Sort.by("createdAt").descending());
+        return communityMessageRepository
+                .findRecentByRoom(room, pageable)
+                .stream()
+                .map(m -> Map.<String, Object>of(
+                        "id",        m.getId(),
+                        "sender",    m.getSender().getName(),
+                        "content",   m.getContent() != null ? m.getContent() : "",
+                        "isFile",    m.isFile(),
+                        "fileName",  m.getFileName() != null ? m.getFileName() : "",
+                        "room",      m.getRoom(),
+                        "createdAt", m.getCreatedAt().toString()
+                ))
+                .toList();
     }
 }

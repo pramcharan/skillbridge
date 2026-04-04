@@ -32,6 +32,10 @@ public class DisputeTicket {
     private User reporter;   // who raised the dispute
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "raised_by_id", nullable = false)
+    private User raisedBy;   // add this field
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "respondent_id", nullable = false)
     private User respondent; // the other party
 

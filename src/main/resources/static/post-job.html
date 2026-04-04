@@ -5,14 +5,17 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post a Job — SkillBridge</title>
+    <meta name="description" content="SkillBridge connects top Indian freelancers with clients. AI-powered proposal scoring, real-time chat, and verified reviews.">
+    <meta name="theme-color" content="#00C9A7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
         :root {
           --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
           --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623; --purple:#7B61FF;
-          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
+          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#5A7090;
           --border:#1A2D4A; --border2:#243650;
         }
         body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
@@ -248,7 +251,10 @@ input[type="date"].form-control {
         <a href="/profile.html">Profile</a>
     </div>
     <div style="display:flex;align-items:center;gap:0.75rem;">
-        <div class="user-av" id="user-av">C</div>
+        <div class="user-av" id="user-av"
+             onclick="window.location.href='/profile.html'"
+             title="View Profile"
+             style="cursor:pointer;">?</div>
         <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
     </div>
 </nav>
@@ -314,6 +320,27 @@ input[type="date"].form-control {
             <label>Project Deadline <span style="color:var(--text3);font-weight:400;">(optional)</span></label>
             <input type="date" id="deadline" class="form-control">
         </div>
+
+        <!-- Job Attachments -->
+        <div class="form-group" id="attachmentsSection" style="display:none;">
+            <label style="display:block;font-size:0.85rem;font-weight:600;color:var(--text2);margin-bottom:0.45rem;">
+                Attachments <span style="color:var(--text3);font-weight:400;">(max 5 · 10 MB each)</span>
+            </label>
+            <div id="attachmentList" style="margin-bottom:0.5rem;"></div>
+            <label style="display:inline-flex;align-items:center;gap:0.4rem;cursor:pointer;
+                padding:0.4rem 0.9rem;border-radius:8px;font-size:0.83rem;font-weight:600;
+                border:1px solid var(--border2);color:var(--text2);background:transparent;
+                transition:border-color 0.2s,color 0.2s;"
+                   onmouseover="this.style.borderColor='var(--teal)';this.style.color='var(--teal)'"
+                   onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">
+                <i class="bi bi-paperclip"></i> Add File
+                <input type="file" id="attachmentInput" style="display:none;" multiple
+                       accept=".pdf,.doc,.docx,.zip,.png,.jpg,.jpeg,.txt">
+            </label>
+            <div id="attachUploadProgress" style="display:none;font-size:0.8rem;color:var(--text3);margin-top:0.4rem;">
+                <i class="bi bi-arrow-repeat"></i> Uploading…
+            </div>
+        </div>
     </div>
 
     <div class="form-card">
@@ -344,22 +371,78 @@ input[type="date"].form-control {
 <script>
     requireAuth('CLIENT');
 
-    document.getElementById('description').addEventListener('input', function() {
-    const len = this.value.length;
-    let hint = document.getElementById('desc-hint');
-    if (!hint) {
-        hint = document.createElement('div');
-        hint.id = 'desc-hint';
-        hint.className = 'char-hint';
-        this.parentNode.appendChild(hint);
-    }
-    hint.textContent = `${len} characters${len < 50 ? ` — need ${50 - len} more` : ''}`;
-    hint.style.color = len < 50 ? 'var(--rose)' : len > 1800 ? 'var(--gold)' : 'var(--text3)';
-});
+    // ── Detect edit mode ──────────────────────────────────────────────
+    const editId = new URLSearchParams(window.location.search).get('edit');
+    const isEditMode = !!editId;
 
-    api.get('/api/v1/profile').then(r => r.json()).then(p => {
-        document.getElementById('user-av').textContent = (p.name || 'C')[0].toUpperCase();
+    if (isEditMode) {
+        document.querySelector('.page-header h1').textContent = 'Edit Job';
+        document.querySelector('.page-header p').textContent  = 'Update your job posting';
+        document.getElementById('submit-btn').textContent     = 'Save Changes →';
+        loadJobForEdit(editId);
+    }
+
+    async function loadJobForEdit(jobId) {
+        try {
+            const res = await api.get(`/api/v1/jobs/${jobId}`);
+            const job = await res.json();
+
+            document.getElementById('title').value       = job.title       || '';
+            document.getElementById('description').value = job.description || '';
+            document.getElementById('category').value    = job.category    || '';
+            document.getElementById('budget').value      = job.budget      || '';
+
+            if (job.deadline) {
+                document.getElementById('deadline').value =
+                    new Date(job.deadline).toISOString().split('T')[0];
+            }
+
+            // Skills
+            const rawSkills = Array.isArray(job.requiredSkills)
+                ? job.requiredSkills
+                : (job.requiredSkills||'').split(',').map(s=>s.trim()).filter(Boolean);
+            rawSkills.forEach(s => { if (s && !skills.includes(s)) skills.push(s); });
+            renderSkills();
+
+            // Pre-load attachments if any
+            if (job.attachments && job.attachments.length > 0) {
+                initAttachments(jobId, job.attachments);
+            } else {
+                initAttachments(jobId, []);
+            }
+
+            showToast('Job loaded for editing', false);
+        } catch(e) {
+            showToast('Failed to load job for editing', true);
+        }
+    }
+
+    // ── Description character count ───────────────────────────────────
+    document.getElementById('description').addEventListener('input', function() {
+        const len = this.value.length;
+        let hint = document.getElementById('desc-hint');
+        if (!hint) {
+            hint = document.createElement('div');
+            hint.id = 'desc-hint';
+            hint.className = 'char-hint';
+            this.parentNode.appendChild(hint);
+        }
+        hint.textContent = `${len} characters${len < 50 ? ` — need ${50 - len} more` : ''}`;
+        hint.style.color = len < 50 ? 'var(--rose)' : len > 1800 ? 'var(--gold)' : 'var(--text3)';
     });
+
+    // ── Avatar ────────────────────────────────────────────────────────
+    api.get('/api/v1/profile').then(r => r.json()).then(p => {
+        const av = document.getElementById('user-av');
+        const savedAvatar = localStorage.getItem('sb_avatar') || p.avatarUrl;
+        if (savedAvatar) {
+            av.innerHTML = `<img src="${savedAvatar}"
+            style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+            if (p.avatarUrl) localStorage.setItem('sb_avatar', p.avatarUrl);
+        } else {
+            av.textContent = (p.name||'?')[0].toUpperCase();
+        }
+    }).catch(() => {});
 
     document.getElementById('deadline').min = new Date().toISOString().split('T')[0];
 
@@ -393,10 +476,88 @@ input[type="date"].form-control {
         skills.forEach((s, i) => {
             const chip = document.createElement('span');
             chip.className = 'skill-chip';
-            chip.innerHTML = `${escHtml(s)}<button class="rm" type="button" onclick="removeSkill(${i})">×</button>`;
+            chip.innerHTML = `${escHtml(s)}<button class="rm" type="button"
+            onclick="removeSkill(${i})">×</button>`;
             container.appendChild(chip);
         });
         container.appendChild(input);
+    }
+
+    // ── Attachments ───────────────────────────────────────────────────
+    let pendingAttachments = [];
+    let currentJobId = null;
+
+    function initAttachments(jobId, existing = []) {
+        currentJobId = jobId;
+        pendingAttachments = [...existing];
+        document.getElementById('attachmentsSection').style.display = 'block';
+        renderAttachmentList();
+    }
+
+    function renderAttachmentList() {
+        const list = document.getElementById('attachmentList');
+        if (!pendingAttachments.length) {
+            list.innerHTML = '<p style="font-size:0.82rem;color:var(--text3);margin:0;">No attachments yet.</p>';
+            return;
+        }
+        list.innerHTML = pendingAttachments.map(a => `
+        <div style="display:flex;align-items:center;gap:0.6rem;padding:0.45rem 0.75rem;
+                    margin-bottom:0.4rem;border-radius:8px;background:rgba(255,255,255,0.04);
+                    border:1px solid var(--border);">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                 stroke="var(--teal)" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <a href="${a.url}" target="_blank"
+               style="font-size:0.83rem;color:var(--text2);text-decoration:none;
+                      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">
+                ${a.name || 'Attachment'}
+            </a>
+            <button onclick="removeAttachment('${a.url}')"
+                    style="background:none;border:none;cursor:pointer;color:var(--rose);
+                           padding:0;line-height:1;flex-shrink:0;font-size:1rem;">×</button>
+        </div>
+    `).join('');
+    }
+
+    document.getElementById('attachmentInput').addEventListener('change', async function() {
+        const files = Array.from(this.files);
+        if (!currentJobId) { alert('Save the job first before attaching files.'); return; }
+        if (pendingAttachments.length + files.length > 5) { alert('Max 5 attachments.'); return; }
+
+        const progress = document.getElementById('attachUploadProgress');
+        progress.style.display = 'block';
+
+        for (const file of files) {
+            const fd = new FormData();
+            fd.append('file', file);
+            const res = await fetch(`/api/v1/upload/job/${currentJobId}`, {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('sb_jwt') },
+                body: fd
+            });
+            if (res.ok) {
+                const data = await res.json();
+                pendingAttachments.push({ url: data.url, name: data.name });
+            }
+        }
+
+        progress.style.display = 'none';
+        this.value = '';
+        renderAttachmentList();
+    });
+
+    async function removeAttachment(fileUrl) {
+        if (!currentJobId) return;
+        const res = await fetch(
+            `/api/v1/jobs/${currentJobId}/attachments?fileUrl=${encodeURIComponent(fileUrl)}`,
+            { method:'DELETE', headers:{ 'Authorization':'Bearer '+localStorage.getItem('sb_jwt') }}
+        );
+        if (res.ok) {
+            pendingAttachments = pendingAttachments.filter(a => a.url !== fileUrl);
+            renderAttachmentList();
+        }
     }
 
     // ── Validation ────────────────────────────────────────────────────
@@ -411,21 +572,22 @@ input[type="date"].form-control {
         const cat   = document.getElementById('category').value;
         const bud   = parseFloat(document.getElementById('budget').value);
 
-        setError('fg-title',  !title);        if (!title)        ok = false;
+        setError('fg-title',  !title);          if (!title)          ok = false;
         setError('fg-desc',   desc.length < 50); if (desc.length < 50) ok = false;
-        setError('fg-cat',    !cat);          if (!cat)          ok = false;
-        setError('fg-budget', !bud || bud<=0); if (!bud || bud<=0) ok = false;
+        setError('fg-cat',    !cat);            if (!cat)            ok = false;
+        setError('fg-budget', !bud || bud <= 0); if (!bud || bud <= 0) ok = false;
         setError('fg-skills', skills.length === 0); if (!skills.length) ok = false;
 
         return ok;
     }
 
-    // ── Submit ────────────────────────────────────────────────────────
+    // ── Submit (create or update) ─────────────────────────────────────
     async function submitJob() {
         if (!validate()) return;
 
         const btn = document.getElementById('submit-btn');
-        btn.disabled = true; btn.textContent = 'Posting…';
+        btn.disabled = true;
+        btn.textContent = isEditMode ? 'Saving…' : 'Posting…';
 
         const deadline = document.getElementById('deadline').value;
         const payload  = {
@@ -438,28 +600,53 @@ input[type="date"].form-control {
         };
 
         try {
-            const res  = await api.post('/api/v1/jobs', payload);
+            const res = isEditMode
+                ? await api.put(`/api/v1/jobs/${editId}`, payload)
+                : await api.post('/api/v1/jobs', payload);
+
             const data = await res.json();
+
             if (res.ok) {
-                showToast('Job posted successfully!');
-                setTimeout(() => window.location.replace('/dashboard-client.html'), 1200);
+                if (isEditMode) {
+                    showToast('Job updated successfully!', false);
+                    setTimeout(() => window.location.replace('/dashboard-client.html'), 1500);
+                } else {
+                    showToast('Job posted! Add attachments below, then click Done.', false);
+
+                    // Lock form fields
+                    ['title','description','category','budget','deadline','skill-input']
+                        .forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.disabled = true;
+                        });
+
+                    // Unlock attachments
+                    initAttachments(data.id, []);
+
+                    // Swap button
+                    btn.disabled = false;
+                    btn.textContent = 'Done — Go to Dashboard →';
+                    btn.onclick = () => window.location.replace('/dashboard-client.html');
+                }
             } else {
                 showToast('Error: ' + (data.message || 'Something went wrong'), true);
-                btn.disabled = false; btn.textContent = 'Post Job →';
+                btn.disabled = false;
+                btn.textContent = isEditMode ? 'Save Changes →' : 'Post Job →';
             }
         } catch(e) {
             showToast('Network error. Please try again.', true);
-            btn.disabled = false; btn.textContent = 'Post Job →';
+            btn.disabled = false;
+            btn.textContent = isEditMode ? 'Save Changes →' : 'Post Job →';
         }
     }
 
-    function showToast(msg, err=false) {
+    function showToast(msg, err = false) {
         const t = document.getElementById('toast');
         t.textContent = msg;
         t.style.borderColor = err ? 'var(--rose)' : 'var(--teal)';
         t.style.color       = err ? 'var(--rose)' : 'var(--teal)';
-        t.style.display = 'block';
-        setTimeout(() => t.style.display = 'none', 3000);
+        t.style.display     = 'block';
+        setTimeout(() => t.style.display = 'none', 4000);
     }
 </script>
 </body>

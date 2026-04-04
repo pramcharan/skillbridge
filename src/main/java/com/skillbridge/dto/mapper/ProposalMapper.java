@@ -16,6 +16,7 @@ public class ProposalMapper {
         ProposalResponse r = new ProposalResponse();
         r.setId(p.getId());
         r.setCoverLetter(p.getCoverLetter());
+        r.setAttachmentUrl(p.getAttachmentUrl());
         r.setExpectedRate(p.getExpectedRate());
         r.setStatus(p.getStatus());
         r.setViewedByClient(p.getViewedByClient());

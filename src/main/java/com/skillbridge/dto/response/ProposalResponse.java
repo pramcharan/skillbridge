@@ -17,6 +17,7 @@ public class ProposalResponse {
     private Double         freelancerRating;
     private List<String>   freelancerSkills;
     private String         coverLetter;
+    private String         attachmentUrl;
     private Double         expectedRate;
     private ProposalStatus status;
     private Boolean        viewedByClient;

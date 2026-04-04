@@ -6,6 +6,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.stream.Collectors;
 
@@ -23,6 +24,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDuplicate(DuplicateResourceException ex) {
         return ResponseEntity.status(409)
                 .body(new ErrorResponse("CONFLICT", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleCustomForbidden(ForbiddenException ex) {
+        return ResponseEntity.status(403)
+                .body(new ErrorResponse("FORBIDDEN", ex.getMessage()));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -47,9 +54,14 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("BAD_REQUEST", ex.getMessage()));
     }
 
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Void> handleNoResourceFound(NoResourceFoundException ex) {
+        // Silently ignore favicon.ico and other missing static resources
+        return ResponseEntity.notFound().build();
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
-        // Log internally — NEVER expose stack trace to client
         log.error("Unhandled exception: {}", ex.getMessage(), ex);
         return ResponseEntity.status(500)
                 .body(new ErrorResponse("INTERNAL_ERROR", "An unexpected error occurred"));

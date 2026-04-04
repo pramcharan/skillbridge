@@ -34,6 +34,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.getMyProfile(email));
     }
 
+
     // ── GET public profile ────────────────────────────────────────────
     @GetMapping("/{userId}")
     public ResponseEntity<UserProfileResponse> getPublicProfile(

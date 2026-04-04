@@ -5,6 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proposals — SkillBridge</title>
+    <meta name="description" content="SkillBridge connects top Indian freelancers with clients. AI-powered proposal scoring, real-time chat, and verified reviews.">
+    <meta name="theme-color" content="#00C9A7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -12,7 +14,7 @@
         :root {
           --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
           --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623; --purple:#7B61FF;
-          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
+          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#5A7090;
           --border:#1A2D4A; --border2:#243650;
         }
         body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
@@ -244,6 +246,39 @@
     0%,100% { opacity: 1; }
     50%      { opacity: 0.5; }
 }
+
+        /* ── Full Proposal Modal ── */
+        .modal-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1000;
+            display:flex; align-items:center; justify-content:center; padding:1rem;
+            backdrop-filter:blur(4px);
+        }
+        .modal-box {
+            background:var(--card); border:1px solid var(--border2); border-radius:20px;
+            padding:2rem; width:100%; max-width:600px; max-height:85vh; overflow-y:auto;
+        }
+        .modal-header {
+            display:flex; align-items:center; justify-content:space-between;
+            margin-bottom:1.5rem;
+        }
+        .modal-header h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; }
+        .modal-close {
+            width:30px; height:30px; border-radius:8px; border:1px solid var(--border2);
+            background:transparent; color:var(--text2); cursor:pointer; font-size:1.1rem;
+            display:flex; align-items:center; justify-content:center; transition:all 0.2s;
+        }
+        .modal-close:hover { border-color:var(--rose); color:var(--rose); }
+        .modal-section { margin-bottom:1.25rem; }
+        .modal-label {
+            font-size:0.75rem; font-weight:700; color:var(--teal); text-transform:uppercase;
+            letter-spacing:0.08em; margin-bottom:0.5rem;
+        }
+        .modal-value {
+            font-size:0.9rem; color:var(--text2); line-height:1.7;
+            background:var(--bg2); border-radius:10px; padding:1rem;
+            border:1px solid var(--border); white-space:pre-wrap;
+        }
+        .modal-loading { text-align:center; padding:2rem; color:var(--text3); }
     </style>
 </head>
 <body>
@@ -255,7 +290,10 @@
         <a href="/post-job.html">Post a Job</a>
     </div>
     <div style="display:flex;align-items:center;gap:0.75rem;">
-        <div class="user-av" id="user-av">C</div>
+        <div class="user-av" id="user-av"
+             onclick="window.location.href='/profile.html'"
+             title="View Profile"
+             style="cursor:pointer;">?</div>
         <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
     </div>
 </nav>
@@ -272,6 +310,20 @@
         <div class="loading">Loading proposals...</div>
     </div>
 </main>
+
+<!-- Full Proposal Modal -->
+<div class="modal-overlay" id="proposal-modal" style="display:none;"
+     onclick="if(event.target===this)closeProposalModal()">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Full Proposal</h3>
+            <button class="modal-close" aria-label="Close" onclick="closeProposalModal()">×</button>
+        </div>
+        <div id="modal-body">
+            <div class="modal-loading">Loading proposal…</div>
+        </div>
+    </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -299,8 +351,14 @@
             const proposals = await proposalsRes.json();
 
             // Set user avatar
-            document.getElementById('user-av').textContent = (profile.name || 'C')[0].toUpperCase();
-
+const av = document.getElementById('user-av');
+const savedAvatar = localStorage.getItem('sb_avatar') || profile.avatarUrl;
+if (savedAvatar) {
+    av.innerHTML = `<img src="${savedAvatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+    if (profile.avatarUrl) localStorage.setItem('sb_avatar', profile.avatarUrl);
+} else {
+    av.textContent = (profile.name||'?')[0].toUpperCase();
+}
             // Update header
             document.getElementById('proposal-count').textContent =
                 `(${proposals.length})`;
@@ -390,23 +448,57 @@
 
                 <div class="pc-cover">${escHtml(p.coverLetter)}</div>
 
-                ${p.aiMatchReason
-                    ? `<div class="pc-ai-reason">
-                         AI Analysis: ${escHtml(p.aiMatchReason)}
-                       </div>`
-                    : ''}
+                ${p.attachmentUrl
+                ? `<a href="${p.attachmentUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.85rem;color:var(--teal);text-decoration:none;margin-bottom:1rem;background:rgba(0,201,167,0.1);padding:0.4rem 0.8rem;border-radius:8px;border:1px solid rgba(0,201,167,0.2);">
+                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                         View Attachment
+                       </a>`
+                : ''}
 
-                <div class="pc-actions">
-                    ${isPending
-                        ? `<button class="btn-accept" onclick="updateStatus(${p.id}, 'ACCEPTED')">
-                             Accept Proposal
-                           </button>
-                           <button class="btn-reject" onclick="updateStatus(${p.id}, 'REJECTED')">
-                             Reject
-                           </button>`
-                        : `<span class="status-badge ${statusClass}">${p.status}</span>`
-                    }
-                </div>
+                ${p.aiMatchReason
+                ? `<div class="pc-ai-reason">
+         AI Analysis: ${escHtml(p.aiMatchReason)}
+       </div>`
+                : ''}
+
+${p.attachmentUrl
+                ? `<div style="margin-bottom:0.85rem;">
+         <a href="${p.attachmentUrl}" target="_blank"
+            style="display:inline-flex;align-items:center;gap:0.5rem;
+                   padding:0.45rem 0.9rem;border-radius:9px;font-size:0.82rem;
+                   background:var(--card2);border:1px solid var(--border2);
+                   color:var(--teal);text-decoration:none;font-weight:600;
+                   transition:border-color 0.2s;"
+            onmouseover="this.style.borderColor='var(--teal)'"
+            onmouseout="this.style.borderColor='var(--border2)'">
+             <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                 <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19
+                          a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+             </svg>
+             View Attachment / Resume
+         </a>
+       </div>`
+                : ''}
+
+<div class="pc-actions">
+    <button class="btn-sm" onclick="viewFullProposal(${p.id})"
+        style="background:var(--card2);border:1px solid var(--border2);
+               color:var(--text2);transition:all 0.2s;"
+        onmouseover="this.style.borderColor='var(--teal)';this.style.color='var(--teal)'"
+        onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">
+        View Full
+    </button>
+    ${isPending
+                ? `<button class="btn-accept" onclick="updateStatus(${p.id}, 'ACCEPTED')">
+             Accept Proposal
+           </button>
+           <button class="btn-reject" onclick="updateStatus(${p.id}, 'REJECTED')">
+             Reject
+           </button>`
+                : `<span class="status-badge ${statusClass}">${p.status}</span>`
+            }
+</div>
             </div>`;
         }).join('');
     }
@@ -441,6 +533,126 @@
         toast.style.color        = isError ? 'var(--rose)' : 'var(--teal)';
         toast.style.display      = 'block';
         setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    async function viewFullProposal(proposalId) {
+        document.getElementById('proposal-modal').style.display = 'flex';
+        document.getElementById('modal-body').innerHTML =
+            '<div class="modal-loading">Loading…</div>';
+
+        try {
+            const res  = await api.get(`/api/v1/proposals/${proposalId}`);
+            const data = await res.json();
+
+            if (!res.ok) {
+                document.getElementById('modal-body').innerHTML =
+                    '<div class="modal-loading">Failed to load proposal.</div>';
+                return;
+            }
+
+            const skills = Array.isArray(data.freelancerSkills)
+                ? data.freelancerSkills
+                : [];
+
+            document.getElementById('modal-body').innerHTML = `
+            <div class="modal-section">
+                <div class="modal-label">Freelancer</div>
+                <div style="display:flex;align-items:center;gap:0.75rem;
+                            background:var(--bg2);border-radius:10px;
+                            padding:0.85rem 1rem;border:1px solid var(--border);">
+                    <div style="width:42px;height:42px;border-radius:50%;flex-shrink:0;
+                                background:linear-gradient(135deg,var(--purple),var(--teal));
+                                display:flex;align-items:center;justify-content:center;
+                                font-weight:700;color:#fff;">
+                        ${(data.freelancerName||'F')[0].toUpperCase()}
+                    </div>
+                    <div>
+                        <div style="font-weight:700;">${escHtml(data.freelancerName||'Freelancer')}</div>
+                        <div style="font-size:0.8rem;color:var(--text2);">
+                            $${data.expectedRate}/hr
+                            ${data.freelancerRating
+                ? ` · ⭐ ${data.freelancerRating.toFixed(1)}`
+                : ''}
+                        </div>
+                    </div>
+                    ${data.aiMatchScore != null ? `
+                    <div style="margin-left:auto;text-align:right;">
+                        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;
+                                    color:${data.aiMatchBadge==='GREEN'?'var(--teal)':data.aiMatchBadge==='AMBER'?'var(--gold)':'var(--rose)'};">
+                            ${data.aiMatchScore.toFixed(0)}%
+                        </div>
+                        <div style="font-size:0.72rem;color:var(--text3);">AI Match</div>
+                    </div>` : ''}
+                </div>
+            </div>
+
+            ${skills.length > 0 ? `
+            <div class="modal-section">
+                <div class="modal-label">Skills</div>
+                <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+                    ${skills.map(s =>
+                `<span class="skill-tag">${escHtml(s)}</span>`
+            ).join('')}
+                </div>
+            </div>` : ''}
+
+            <div class="modal-section">
+                <div class="modal-label">Cover Letter</div>
+                <div class="modal-value">${escHtml(data.coverLetter||'No cover letter provided.')}</div>
+            </div>
+
+            ${data.aiMatchReason ? `
+            <div class="modal-section">
+                <div class="modal-label">AI Analysis</div>
+                <div class="modal-value" style="border-left:3px solid var(--teal);">
+                    ${escHtml(data.aiMatchReason)}
+                </div>
+            </div>` : ''}
+
+            ${data.attachmentUrl ? `
+            <div class="modal-section">
+                <div class="modal-label">Attachment</div>
+                <a href="${data.attachmentUrl}" target="_blank"
+                   style="display:inline-flex;align-items:center;gap:0.5rem;
+                          padding:0.5rem 1rem;border-radius:10px;
+                          background:var(--bg2);border:1px solid var(--border2);
+                          color:var(--teal);font-size:0.85rem;text-decoration:none;
+                          transition:border-color 0.2s;"
+                   onmouseover="this.style.borderColor='var(--teal)'"
+                   onmouseout="this.style.borderColor='var(--border2)'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download Attachment
+                </a>
+            </div>` : ''}
+
+            <div style="display:flex;gap:0.75rem;margin-top:1.5rem;">
+                ${data.status === 'PENDING' ? `
+                <button class="btn-accept" style="flex:2;"
+                        onclick="closeProposalModal();updateStatus(${data.id},'ACCEPTED')">
+                    Accept Proposal
+                </button>
+                <button class="btn-reject" style="flex:1;"
+                        onclick="closeProposalModal();updateStatus(${data.id},'REJECTED')">
+                    Reject
+                </button>` : `
+                <span class="status-badge status-${(data.status||'pending').toLowerCase()}"
+                      style="margin:0 auto;">
+                    ${data.status}
+                </span>`}
+            </div>`;
+        } catch(e) {
+            document.getElementById('modal-body').innerHTML =
+                '<div class="modal-loading">Network error. Please try again.</div>';
+        }
+    }
+
+    function closeProposalModal() {
+        document.getElementById('proposal-modal').style.display = 'none';
     }
 
     loadProposals();

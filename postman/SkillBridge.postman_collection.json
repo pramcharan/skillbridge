@@ -1,0 +1,781 @@
+{
+  "info": {
+    "name": "SkillBridge API",
+    "_postman_id": "skillbridge-collection-v4",
+    "description": "v4 FINAL — All URLs, methods, and field names match actual controller and DTO source code.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl",         "value": "http://localhost:8080/api/v1" },
+    { "key": "freelancerToken", "value": "" },
+    { "key": "clientToken",     "value": "" },
+    { "key": "adminToken",      "value": "" },
+    { "key": "jobId",           "value": "" },
+    { "key": "proposalId",      "value": "" },
+    { "key": "projectId",       "value": "" },
+    { "key": "disputeId",       "value": "" },
+    { "key": "portfolioItemId", "value": "" },
+    { "key": "revisionId",      "value": "" }
+  ],
+  "item": [
+
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Register Freelancer",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Ram Kumar\",\n  \"email\": \"ram@test.com\",\n  \"password\": \"Password1!\",\n  \"role\": \"FREELANCER\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));",
+            "pm.test('Token saved', () => {",
+            "  const j = pm.response.json();",
+            "  pm.expect(j.token).to.be.a('string');",
+            "  pm.collectionVariables.set('freelancerToken', j.token);",
+            "});",
+            "pm.test('Role is FREELANCER', () => pm.expect(pm.response.json().role).to.eql('FREELANCER'));",
+            "pm.test('onboardingComplete is false', () => pm.expect(pm.response.json().onboardingComplete).to.be.false);"
+          ]}}]
+        },
+        {
+          "name": "Register Client",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Priya Sharma\",\n  \"email\": \"priya@test.com\",\n  \"password\": \"Password1!\",\n  \"role\": \"CLIENT\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));",
+            "pm.test('Client token saved', () => {",
+            "  const j = pm.response.json();",
+            "  pm.expect(j.token).to.be.a('string');",
+            "  pm.collectionVariables.set('clientToken', j.token);",
+            "});",
+            "pm.test('Role is CLIENT', () => pm.expect(pm.response.json().role).to.eql('CLIENT'));"
+          ]}}]
+        },
+        {
+          "name": "Register Admin (201 first run, 409 on repeat)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@skillbridge.com\",\n  \"password\": \"Admin11!\",\n  \"role\": \"FREELANCER\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Register admin attempted', () => {",
+            "  pm.expect([201, 400, 409]).to.include(pm.response.code);",
+            "});"
+          ]}}]
+        },
+        {
+          "name": "Login Freelancer",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"ram@test.com\",\n  \"password\": \"Password1!\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Freelancer token saved', () => {",
+            "  const j = pm.response.json();",
+            "  pm.expect(j.token).to.be.a('string');",
+            "  pm.collectionVariables.set('freelancerToken', j.token);",
+            "});",
+            "pm.test('Has onboardingComplete flag', () => pm.expect(pm.response.json()).to.have.property('onboardingComplete'));"
+          ]}}]
+        },
+        {
+          "name": "Login Client",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"priya@test.com\",\n  \"password\": \"Password1!\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.collectionVariables.set('clientToken', pm.response.json().token);"
+          ]}}]
+        },
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@skillbridge.com\",\n  \"password\": \"Admin11!\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Admin token saved', () => {",
+            "  const j = pm.response.json();",
+            "  pm.expect(j.token).to.be.a('string');",
+            "  pm.collectionVariables.set('adminToken', j.token);",
+            "});"
+          ]}}]
+        },
+        {
+          "name": "Login Wrong Password (expect 400)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"ram@test.com\",\n  \"password\": \"wrongpassword\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400 for wrong password', () => pm.response.to.have.status(400));"
+          ]}}]
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/password/forgot",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"ram@test.com\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        },
+        {
+          "name": "No Token - Expect 401",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/profile"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 401 without token', () => pm.response.to.have.status(401));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "2. Onboarding",
+      "item": [
+        {
+          "name": "Complete Onboarding - Freelancer",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/profile/onboarding",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{freelancerToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"firstName\": \"Ram\",\n  \"lastName\": \"Kumar\",\n  \"bio\": \"Experienced Java developer with 4 years of Spring Boot expertise building production REST APIs.\",\n  \"location\": \"Hyderabad\",\n  \"language\": \"English\",\n  \"skills\": [\"Java\", \"Spring Boot\", \"MySQL\", \"Docker\"],\n  \"hourlyRate\": 25.00,\n  \"experienceLevel\": \"MID\",\n  \"availability\": \"FULL_TIME\",\n  \"portfolioUrl\": \"https://github.com/ram\",\n  \"onboardingComplete\": true\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        },
+        {
+          "name": "Complete Onboarding - Client",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/profile/onboarding",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clientToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"firstName\": \"Priya\",\n  \"lastName\": \"Sharma\",\n  \"bio\": \"Startup founder looking for talented developers.\",\n  \"location\": \"Bangalore\",\n  \"language\": \"English\",\n  \"companyName\": \"TechCorp\",\n  \"hiringGoal\": \"ONGOING\",\n  \"budgetRange\": \"1000-5000\",\n  \"onboardingComplete\": true\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        },
+        {
+          "name": "Get Onboarding Status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/profile/onboarding/status",
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('onboardingComplete is true', () => pm.expect(pm.response.json().onboardingComplete).to.be.true);"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "3. Profile",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/profile",
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Has email field', () => pm.expect(pm.response.json()).to.have.property('email'));",
+            "pm.test('Has role field', () => pm.expect(pm.response.json()).to.have.property('role'));"
+          ]}}]
+        },
+        {
+          "name": "Get Public Profile by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/profile/1", "host": ["{{baseUrl}}"], "path": ["profile", "1"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 or 404', () => pm.expect([200, 404]).to.include(pm.response.code));"
+          ]}}]
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/profile",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{freelancerToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Ram Kumar\",\n  \"bio\": \"Full stack Java developer specialising in Spring Boot microservices.\",\n  \"location\": \"Hyderabad\",\n  \"skills\": \"Java, Spring Boot, MySQL, Docker, Redis\",\n  \"hourlyRate\": 30.00,\n  \"availabilityStatus\": \"AVAILABLE\",\n  \"portfolioUrl\": \"https://github.com/ram\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "4. Jobs",
+      "item": [
+        {
+          "name": "Post Job (Client)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/jobs",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clientToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Build a Spring Boot REST API\",\n  \"description\": \"We need an experienced Spring Boot developer to build a RESTful API with MySQL integration, JWT authentication, and Swagger documentation.\",\n  \"category\": \"TECHNOLOGY\",\n  \"budget\": 1000,\n  \"requiredSkills\": \"Java, Spring Boot, MySQL\",\n  \"deadline\": \"2026-06-30T00:00:00Z\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 or 201', () => pm.expect([200, 201]).to.include(pm.response.code));",
+            "pm.test('Job created with ID', () => {",
+            "  const j = pm.response.json();",
+            "  pm.expect(j.id).to.be.a('number');",
+            "  pm.collectionVariables.set('jobId', j.id);",
+            "});",
+            "pm.test('Status is OPEN', () => pm.expect(pm.response.json().status).to.eql('OPEN'));",
+            "pm.test('Category is TECHNOLOGY', () => pm.expect(pm.response.json().category).to.eql('TECHNOLOGY'));"
+          ]}}]
+        },
+        {
+          "name": "Post Job - Freelancer Forbidden (expect 403)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/jobs",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{freelancerToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Test Job\",\n  \"description\": \"This is a test description that meets the minimum length requirement.\",\n  \"category\": \"TECHNOLOGY\",\n  \"budget\": 500,\n  \"requiredSkills\": \"Java\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 403 - Freelancer cannot post job', () => pm.response.to.have.status(403));"
+          ]}}]
+        },
+        {
+          "name": "Browse All Jobs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/jobs?page=0&size=10",
+              "host": ["{{baseUrl}}"], "path": ["jobs"],
+              "query": [{ "key": "page", "value": "0" }, { "key": "size", "value": "10" }]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Returns paginated result', () => {",
+            "  const j = pm.response.json();",
+            "  pm.expect(j).to.have.property('content');",
+            "  pm.expect(j.content).to.be.an('array');",
+            "});",
+            "pm.test('At least one job', () => pm.expect(pm.response.json().totalElements).to.be.at.least(1));"
+          ]}}]
+        },
+        {
+          "name": "Browse Jobs - Filter by Category",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/jobs?category=TECHNOLOGY&page=0&size=10",
+              "host": ["{{baseUrl}}"], "path": ["jobs"],
+              "query": [{ "key": "category", "value": "TECHNOLOGY" }, { "key": "page", "value": "0" }, { "key": "size", "value": "10" }]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('All results are TECHNOLOGY', () => {",
+            "  pm.response.json().content.forEach(job => pm.expect(job.category).to.eql('TECHNOLOGY'));",
+            "});"
+          ]}}]
+        },
+        {
+          "name": "Browse Jobs - Keyword Search",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/jobs?keyword=Spring Boot&page=0&size=10",
+              "host": ["{{baseUrl}}"], "path": ["jobs"],
+              "query": [{ "key": "keyword", "value": "Spring Boot" }, { "key": "page", "value": "0" }, { "key": "size", "value": "10" }]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Returns results array', () => pm.expect(pm.response.json().content).to.be.an('array'));"
+          ]}}]
+        },
+        {
+          "name": "Get Job by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/jobs/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["jobs", "{{jobId}}"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Correct job returned', () => pm.expect(pm.response.json().id).to.eql(parseInt(pm.collectionVariables.get('jobId'))));"
+          ]}}]
+        },
+        {
+          "name": "Get Non-existent Job (expect 404)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/jobs/999999", "host": ["{{baseUrl}}"], "path": ["jobs", "999999"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 404', () => pm.response.to.have.status(404));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "5. Proposals",
+      "item": [
+        {
+          "name": "Submit Proposal (Freelancer)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/proposals",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{freelancerToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"jobId\": {{jobId}},\n  \"coverLetter\": \"I have 4 years of Spring Boot experience building production REST APIs with MySQL and JWT authentication. I can deliver this project within the timeline with full documentation and tests.\",\n  \"expectedRate\": 800\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 or 201', () => pm.expect([200, 201]).to.include(pm.response.code));",
+            "pm.test('Proposal created with ID', () => {",
+            "  const j = pm.response.json();",
+            "  pm.expect(j.id).to.be.a('number');",
+            "  pm.collectionVariables.set('proposalId', j.id);",
+            "});",
+            "pm.test('Status is PENDING', () => pm.expect(pm.response.json().status).to.eql('PENDING'));"
+          ]}}]
+        },
+        {
+          "name": "Submit Duplicate Proposal (expect 400)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/proposals",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{freelancerToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"jobId\": {{jobId}},\n  \"coverLetter\": \"Trying to submit a duplicate proposal on the same job to test the duplicate validation rule.\",\n  \"expectedRate\": 900\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400 for duplicate proposal', () => pm.response.to.have.status(400));"
+          ]}}]
+        },
+        {
+          "name": "Get Proposals for Job (Client)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/proposals/job/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["proposals", "job", "{{jobId}}"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{clientToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));",
+            "pm.test('At least one proposal', () => pm.expect(pm.response.json().length).to.be.at.least(1));"
+          ]}}]
+        },
+        {
+          "name": "Accept Proposal (Client)",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/proposals/{{proposalId}}/status", "host": ["{{baseUrl}}"], "path": ["proposals", "{{proposalId}}", "status"] },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clientToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"ACCEPTED\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Save project ID if returned', () => {",
+            "  const j = pm.response.json();",
+            "  if (j && j.projectId) pm.collectionVariables.set('projectId', j.projectId);",
+            "  if (j && j.id) pm.collectionVariables.set('projectId', j.id);",
+            "});"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "6. Projects",
+      "item": [
+        {
+          "name": "Get My Projects",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/projects",
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));",
+            "pm.test('Save project ID', () => {",
+            "  const projects = pm.response.json();",
+            "  if (projects.length > 0) pm.collectionVariables.set('projectId', projects[0].id);",
+            "});"
+          ]}}]
+        },
+        {
+          "name": "Get Project by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/projects/{{projectId}}", "host": ["{{baseUrl}}"], "path": ["projects", "{{projectId}}"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Has status field', () => pm.expect(pm.response.json()).to.have.property('status'));"
+          ]}}]
+        },
+        {
+          "name": "Get Chat Messages",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/projects/{{projectId}}/messages", "host": ["{{baseUrl}}"], "path": ["projects", "{{projectId}}", "messages"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+          ]}}]
+        },
+        {
+          "name": "Create Revision Request",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/projects/{{projectId}}/revisions", "host": ["{{baseUrl}}"], "path": ["projects", "{{projectId}}", "revisions"] },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clientToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Update error handling\",\n  \"description\": \"Please update the error handling to return proper JSON responses for all 4xx and 5xx errors with a consistent structure.\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 or 201', () => pm.expect([200, 201]).to.include(pm.response.code));",
+            "pm.test('Revision has ID', () => {",
+            "  const j = pm.response.json();",
+            "  if (j && j.id) pm.collectionVariables.set('revisionId', j.id);",
+            "});"
+          ]}}]
+        },
+        {
+          "name": "Complete Project (Client)",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/projects/{{projectId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["projects", "{{projectId}}", "status"]
+            },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clientToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\"\n}"
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Project completed', () => {",
+            "  pm.expect([200, 201]).to.include(pm.response.code);",
+            "});"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "7. Reviews",
+      "item": [
+        {
+          "name": "Submit Review (Client to Freelancer)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/reviews",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clientToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"projectId\": {{projectId}},\n  \"rating\": 5,\n  \"comment\": \"Excellent work! Delivered on time with comprehensive documentation and clean code.\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 or 201', () => pm.expect([200, 201]).to.include(pm.response.code));",
+            "pm.test('Rating is 5', () => pm.expect(pm.response.json().rating).to.eql(5));"
+          ]}}]
+        },
+        {
+          "name": "Duplicate Review (expect 400)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/reviews",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clientToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"projectId\": {{projectId}},\n  \"rating\": 3,\n  \"comment\": \"Trying to submit a second review on the same project.\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400 for duplicate review', () => pm.response.to.have.status(400));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "8. Portfolio",
+      "item": [
+        {
+          "name": "Add Portfolio Item",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/portfolio",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{freelancerToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"E-Commerce REST API\",\n  \"description\": \"Full-stack Spring Boot application with JWT auth, MySQL, and Cloudinary file uploads.\",\n  \"projectUrl\": \"https://github.com/ram/ecommerce\",\n  \"category\": \"TECHNOLOGY\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 or 201', () => pm.expect([200, 201]).to.include(pm.response.code));",
+            "pm.test('Item created with ID', () => {",
+            "  const j = pm.response.json();",
+            "  pm.expect(j.id).to.be.a('number');",
+            "  pm.collectionVariables.set('portfolioItemId', j.id);",
+            "});"
+          ]}}]
+        },
+        {
+          "name": "Get My Portfolio",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/portfolio/me",
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));",
+            "pm.test('At least 1 item', () => pm.expect(pm.response.json().length).to.be.at.least(1));"
+          ]}}]
+        },
+        {
+          "name": "Delete Portfolio Item",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/portfolio/{{portfolioItemId}}", "host": ["{{baseUrl}}"], "path": ["portfolio", "{{portfolioItemId}}"] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 or 204', () => pm.expect([200, 204]).to.include(pm.response.code));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "9. Disputes",
+      "item": [
+        {
+          "name": "Raise Dispute",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/disputes",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clientToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"projectId\": {{projectId}},\n  \"reason\": \"Deliverables do not match the agreed specifications.\",\n  \"description\": \"The final deliverable was missing the JWT authentication module which was explicitly agreed upon in the project scope.\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 or 201', () => pm.expect([200, 201]).to.include(pm.response.code));",
+            "pm.test('Dispute created with ID', () => {",
+            "  const j = pm.response.json();",
+            "  if (j && j.id) pm.collectionVariables.set('disputeId', j.id);",
+            "});"
+          ]}}]
+        },
+        {
+          "name": "Raise Duplicate Dispute (expect 400)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/disputes",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clientToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"projectId\": {{projectId}},\n  \"reason\": \"Second dispute attempt.\",\n  \"description\": \"Trying to raise another dispute on the same project to test the one-dispute-per-project rule.\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400 - one open dispute max', () => pm.response.to.have.status(400));"
+          ]}}]
+        },
+        {
+          "name": "Resolve Dispute (Admin)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/disputes/{{disputeId}}/resolve", "host": ["{{baseUrl}}"], "path": ["disputes", "{{disputeId}}", "resolve"] },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"resolution\": \"FAVOUR_REPORTER\",\n  \"adminNotes\": \"After reviewing both sides, the deliverable was missing key features agreed upon in the project scope.\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "10. Notifications",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/notifications",
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Returns list', () => {",
+            "  const j = pm.response.json();",
+            "  const list = Array.isArray(j) ? j : j.content;",
+            "  pm.expect(list).to.be.an('array');",
+            "});"
+          ]}}]
+        },
+        {
+          "name": "Mark All Read",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/notifications/read-all",
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "11. Admin",
+      "item": [
+        {
+          "name": "Get Chart Data (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/charts",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Returns object', () => pm.expect(pm.response.json()).to.be.an('object'));"
+          ]}}]
+        },
+        {
+          "name": "Chart Data - Non Admin (expect 403)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/charts",
+            "header": [{ "key": "Authorization", "value": "Bearer {{freelancerToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 403 for non-admin', () => pm.response.to.have.status(403));"
+          ]}}]
+        },
+        {
+          "name": "Get AI Health",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/ai-health",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "12. Public Stats",
+      "item": [
+        {
+          "name": "Get Public Stats",
+          "request": { "method": "GET", "url": "{{baseUrl}}/stats/public" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Has totalUsers', () => pm.expect(pm.response.json()).to.have.property('totalUsers'));",
+            "pm.test('Has a jobs stat', () => {",
+            "  const j = pm.response.json();",
+            "  pm.expect(j.totalJobs !== undefined || j.jobs !== undefined || j.openJobs !== undefined || j.activeJobs !== undefined).to.be.true;",
+            "});"
+          ]}}]
+        },
+        {
+          "name": "Get Top Freelancers",
+          "request": { "method": "GET", "url": "{{baseUrl}}/stats/top-freelancers" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+          ]}}]
+        }
+      ]
+    }
+
+  ]
+}

@@ -1,5 +1,6 @@
 package com.skillbridge.controller;
 
+import com.skillbridge.dto.request.JobAttachmentDTO;
 import com.skillbridge.dto.request.PostJobRequest;
 import com.skillbridge.dto.request.UpdateJobRequest;
 import com.skillbridge.dto.response.JobCardResponse;
@@ -105,5 +106,14 @@ public class JobController {
                         .filter(j -> !j.getId().equals(id))
                         .map(jobService::toCardResponse)
                         .collect(java.util.stream.Collectors.toList()));
+    }
+
+    @DeleteMapping("/{id}/attachments")
+    public ResponseEntity<List<JobAttachmentDTO>> removeAttachment(
+            @PathVariable Long id,
+            @RequestParam String fileUrl,
+            @AuthenticationPrincipal String email) {
+
+        return ResponseEntity.ok(jobService.removeAttachment(id, fileUrl, email));
     }
 }

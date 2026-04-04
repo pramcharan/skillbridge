@@ -1,0 +1,52 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - navigation [ref=e2]:
+    - link "SkillBridge" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e4]:
+      - text: Don't have an account?
+      - link "Sign up free →" [ref=e5] [cursor=pointer]:
+        - /url: /register.html
+  - main [ref=e6]:
+    - generic [ref=e7]:
+      - heading "Sign In" [level=1] [ref=e8]
+      - paragraph [ref=e9]: Enter your credentials to access your account
+      - generic [ref=e10]:
+        - generic [ref=e11]: Email Address
+        - textbox "Email Address" [ref=e12]:
+          - /placeholder: you@example.com
+          - text: ram@playwright.com
+      - generic [ref=e13]:
+        - generic [ref=e14]: Password
+        - textbox "Password" [active] [ref=e15]:
+          - /placeholder: ••••••••
+          - text: Password1!
+      - link "Forgot password?" [ref=e17] [cursor=pointer]:
+        - /url: /forgot-password.html
+      - button "Sign In" [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: Sign In
+      - generic [ref=e21]: or continue with
+      - generic [ref=e22]:
+        - link "Continue with Google" [ref=e23] [cursor=pointer]:
+          - /url: /oauth2/authorization/google
+          - img [ref=e25]
+          - text: Continue with Google
+        - link "Continue with GitHub" [ref=e30] [cursor=pointer]:
+          - /url: /oauth2/authorization/github
+          - img [ref=e32]
+          - text: Continue with GitHub
+      - generic [ref=e34]:
+        - text: Don't have an account?
+        - link "Create one free →" [ref=e35] [cursor=pointer]:
+          - /url: /register.html
+  - generic [ref=e36]:
+    - paragraph [ref=e37]: © 2026 SkillBridge
+    - paragraph [ref=e38]:
+      - link "Privacy Policy" [ref=e39] [cursor=pointer]:
+        - /url: /privacy.html
+      - text: ·
+      - link "Terms of Service" [ref=e40] [cursor=pointer]:
+        - /url: /terms.html
+```

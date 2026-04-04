@@ -93,6 +93,33 @@ public class User {
     @OneToMany(mappedBy = "user",       cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PortfolioItem> portfolio;
 
+    // ── Onboarding flag ──────────────────────────────────────────────
+    @Column(name = "onboarding_complete", nullable = false)
+    private boolean onboardingComplete = false;
+
+    // ── Profile fields (may already exist — add only if missing) ─────
+    @Column(name = "location")
     private String location;
+
+    @Column(name = "language", length = 50)
+    private String language;
+
+    @Column(name = "experience_level", length = 30)
+    private String experienceLevel;    // ENTRY | INTERMEDIATE | EXPERT
+
+    @Column(name = "availability", length = 30)
+    private String availability;       // FULL_TIME | PART_TIME | FLEXIBLE
+
+    @Column(name = "portfolio_url")
     private String portfolioUrl;
+
+    @Column(name = "company_name")
+    private String companyName;
+
+    @Column(name = "hiring_goal", length = 30)
+    private String hiringGoal;         // ONE_TIME | ONGOING | TEAM | EXPLORE
+
+    @Column(name = "budget_range", length = 20)
+    private String budgetRange;        // MICRO | SMALL | MEDIUM | LARGE | ENTERPRISE
+
 }

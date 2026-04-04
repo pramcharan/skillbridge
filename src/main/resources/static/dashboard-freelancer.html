@@ -5,497 +5,594 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard — SkillBridge</title>
+    <meta name="description" content="SkillBridge freelancer dashboard — track your applications, active projects, and recommended jobs.">
+    <meta name="theme-color" content="#00C9A7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css">
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root {
-          --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
-          --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623; --purple:#7B61FF;
-          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
-          --border:#1A2D4A; --border2:#243650;
-        }
-        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-        nav {
-          display:flex; align-items:center; justify-content:space-between;
-          padding:0 5%; height:64px; background:rgba(6,13,26,0.95);
-          border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;
-        }
-        .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.35rem;
-          background:linear-gradient(135deg,var(--teal),var(--gold));
-          -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-        .nav-links { display:flex; gap:1.5rem; align-items:center; }
-        .nav-links a { font-size:0.88rem; color:var(--text2); text-decoration:none; transition:color 0.2s; }
-        .nav-links a:hover { color:var(--teal); }
-        .nav-user { display:flex; align-items:center; gap:0.75rem; }
-        .user-av {
-          width:36px; height:36px; border-radius:50%;
-          background:linear-gradient(135deg,var(--teal),var(--purple));
-          display:flex; align-items:center; justify-content:center;
-          font-weight:700; font-size:0.85rem; color:#fff; cursor:pointer;
-        }
-        .btn-sm {
-          padding:0.4rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600;
-          cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s;
-        }
-        .btn-logout { background:transparent; border:1px solid var(--border2); color:var(--text2); }
-        .btn-logout:hover { border-color:var(--rose); color:var(--rose); }
-        .btn-primary { background:linear-gradient(135deg,var(--teal),var(--teal-dk)); border:none; color:#fff; }
-        .btn-primary:hover { opacity:0.9; }
+        /* ── Page-specific overrides only ─────────────────────────── */
 
-        main { max-width:1200px; margin:0 auto; padding:2rem 5%; }
-
-        /* Welcome banner */
-        .welcome-banner {
-  background:linear-gradient(135deg,var(--card),var(--card2));
-  border:1px solid var(--border2); border-radius:16px;
-  position:relative; overflow:hidden;
-  padding:2rem; margin-bottom:2rem;
-  display:flex; align-items:center; justify-content:space-between;
-}
-.welcome-banner::before {
-  content:''; position:absolute; top:-40px; right:-40px;
-  width:200px; height:200px; border-radius:50%;
-  background:radial-gradient(circle, rgba(0,201,167,0.08) 0%, transparent 70%);
-  pointer-events:none;
-}
-        .wb-left h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:1.6rem; margin-bottom:0.35rem; }
-        .wb-left p { font-size:0.9rem; color:var(--text2); }
-        .wb-badge {
-          padding:0.3rem 0.8rem; border-radius:99px; font-size:0.78rem; font-weight:600;
-          background:rgba(0,201,167,0.1); border:1px solid rgba(0,201,167,0.25); color:var(--teal);
-          margin-left:0.5rem;
+        /* Background mesh */
+        .page-bg {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background:
+                    radial-gradient(ellipse 55% 45% at 10% 15%, rgba(0,201,167,0.05) 0%, transparent 60%),
+                    radial-gradient(ellipse 50% 40% at 90% 80%, rgba(123,97,255,0.04) 0%, transparent 60%);
+        }
+        .grid-bg {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image:
+                    linear-gradient(var(--border) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 52px 52px;
+            opacity: 0.15;
+            mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 20%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 20%, transparent 75%);
         }
 
-        /* Profile completion */
+        /* Layout wrap above background layers */
+        body > *:not(.page-bg):not(.grid-bg) { position: relative; z-index: 1; }
+
+
+        /* ── Completion card ──────────────────────────────────────── */
         .completion-card {
-          background:var(--card); border:1px solid var(--border2); border-radius:14px;
-          padding:1.5rem; margin-bottom:2rem;
+            background: var(--bg-overlay);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-lg);
+            padding: var(--sp-5);
+            margin-bottom: var(--sp-8);
         }
-        .completion-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
-        .completion-title { font-weight:700; font-size:0.95rem; }
-        .completion-pct { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; color:var(--teal); }
-        .progress-track { height:8px; background:var(--border); border-radius:99px; overflow:hidden; }
-        .progress-fill {
-          height:100%; border-radius:99px;
-          background:linear-gradient(90deg,var(--teal),var(--gold));
-          transition:width 0.8s ease;
+        .completion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--sp-3);
         }
-        .completion-tips { display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.75rem; }
+        .completion-label {
+            font-weight: 600;
+            font-size: var(--text-base);
+            color: var(--text-secondary);
+        }
+        .completion-pct {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: var(--text-xl);
+            color: var(--teal);
+        }
+        .completion-tips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: var(--sp-3);
+        }
         .tip-chip {
-          padding:0.25rem 0.65rem; border-radius:99px; font-size:0.78rem;
-          background:rgba(245,166,35,0.1); border:1px solid rgba(245,166,35,0.2); color:var(--gold);
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            background: var(--gold-10);
+            border: 1px solid var(--gold-20);
+            color: var(--gold);
+            cursor: pointer;
+            transition: opacity var(--t-base);
+        }
+        .tip-chip:hover { opacity: 0.8; }
+
+        /* ── Stat cards ───────────────────────────────────────────── */
+        .stat-card-hover-up {
+            transition: transform var(--t-base), border-color var(--t-base), box-shadow var(--t-base);
+        }
+        .stat-card-hover-up:hover {
+            transform: translateY(-3px);
+            border-color: rgba(0,201,167,0.25);
+            box-shadow: var(--shadow-elevated);
         }
 
-        /* Stats grid */
-        .stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:2rem; }
-        .stat-card {
-          background:var(--card); border:1px solid var(--border2); border-radius:14px;
-          padding:1.25rem; text-align:center;
+        /* ── Job cards (dashboard mini-grid) ──────────────────────── */
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--sp-4);
+            margin-bottom: var(--sp-8);
         }
-        .stat-card .num { font-family:'Syne',sans-serif; font-weight:800; font-size:1.8rem; color:var(--teal); }
-        .stat-card .lbl { font-size:0.8rem; color:var(--text2); margin-top:0.25rem; }
 
-        /* Section headers */
-        .section-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
-        .section-hdr h2 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; }
-        .section-hdr a { font-size:0.85rem; color:var(--teal); text-decoration:none; }
-
-        /* Job cards */
-        .jobs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-bottom:2rem; }
-        .job-card {
-          background:var(--card); border:1px solid var(--border2); border-radius:14px;
-          padding:1.25rem; transition:all 0.2s;
-        }
-        .job-card:hover { transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,0,0,0.3); }
-        .jc-title { font-weight:700; font-size:0.95rem; margin-bottom:0.35rem; }
-        .jc-meta { font-size:0.8rem; color:var(--text2); margin-bottom:0.75rem; }
-        .jc-skills { display:flex; flex-wrap:wrap; gap:0.3rem; margin-bottom:0.75rem; }
-        .skill-tag {
-          padding:0.18rem 0.55rem; border-radius:99px; font-size:0.75rem; font-weight:500;
-          background:rgba(0,201,167,0.08); border:1px solid rgba(0,201,167,0.18); color:var(--teal);
-        }
-        .jc-footer { display:flex; align-items:center; justify-content:space-between; }
-        .jc-budget { font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; color:var(--gold); }
         .jc-apply {
-          padding:0.35rem 0.9rem; border-radius:8px; font-size:0.82rem; font-weight:600;
-          background:var(--teal-lt,rgba(0,201,167,0.08)); border:1px solid rgba(0,201,167,0.25);
-          color:var(--teal); cursor:pointer; text-decoration:none; transition:all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 14px;
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            background: var(--teal-10);
+            border: 1px solid var(--teal-20);
+            color: var(--teal);
+            text-decoration: none;
+            transition: background var(--t-base);
         }
-        .jc-apply:hover { background:rgba(0,201,167,0.18); }
+        .jc-apply:hover { background: var(--teal-20); }
 
-        /* Badge */
-        .ai-badge {
-          display:inline-flex; align-items:center; gap:0.3rem;
-          padding:0.2rem 0.6rem; border-radius:99px; font-size:0.75rem; font-weight:700;
-        }
-        .badge-green { background:rgba(0,201,167,0.1);  color:var(--teal);   border:1px solid rgba(0,201,167,0.2); }
-.badge-amber { background:rgba(245,166,35,0.1); color:var(--gold);   border:1px solid rgba(245,166,35,0.2); }
-.badge-red   { background:rgba(255,107,138,0.1);color:var(--rose);   border:1px solid rgba(255,107,138,0.2); }
-        .empty-state { text-align:center; padding:3rem; color:var(--text3); font-size:0.9rem; }
-        .empty-state .empty-icon { font-size:2.5rem; margin-bottom:0.75rem; }
+        /* ── Proposals list ───────────────────────────────────────── */
+        .proposals-list { display: flex; flex-direction: column; gap: 10px; }
 
-        .job-row {
-            background:var(--card); border:1px solid var(--border2); border-radius:12px;
-            padding:1rem 1.25rem; display:flex; align-items:center;
-            justify-content:space-between; gap:1rem;
+        .proposal-row {
+            background: var(--bg-overlay);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-md);
+            padding: var(--sp-4) var(--sp-5);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--sp-4);
+            transition: border-color var(--t-base), transform var(--t-base);
         }
-        .jr-title { font-weight:700; font-size:0.95rem; }
-        .jr-meta  { font-size:0.8rem; color:var(--text2); margin-top:0.2rem; }
-        .stat-icon {
-    width:40px; height:40px; border-radius:10px;
-    display:flex; align-items:center; justify-content:center;
-    margin:0 auto 0.75rem;
-}
-.stat-card:hover { transform:translateY(-2px); transition:transform 0.2s; }
+        .proposal-row:hover { border-color: var(--teal); transform: translateX(3px); }
+
+        .pr-title { font-weight: 700; font-size: var(--text-base); }
+        .pr-meta  { font-size: var(--text-sm); color: var(--text-secondary); margin-top: 3px; }
+
+        /* ── Role badge ───────────────────────────────────────────── */
+        .role-badge {
+            padding: 3px 12px;
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            background: var(--teal-10);
+            border: 1px solid var(--teal-20);
+            color: var(--teal);
+        }
+        .role-badge.busy {
+            background: var(--rose-10);
+            border-color: var(--rose-20);
+            color: var(--rose);
+        }
+        .role-badge.open {
+            background: var(--gold-10);
+            border-color: var(--gold-20);
+            color: var(--gold);
+        }
+
+        /* ── Responsive ───────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .jobs-grid { grid-template-columns: 1fr; }
+            .proposal-row { flex-direction: column; align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
-<nav>
-    <a href="/" class="nav-logo">SkillBridge</a>
-    <div class="nav-links">
-        <a href="/jobs.html">Browse Jobs</a>
-        <a href="/my-projects.html">My Projects</a>
-        <a href="/community.html">Community</a>
-        <a href="/notifications.html">Notifications</a>
-        <a href="/profile.html">Profile</a>
+
+<!-- Background layers -->
+<div class="page-bg" aria-hidden="true"></div>
+<div class="grid-bg" aria-hidden="true"></div>
+
+<!-- ── MOBILE NAV DRAWER ───────────────────────────────────── -->
+<div id="nav-drawer" class="nav-drawer" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <div class="nav-drawer-overlay" onclick="closeMobileNav()"></div>
+    <nav class="nav-drawer-panel">
+        <div style="margin-bottom: 24px;">
+            <span class="nav-logo" style="font-size:1.2rem;">SkillBridge</span>
+        </div>
+        <a href="/jobs.html"          class="nav-drawer-link" onclick="closeMobileNav()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+            Browse Jobs
+        </a>
+        <a href="/my-projects.html"   class="nav-drawer-link" onclick="closeMobileNav()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            My Projects
+        </a>
+        <a href="/community.html"     class="nav-drawer-link" onclick="closeMobileNav()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Community
+        </a>
+        <a href="/notifications.html" class="nav-drawer-link" onclick="closeMobileNav()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Notifications
+        </a>
+        <a href="/profile.html"       class="nav-drawer-link" onclick="closeMobileNav()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profile
+        </a>
+        <div style="margin-top:auto; padding-top:24px; border-top:1px solid var(--border);">
+            <button class="btn btn-ghost btn-sm" onclick="logout()" style="width:100%;justify-content:flex-start;gap:10px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+            </button>
     </div>
-    <div class="nav-user">
+    </nav>
+</div>
+
+<!-- ── NAVBAR ─────────────────────────────────────────────── -->
+<header class="navbar">
+    <a href="/" class="nav-logo" aria-label="SkillBridge home">SkillBridge</a>
+
+    <!-- Desktop links -->
+    <nav class="nav-links" aria-label="Main navigation">
+        <a href="/jobs.html"          class="nav-link">Browse Jobs</a>
+        <a href="/my-projects.html"   class="nav-link">My Projects</a>
+        <a href="/community.html"     class="nav-link">Community</a>
+        <a href="/notifications.html" class="nav-link">Notifications</a>
+        <a href="/profile.html"       class="nav-link">Profile</a>
+    </nav>
+
+    <!-- Nav actions -->
+    <div class="nav-actions">
         <!-- Notification bell -->
-        <div style="position:relative;cursor:pointer;" onclick="openNotifications()">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                 stroke="var(--text2)" stroke-width="2">
+        <button class="notif-btn" id="notif-btn" onclick="window.location.href='/notifications.html'" aria-label="View notifications" title="Notifications">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
                 <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
-            <span id="notif-badge" style="
-      display:none;position:absolute;top:-4px;right:-4px;
-      background:var(--rose);color:#fff;border-radius:99px;
-      font-size:0.65rem;font-weight:700;padding:0.1rem 0.35rem;
-      min-width:16px;text-align:center;">0</span>
-        </div>
-        <div class="user-av" id="user-av">?</div>
-        <button class="btn-sm btn-logout" onclick="logout()">Logout</button>
-    </div>
-</nav>
+            <span class="notif-badge" id="notif-badge" aria-live="polite"></span>
+        </button>
 
-<main>
-    <!-- Welcome -->
-    <div class="welcome-banner">
-        <div class="wb-left">
-            <h1>Welcome back, <span id="user-name">...</span>!
-                <span class="wb-badge" id="role-badge">FREELANCER</span>
-            </h1>
-            <p>Here's what's happening on SkillBridge today.</p>
+        <!-- Avatar -->
+        <div class="user-avatar" id="user-avatar" onclick="window.location.href='/profile.html'" title="View Profile" role="button" tabindex="0" onkeydown="if(event.key==='Enter')window.location.href='/profile.html'" aria-label="Go to profile">
+            <span id="avatar-initial">?</span>
         </div>
-        <a href="/jobs.html" class="btn-sm btn-primary"
-           style="text-decoration:none;display:inline-flex;align-items:center;color:#000;">
-            Browse Jobs →
-        </a>    </div>
+
+        <!-- Logout -->
+        <button class="btn btn-ghost btn-sm btn-logout" onclick="logout()" id="logout-btn">Logout</button>
+
+        <!-- Hamburger -->
+        <button class="hamburger" onclick="toggleMobileNav()" aria-label="Open navigation menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</header>
+
+<!-- ── MAIN CONTENT ────────────────────────────────────────── -->
+<main class="page-main" id="main-content">
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner stagger" id="welcome-banner" style="animation: fadeUp 0.5s 0.05s both; margin-bottom: 32px;">
+        <div>
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px; flex-wrap:wrap;">
+                <h1 class="welcome-title">Welcome back, <span id="user-name" style="background:linear-gradient(135deg,var(--teal),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">...</span>!</h1>
+                <span class="role-badge" id="role-badge">FREELANCER</span>
+            </div>
+            <p class="welcome-sub">Here's what's happening on SkillBridge today.</p>
+        </div>
+        <a href="/jobs.html" class="btn btn-primary" style="flex-shrink:0; color:#000;" id="browse-jobs-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Browse Jobs
+        </a>
+        </div>
 
     <!-- Profile Completion -->
-    <div class="completion-card">
+    <div class="completion-card" id="completion-card" style="animation: fadeUp 0.5s 0.10s both;">
         <div class="completion-header">
-            <span class="completion-title">Profile Completion</span>
+            <span class="completion-label">Profile Completion</span>
             <span class="completion-pct" id="completion-pct">0%</span>
         </div>
         <div class="progress-track">
-            <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+            <div class="progress-fill" id="progress-fill" style="width:0%;" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
         </div>
         <div class="completion-tips" id="completion-tips"></div>
     </div>
 
-    <!-- Stats -->
-    <div class="stats-row">
-    <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(0,201,167,0.08);color:var(--teal);">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <!-- Stats Row -->
+    <div class="stats-grid" id="stats-grid" style="margin-bottom:32px; animation: fadeUp 0.5s 0.15s both;">
+        <!-- Stat: Applications -->
+        <div class="card stat-card stat-card-hover-up" id="card-applications">
+            <div class="stat-icon" style="background:rgba(0,201,167,0.08); color:var(--teal);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="stat-value" id="stat-applications" style="color:var(--teal);">0</div>
+            <div class="stat-label">Applications Sent</div>
         </div>
-        <div class="num" id="stat-applications">0</div>
-        <div class="lbl">Applications Sent</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(123,97,255,0.08);color:var(--purple);">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+
+        <!-- Stat: Active Projects -->
+        <div class="card stat-card stat-card-hover-up" id="card-active">
+            <div class="stat-icon" style="background:rgba(123,97,255,0.08); color:var(--purple);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            </div>
+            <div class="stat-value" id="stat-active" style="color:var(--purple);">0</div>
+            <div class="stat-label">Active Projects</div>
         </div>
-        <div class="num" id="stat-active" style="color:var(--purple);">0</div>
-        <div class="lbl">Active Projects</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(0,201,167,0.08);color:var(--teal);">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+
+        <!-- Stat: Completed -->
+        <div class="card stat-card stat-card-hover-up" id="card-completed">
+            <div class="stat-icon" style="background:rgba(0,201,167,0.08); color:var(--teal);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="stat-value" id="stat-completed" style="color:var(--teal);">0</div>
+            <div class="stat-label">Completed</div>
         </div>
-        <div class="num" id="stat-completed">0</div>
-        <div class="lbl">Completed</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(245,166,35,0.08);color:var(--gold);">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <!-- Stat: Rating -->
+        <div class="card stat-card stat-card-hover-up" id="card-rating">
+            <div class="stat-icon" style="background:rgba(245,166,35,0.08); color:var(--gold);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="stat-value" id="stat-rating" style="color:var(--gold);">—</div>
+            <div class="stat-label">Your Rating</div>
         </div>
-        <div class="num" id="stat-rating" style="color:var(--gold);">—</div>
-        <div class="lbl">Your Rating</div>
-    </div>
     </div>
 
     <!-- Recommended Jobs -->
+    <div style="animation: fadeUp 0.5s 0.20s both;">
     <div class="section-hdr">
-        <h2>Recommended Jobs</h2>
-        <a href="/jobs.html">View all →</a>
+        <h2 class="section-title">Recommended Jobs</h2>
+        <a href="/jobs.html" class="section-link">View all →</a>
     </div>
+
     <div class="jobs-grid" id="jobs-grid">
-        <div class="empty-state">
-            <p>Loading recommended jobs…</p>
+        <!-- Skeleton placeholders -->
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+    </div>
+    </div>
+
+    <!-- My Applications -->
+    <div id="proposals-section" style="animation: fadeUp 0.5s 0.25s both;">
+        <div class="section-hdr" style="margin-bottom: 16px;">
+            <h2 class="section-title">My Applications</h2>
+            <span style="font-size:var(--text-sm); color:var(--text-secondary);">Recent 5</span>
         </div>
+        <div class="proposals-list" id="proposals-list">
+            <!-- Skeleton -->
+            <div class="skeleton skeleton-row"></div>
+            <div class="skeleton skeleton-row"></div>
+        </div>
+    </div>
     </div>
 </main>
 
+<!-- ── SCRIPTS ──────────────────────────────────────────────── -->
 <script src="/js/utils.js"></script>
-<script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
+<script src="/js/api.js"></script>
+
 <script>
+    'use strict';
+
     requireAuth('FREELANCER');
 
+    /* ── Helper: mark active nav link ──────────────────────── */
+    document.querySelectorAll('.nav-link').forEach(a => {
+        if (a.getAttribute('href') === window.location.pathname) {
+            a.classList.add('active');
+        }
+    });
+
+    /* ── Load full dashboard ────────────────────────────────── */
     async function loadDashboard() {
-      try {
-        // Load profile + stats in parallel
-        const [profileRes, statsRes, notifRes] = await Promise.all([
-          api.get('/api/v1/profile'),
-          api.get('/api/v1/dashboard/freelancer/stats'),
-          api.get('/api/v1/notifications/unread-count')
-        ]);
+        try {
+            const [profileRes, statsRes, notifRes] = await Promise.all([
+                api.get('/api/v1/profile'),
+                api.get('/api/v1/dashboard/freelancer/stats'),
+                api.get('/api/v1/notifications/unread-count'),
+            ]);
 
-        const profile = await profileRes.json();
-        const stats   = await statsRes.json();
-        const notif   = await notifRes.json();
+            const profile = await profileRes.json();
+            const stats   = await statsRes.json();
+            const notif   = await notifRes.json();
 
-        updateNotifBadge(notif.count);
+            // ── Avatar & name ────────────────────────────────────
+            const savedAvatar = localStorage.getItem('sb_avatar') || profile.avatarUrl;
+            const avatarEl    = document.getElementById('user-avatar');
+            if (savedAvatar) {
+                avatarEl.innerHTML = `<img src="${savedAvatar}" alt="Profile" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                if (profile.avatarUrl) localStorage.setItem('sb_avatar', profile.avatarUrl);
+            } else {
+                avatarEl.innerHTML = `<span id="avatar-initial">${(profile.name || 'F')[0].toUpperCase()}</span>`;
+            }
 
-        // ── Profile ───────────────────────────────────────────────────────
-        document.getElementById('user-name').textContent     = profile.name || 'Freelancer';
-        document.getElementById('user-av').textContent       = (profile.name||'F')[0].toUpperCase();
-        document.getElementById('completion-pct').textContent= (profile.profileCompletionPct||0)+'%';
-        document.getElementById('progress-fill').style.width = (profile.profileCompletionPct||0)+'%';
+            document.getElementById('user-name').textContent = profile.name || 'Freelancer';
 
-        // ── Notification badge ────────────────────────────────────────────
-        if (notif.count > 0) {
-          document.getElementById('user-av').style.outline = '2px solid var(--rose)';
-          document.title = `(${notif.count}) Dashboard — SkillBridge`;
+            // ── Role / availability badge ─────────────────────────
+            const avail = profile.availabilityStatus || 'UNKNOWN';
+            const badge = document.getElementById('role-badge');
+            if (avail === 'AVAILABLE') {
+                badge.textContent = 'AVAILABLE';
+                badge.className = 'role-badge';
+            } else if (avail === 'OPEN_TO_OFFERS') {
+                badge.textContent = 'OPEN';
+                badge.className = 'role-badge open';
+            } else {
+                badge.textContent = 'BUSY';
+                badge.className = 'role-badge busy';
+            }
+
+            // ── Notifications badge ──────────────────────────────
+            updateNotifBadge(notif.count, 'notif-badge', 'Dashboard — SkillBridge');
+            if (notif.count > 0) {
+                avatarEl.style.boxShadow = '0 0 0 2px var(--rose)';
+            }
+
+            // ── Stats (animated countup) ─────────────────────────
+            const totalApps  = stats.totalApplications || 0;
+            const activePrj  = stats.activeProjects    || 0;
+            const donePrj    = stats.completedProjects || 0;
+            const avgRating  = (stats.avgRating && stats.reviewCount > 0) ? stats.avgRating : null;
+
+            animateCounter(document.getElementById('stat-applications'), totalApps);
+            animateCounter(document.getElementById('stat-active'),       activePrj);
+            animateCounter(document.getElementById('stat-completed'),    donePrj);
+
+            if (avgRating) {
+                document.getElementById('stat-rating').textContent = avgRating.toFixed(1) + '★';
+            }
+
+            // ── Profile completion progress ──────────────────────
+            const pct = profile.profileCompletionPct || 0;
+            document.getElementById('completion-pct').textContent = pct + '%';
+            const fill = document.getElementById('progress-fill');
+            fill.style.width = pct + '%';
+            fill.setAttribute('aria-valuenow', pct);
+
+            const tips  = [];
+            if (!profile.bio)        tips.push('Add a bio');
+            if (!profile.skills?.length) tips.push('Add your skills');
+            if (!profile.hourlyRate) tips.push('Set your hourly rate');
+            if (!profile.avatarUrl)  tips.push('Upload a photo');
+            document.getElementById('completion-tips').innerHTML =
+                tips.map(t => `<span class="tip-chip" title="${t}">+ ${t}</span>`).join('');
+
+        } catch (e) {
+            console.error('Dashboard profile/stats error:', e);
         }
 
-        // ── Stats ─────────────────────────────────────────────────────────
-        document.getElementById('stat-applications').textContent = stats.totalApplications || 0;
-        document.getElementById('stat-active').textContent       = stats.activeProjects     || 0;
-        document.getElementById('stat-completed').textContent    = stats.completedProjects  || 0;
-        document.getElementById('stat-rating').textContent       =
-            (stats.avgRating && stats.reviewCount > 0)
-                ? stats.avgRating.toFixed(1) + '★'
-                : '—';
+        // ── Recommended jobs ─────────────────────────────────
+        await loadRecommendedJobs();
 
-        // ── Availability badge ────────────────────────────────────────────
-        const avail = profile.availabilityStatus || 'UNKNOWN';
-        document.getElementById('role-badge').textContent =
-            avail === 'AVAILABLE' ? 'AVAILABLE' :
-            avail === 'OPEN_TO_OFFERS' ? 'OPEN' : 'BUSY';
+        // ── My proposals ─────────────────────────────────────
+        await loadMyProposals();
+    }
 
-        // ── Profile completion tips ────────────────────────────────────────
-        const tips   = [];
-        const skills = profile.skills && profile.skills.length > 0;
-        if (!profile.bio)        tips.push('Add a bio');
-        if (!skills)             tips.push('Add your skills');
-        if (!profile.hourlyRate) tips.push('Set your hourly rate');
-        if (!profile.avatarUrl)  tips.push('Upload a photo');
-        document.getElementById('completion-tips').innerHTML =
-            tips.map(t => `<span class="tip-chip">+ ${t}</span>`).join('');
-
-      } catch (e) { console.error('Profile/stats error', e); }
-
-      // ── Recommended jobs ──────────────────────────────────────────────
-      try {
-        const res  = await api.get('/api/v1/jobs?size=6');
-        const data = await res.json();
-        const jobs = data.content || [];
+    /* ── Recommended Jobs ───────────────────────────────────── */
+    async function loadRecommendedJobs() {
         const grid = document.getElementById('jobs-grid');
-
-        if (jobs.length === 0) {
-          grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="margin:0 auto 1rem;display:block;opacity:0.25;">
-        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-    </svg>
-    <p style="font-weight:600;margin-bottom:0.35rem;">No open jobs yet</p>
-    <p style="font-size:0.82rem;">Check back soon!</p>
-</div>`;
-          return;
-        }
-
-        grid.innerHTML = jobs.map(j => `
-          <div class="job-card">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.35rem;">
-              <div class="jc-title">${escHtml(j.title)}</div>
-              ${j.aiPreviewBadge ? `<span class="ai-badge badge-${j.aiPreviewBadge.toLowerCase()}">
-                ${j.aiPreviewScore?.toFixed(0)}% ${j.aiPreviewBadge}</span>` : ''}
-            </div>
-            <div class="jc-meta">${j.category} · ${j.clientName || 'Client'}</div>
-            <div class="jc-skills">
-              ${(j.requiredSkills||[]).slice(0,3).map(s =>
-                `<span class="skill-tag">${escHtml(s)}</span>`).join('')}
-            </div>
-            <div class="jc-footer">
-              <span class="jc-budget">${j.budget ? '$'+j.budget.toLocaleString() : 'Negotiable'}</span>
-              <a href="/job-detail.html?id=${j.id}" class="jc-apply">View →</a>
-            </div>
-          </div>
-        `).join('');
-      } catch (e) { console.error('Jobs error', e); }
-
-      // ── My recent proposals ────────────────────────────────────────────
-      loadMyProposals();
-    }
-
-    // Update bell badge
-    function updateNotifBadge(count) {
-    const badge = document.getElementById('notif-badge');
-    if (count > 0) {
-        badge.style.display = 'block';
-        badge.textContent   = count > 99 ? '99+' : count;
-    } else {
-        badge.style.display = 'none';
-        }
-    }
-
-    function openNotifications() {
-        // Simple redirect for now — Day 9 will use a dropdown
-        window.location.href = '/notifications.html';
-    }
-
-    async function loadMyProposals() {
-      try {
-        const res  = await api.get('/api/v1/proposals/my-proposals?size=5');
-        const data = await res.json();
-        const proposals = data.content || [];
-
-        // Add proposals section if not exists
-        let section = document.getElementById('proposals-section');
-        if (!section) {
-          const main = document.querySelector('main');
-          section = document.createElement('div');
-          section.id = 'proposals-section';
-          section.innerHTML = `
-            <div class="section-hdr" style="margin-top:2rem;">
-              <h2>My Applications</h2>
-              <span style="font-size:0.85rem;color:var(--text2);">Recent 5</span>
-            </div>
-            <div id="proposals-list"></div>`;
-          main.appendChild(section);
-        }
-
-        const list = document.getElementById('proposals-list');
-        if (proposals.length === 0) {
-          list.innerHTML = `<div class="empty-state">
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="margin:0 auto 1rem;display:block;opacity:0.25;">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-    </svg>
-    <p style="font-weight:600;margin-bottom:0.35rem;">No applications yet</p>
-    <p style="font-size:0.82rem;margin-bottom:0.75rem;">Start applying to jobs to track them here.</p>
-    <a href="/jobs.html" style="color:var(--teal);font-weight:600;font-size:0.85rem;">Browse jobs →</a>
-</div>`;
-          return;
-        }
-
-        list.innerHTML = proposals.map(p => {
-          const badgeClass =
-              p.aiMatchBadge === 'GREEN' ? 'badge-green' :
-              p.aiMatchBadge === 'AMBER' ? 'badge-amber' : 'badge-red';
-          const statusColor =
-              p.status === 'PENDING'  ? 'var(--text2)' :
-              p.status === 'ACCEPTED' ? 'var(--teal)'  :
-              p.status === 'REJECTED' ? 'var(--rose)'  : 'var(--text3)';
-          return `
-            <div class="job-row" style="margin-bottom:0.75rem;">
-              <div>
-                <div class="jr-title">${escHtml(p.jobTitle || 'Job')}</div>
-                <div class="jr-meta">
-                  ${p.jobCategory || ''} · $${p.expectedRate}/hr ·
-                  Applied ${formatDate(p.createdAt)}
-                </div>
-              </div>
-              <div style="display:flex;align-items:center;gap:0.75rem;">
-                ${p.aiMatchScore ? `<span class="ai-badge ${badgeClass}">
-                  ${p.aiMatchScore.toFixed(0)}%</span>` : ''}
-                <span style="font-size:0.75rem;font-weight:700;padding:0.2rem 0.65rem;border-radius:99px;
-    background:${
-        p.status==='ACCEPTED' ? 'rgba(0,201,167,0.1)' :
-        p.status==='REJECTED' ? 'rgba(255,107,138,0.1)' : 'rgba(139,163,199,0.1)'};
-    border:1px solid ${
-        p.status==='ACCEPTED' ? 'rgba(0,201,167,0.2)' :
-        p.status==='REJECTED' ? 'rgba(255,107,138,0.2)' : 'rgba(139,163,199,0.2)'};
-    color:${statusColor};">
-    ${p.status}
-</span>
-                ${p.status === 'PENDING' ? `
-                <button onclick="withdrawProposal(${p.id}, event)"
-                    style="padding:0.3rem 0.75rem;border-radius:7px;font-size:0.75rem;
-                           font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;
-                           background:rgba(255,107,138,0.08);color:var(--rose);
-                           border:1px solid rgba(255,107,138,0.2);transition:opacity 0.2s;">
-                    Withdraw
-                </button>` : ''}
-              </div>
-            </div>`;
-        }).join('');
-      } catch(e) { console.error('Proposals error', e); }
-    }
-
-    // Poll for notifications every 30 seconds
-    setInterval(async () => {
-  try {
-    const res   = await api.get('/api/v1/notifications/unread-count');
-    const notif = await res.json();
-    updateNotifBadge(notif.count);  // ← updates bell badge
-    if (notif.count > 0) {
-      document.getElementById('user-av').style.outline = '2px solid var(--rose)';
-      document.title = `(${notif.count}) Dashboard — SkillBridge`;
-    } else {
-      document.getElementById('user-av').style.outline = 'none';
-      document.title = 'Dashboard — SkillBridge';
-    }
-  } catch(e) {}
-}, 30000);
-
-async function withdrawProposal(proposalId, e) {
-    e.stopPropagation();
-    if (!confirm('Are you sure you want to withdraw this proposal? This cannot be undone.')) return;
-    try {
-        const res = await api.delete(`/api/v1/proposals/${proposalId}/withdraw`);
-        if (res.ok) {
-            showToast('Proposal withdrawn successfully', 'success');
-            loadMyProposals();
-        } else {
+        try {
+            const res  = await api.get('/api/v1/jobs?size=6');
             const data = await res.json();
-            showToast(data.message || 'Failed to withdraw', 'error');
+            const jobs = data.content || [];
+
+            if (jobs.length === 0) {
+                grid.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1;">
+            <div class="empty-state-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+            </div>
+            <p class="empty-state-title">No open jobs yet</p>
+            <p class="empty-state-sub">Check back soon — new opportunities are posted daily.</p>
+          </div>`;
+                return;
+            }
+
+            grid.innerHTML = jobs.map(j => `
+        <div class="card card-interactive" style="padding:20px;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:8px;">
+            <div style="font-family:'Syne',sans-serif; font-weight:700; font-size:var(--text-base); flex:1; min-width:0;">
+              ${escHtml(j.title)}
+            </div>
+            ${j.aiPreviewBadge ? `<span class="badge badge-${j.aiPreviewBadge === 'GREEN' ? 'success' : j.aiPreviewBadge === 'AMBER' ? 'warning' : 'danger'}" style="flex-shrink:0;">
+              ${j.aiPreviewScore?.toFixed(0)}%
+            </span>` : ''}
+          </div>
+          <div style="font-size:var(--text-sm); color:var(--text-muted); margin-bottom:12px;">
+            ${escHtml(j.category || '')} · ${escHtml(j.clientName || 'Client')}
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;">
+            ${(j.requiredSkills || []).slice(0, 3).map(s => `<span class="skill-tag">${escHtml(s)}</span>`).join('')}
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span class="job-card-budget">${j.budget ? '$' + Number(j.budget).toLocaleString() : 'Negotiable'}</span>
+            <a href="/job-detail.html?id=${j.id}" class="jc-apply">
+              View
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+      `).join('');
+
+        } catch (e) {
+            console.error('Jobs load error:', e);
+            grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1;">
+          <p class="empty-state-title">Could not load jobs</p>
+          <p class="empty-state-sub">Please refresh to try again.</p>
+        </div>`;
         }
-    } catch(e) {
-        showToast('Network error', 'error');
     }
-}
 
-function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-        position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;
-        padding:0.85rem 1.25rem;border-radius:12px;font-size:0.88rem;font-weight:600;
-        font-family:'DM Sans',sans-serif;
-        background:${type==='success' ? 'rgba(0,201,167,0.12)' : 'rgba(255,107,138,0.12)'};
-        border:1px solid ${type==='success' ? 'rgba(0,201,167,0.25)' : 'rgba(255,107,138,0.25)'};
-        color:${type==='success' ? '#00C9A7' : '#FF6B8A'};
-        box-shadow:0 8px 30px rgba(0,0,0,0.3);
-        animation:slideIn 0.3s ease;
-    `;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-}
+    /* ── My Proposals ───────────────────────────────────────── */
+    async function loadMyProposals() {
+        const list = document.getElementById('proposals-list');
+        try {
+            const res  = await api.get('/api/v1/proposals/my-proposals?size=5');
+            const data = await res.json();
+            const proposals = data.content || [];
 
+            if (proposals.length === 0) {
+                list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <p class="empty-state-title">No applications yet</p>
+            <p class="empty-state-sub">Start applying to jobs to track your proposals here.</p>
+            <a href="/jobs.html" class="btn btn-primary btn-sm" style="color:#000; display:inline-flex; margin:0 auto;">Browse Jobs →</a>
+          </div>`;
+                return;
+            }
+
+            list.innerHTML = proposals.map(p => {
+                const statusClass =
+                    p.status === 'ACCEPTED' ? 'badge-success' :
+                        p.status === 'REJECTED' ? 'badge-danger'  : 'badge-muted';
+
+                const aiClass =
+                    p.aiMatchBadge === 'GREEN' ? 'badge-success' :
+                        p.aiMatchBadge === 'AMBER' ? 'badge-warning'  : 'badge-danger';
+
+                return `
+          <div class="proposal-row">
+            <div style="flex:1; min-width:0;">
+              <div class="pr-title">${escHtml(p.jobTitle || 'Job')}</div>
+              <div class="pr-meta">
+                ${escHtml(p.jobCategory || '')}
+                ${p.expectedRate ? ` · $${p.expectedRate}/hr` : ''}
+                · Applied ${formatDate(p.createdAt)}
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0; flex-wrap:wrap;">
+              ${p.aiMatchScore != null ? `<span class="badge ${aiClass}">${p.aiMatchScore.toFixed(0)}% match</span>` : ''}
+              <span class="badge ${statusClass}">${p.status}</span>
+              ${p.status === 'PENDING' ? `
+                <button
+                  onclick="withdrawProposal(${p.id}, event)"
+                  class="btn btn-danger btn-sm"
+                  title="Withdraw this proposal">
+                  Withdraw
+                </button>` : ''}
+            </div>
+          </div>`;
+            }).join('');
+
+        } catch (e) {
+            console.error('Proposals load error:', e);
+            list.innerHTML = `<div class="empty-state"><p class="empty-state-sub">Could not load applications.</p></div>`;
+        }
+    }
+
+    /* ── Withdraw Proposal ──────────────────────────────────── */
+    async function withdrawProposal(proposalId, e) {
+        e.stopPropagation();
+        if (!confirm('Withdraw this proposal? This cannot be undone.')) return;
+        try {
+            const res = await api.delete(`/api/v1/proposals/${proposalId}/withdraw`);
+            if (res.ok) {
+                Toast.show('Proposal withdrawn successfully', 'success');
+                loadMyProposals();
+            } else {
+                const d = await res.json().catch(() => ({}));
+                Toast.show(d.message || 'Failed to withdraw', 'error');
+            }
+        } catch {
+            Toast.show('Network error — please try again', 'error');
+        }
+    }
+
+    /* ── Notification polling (every 30 seconds) ─────────────── */
+    setInterval(async () => {
+        try {
+            const res   = await api.get('/api/v1/notifications/unread-count');
+            const notif = await res.json();
+            updateNotifBadge(notif.count, 'notif-badge', 'Dashboard — SkillBridge');
+            const av = document.getElementById('user-avatar');
+            if (av) av.style.boxShadow = notif.count > 0 ? '0 0 0 2px var(--rose)' : 'none';
+        } catch { /* silent */ }
+    }, 30000);
+
+    /* ── Init ───────────────────────────────────────────────── */
     loadDashboard();
 </script>
+
 </body>
 </html>

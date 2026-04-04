@@ -26,6 +26,7 @@ public class SchedulerService {
     private final ProjectRepository projectRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final NotificationService          notificationService;
+    private final RoomPresenceRepository presenceRepository;
     private static final long ONLINE_MINS = 5;
 
     // ── Auto-expire jobs every hour ───────────────────────────────────

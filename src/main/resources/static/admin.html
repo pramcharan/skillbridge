@@ -5,6 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel — SkillBridge</title>
+    <meta name="description" content="SkillBridge connects top Indian freelancers with clients. AI-powered proposal scoring, real-time chat, and verified reviews.">
+    <meta name="theme-color" content="#00C9A7">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -13,7 +15,7 @@
         :root {
           --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
           --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623; --purple:#7B61FF;
-          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
+          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#5A7090;
           --border:#1A2D4A; --border2:#243650;
         }
         body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
@@ -246,12 +248,20 @@ tr:hover td:first-child { border-left:2px solid var(--teal); padding-left:calc(1
         </button>
         <button class="tab-btn" onclick="switchTab('disputes')" id="tab-btn-disputes">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2">
+                 stroke="currentColor" stroke-width="2"
+                style="margin-right:6px;vertical-align:middle">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="12" y1="8" x2="12" y2="12"/>
                 <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
             Disputes
+        </button>
+        <button class="tab-btn" id="tab-btn-chat-mod" onclick="switchTab('chat-mod')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" style="margin-right:6px;vertical-align:middle">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Chat Moderation
         </button>
     </div>
 
@@ -411,6 +421,89 @@ tr:hover td:first-child { border-left:2px solid var(--teal); padding-left:calc(1
                         margin-top:0.5rem;"></div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div id="tab-chat-mod" class="tab-panel">
+
+        <div style="display:grid;grid-template-columns:280px 1fr;gap:1.25rem;">
+
+            <!-- Left: Source Selector -->
+            <div style="background:var(--card);border:1px solid var(--border2);
+                    border-radius:16px;padding:1.25rem;">
+                <div style="font-size:0.82rem;font-weight:700;color:var(--text2);
+                        text-transform:uppercase;letter-spacing:0.05em;
+                        margin-bottom:1rem;">Chat Source</div>
+
+                <!-- Type toggle -->
+                <div style="margin-bottom:1rem;">
+                    <div style="font-size:0.75rem;color:var(--text3);margin-bottom:0.4rem;">Type</div>
+                    <div style="display:flex;gap:0.5rem;">
+                        <button id="chatTypeProject"
+                                onclick="setChatType('project')"
+                                style="flex:1;padding:0.45rem 0;border-radius:8px;font-size:0.82rem;
+                                   font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;
+                                   background:var(--teal);color:#000;border:none;">
+                            Project
+                        </button>
+                        <button id="chatTypeCommunity"
+                                onclick="setChatType('community')"
+                                style="flex:1;padding:0.45rem 0;border-radius:8px;font-size:0.82rem;
+                                   font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;
+                                   background:transparent;color:var(--text2);
+                                   border:1px solid var(--border2);">
+                            Community
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project ID input -->
+                <div id="projectChatInput" style="margin-bottom:1rem;">
+                    <div style="font-size:0.75rem;color:var(--text3);margin-bottom:0.4rem;">Project ID</div>
+                    <div style="display:flex;gap:0.5rem;">
+                        <input type="number" id="modProjectId"
+                               class="search-input" placeholder="e.g. 42"
+                               style="flex:1;padding:0.5rem 0.75rem;font-size:0.82rem;"
+                               onkeydown="if(event.key==='Enter') loadChatMessages()">
+                        <button onclick="loadChatMessages()"
+                                style="padding:0.5rem 0.85rem;border-radius:8px;font-size:0.82rem;
+                                   font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;
+                                   background:var(--teal);color:#000;border:none;">
+                            Load
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Room selector -->
+                <div id="communityChatInput" style="display:none;margin-bottom:1rem;">
+                    <div style="font-size:0.75rem;color:var(--text3);margin-bottom:0.4rem;">Room</div>
+                    <select id="modRoomSelect" onchange="loadChatMessages()"
+                            style="width:100%;padding:0.5rem 0.75rem;border-radius:8px;
+                               background:var(--card2);border:1px solid var(--border2);
+                               color:var(--text);font-family:'DM Sans',sans-serif;
+                               font-size:0.82rem;outline:none;">
+                        <option value="general">general</option>
+                        <option value="developers">developers</option>
+                        <option value="creatives">creatives</option>
+                        <option value="opportunities">opportunities</option>
+                        <option value="help">help</option>
+                    </select>
+                </div>
+
+                <div id="chatMsgCount"
+                     style="font-size:0.75rem;color:var(--text3);"></div>
+            </div>
+
+            <!-- Right: Message List -->
+            <div style="background:var(--card);border:1px solid var(--border2);
+                    border-radius:16px;overflow:hidden;">
+                <div id="adminMessageList"
+                     style="max-height:540px;overflow-y:auto;padding:1.25rem;">
+                    <div style="text-align:center;padding:3rem;color:var(--text3);">
+                        Select a project or community room to review messages.
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </main>
@@ -718,6 +811,7 @@ async function loadAdminDisputes() {
     if (name === 'jobs')      loadJobs(0);
     if (name === 'analytics') loadCharts();
     if (name === 'disputes')  loadAdminDisputes();
+    if (name === 'chat-mod')  loadChatMod();
 }
 
 let statsLoaded = false;
@@ -1014,6 +1108,137 @@ tbody.innerHTML = `<tr><td colspan="9">
 
     // ── Init ───────────────────────────────────────────────────────────────
     loadStats();
+
+    // ── Chat Moderation ────────────────────────────────────────────────────
+let currentChatType  = 'project';
+let chatModPage      = 0;
+let chatModMessages  = [];
+
+function loadChatMod() {
+    // nothing to auto-load — user picks a source first
+}
+
+function setChatType(type) {
+    currentChatType = type;
+    chatModPage     = 0;
+
+    document.getElementById('projectChatInput').style.display =
+        type === 'project' ? 'block' : 'none';
+    document.getElementById('communityChatInput').style.display =
+        type === 'community' ? 'block' : 'none';
+
+    // Button styles — match your design system
+    const activeStyle   = 'flex:1;padding:0.45rem 0;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:\'DM Sans\',sans-serif;background:var(--teal);color:#000;border:none;';
+    const inactiveStyle = 'flex:1;padding:0.45rem 0;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:\'DM Sans\',sans-serif;background:transparent;color:var(--text2);border:1px solid var(--border2);';
+
+    document.getElementById('chatTypeProject').style.cssText =
+        type === 'project' ? activeStyle : inactiveStyle;
+    document.getElementById('chatTypeCommunity').style.cssText =
+        type === 'community' ? activeStyle : inactiveStyle;
+
+    document.getElementById('adminMessageList').innerHTML =
+        '<div style="text-align:center;padding:3rem;color:var(--text3);">Select a source to load messages.</div>';
+    document.getElementById('chatMsgCount').textContent = '';
+}
+
+async function loadChatMessages() {
+    let url;
+    if (currentChatType === 'project') {
+        const pid = document.getElementById('modProjectId').value.trim();
+        if (!pid) return;
+        url = `/api/v1/admin/chats/project/${pid}?page=${chatModPage}`;
+    } else {
+        const room = document.getElementById('modRoomSelect').value;
+        url = `/api/v1/admin/chats/community/${room}?page=${chatModPage}`;
+    }
+
+    document.getElementById('adminMessageList').innerHTML =
+        '<div style="text-align:center;padding:2rem;color:var(--text3);">Loading…</div>';
+
+    try {
+        const res = await api.get(url);
+        if (!res.ok) throw new Error('Failed');
+        chatModMessages = await res.json();
+        document.getElementById('chatMsgCount').textContent =
+            chatModMessages.length + ' messages loaded';
+        renderAdminMessages();
+    } catch(e) {
+        document.getElementById('adminMessageList').innerHTML =
+            '<div style="text-align:center;padding:2rem;color:var(--rose);font-weight:600;">Failed to load messages.</div>';
+    }
+}
+
+function renderAdminMessages() {
+    const list = document.getElementById('adminMessageList');
+    if (!chatModMessages.length) {
+        list.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text3);">No messages found.</div>';
+        return;
+    }
+
+    list.innerHTML = chatModMessages.map(m => `
+        <div id="adminMsg_${m.id}"
+             style="display:flex;align-items:flex-start;gap:0.85rem;
+                    padding-bottom:0.85rem;margin-bottom:0.85rem;
+                    border-bottom:1px solid var(--border);">
+            <div style="flex:1;min-width:0;">
+                <div style="display:flex;justify-content:space-between;
+                            align-items:baseline;gap:0.5rem;margin-bottom:0.25rem;">
+                    <span style="font-weight:700;font-size:0.85rem;
+                                 color:var(--text);">${escHtml(m.sender)}</span>
+                    <span style="font-size:0.72rem;color:var(--text3);white-space:nowrap;">
+                        ${new Date(m.createdAt).toLocaleString()}
+                    </span>
+                </div>
+                ${m.isFile
+                    ? `<span style="font-size:0.82rem;color:var(--teal);">
+                           📎 ${escHtml(m.fileName || 'file')}
+                       </span>`
+                    : `<p style="font-size:0.83rem;color:var(--text2);margin:0;
+                                 word-break:break-word;">${escHtml(m.content)}</p>`
+                }
+            </div>
+            <button onclick="adminDeleteMessage(${m.id})"
+                    title="Delete message"
+                    style="flex-shrink:0;padding:0.35rem 0.65rem;border-radius:7px;
+                           font-size:0.75rem;font-weight:600;cursor:pointer;
+                           font-family:'DM Sans',sans-serif;
+                           background:rgba(255,107,138,0.1);color:var(--rose);
+                           border:1px solid rgba(255,107,138,0.2);transition:opacity 0.2s;"
+                    onmouseover="this.style.opacity='0.7'"
+                    onmouseout="this.style.opacity='1'">
+                🗑
+            </button>
+        </div>
+    `).join('');
+}
+
+async function adminDeleteMessage(messageId) {
+    if (!confirm('Permanently delete this message?')) return;
+
+    let url;
+    if (currentChatType === 'project') {
+        const pid = document.getElementById('modProjectId').value.trim();
+        url = `/api/v1/admin/chats/project/${pid}/messages/${messageId}`;
+    } else {
+        const room = document.getElementById('modRoomSelect').value;
+        url = `/api/v1/admin/chats/community/${room}/messages/${messageId}`;
+    }
+
+    try {
+        const res = await api.delete(url);
+        if (res.ok) {
+            document.getElementById('adminMsg_' + messageId)?.remove();
+            chatModMessages = chatModMessages.filter(m => m.id !== messageId);
+            document.getElementById('chatMsgCount').textContent =
+                chatModMessages.length + ' messages loaded';
+            showToast('Message deleted', 'success');
+        } else {
+            showToast('Failed to delete message', 'error');
+        }
+    } catch(e) {
+        showToast('Failed to delete message', 'error');
+    }
+}
 </script>
 </body>
 </html>

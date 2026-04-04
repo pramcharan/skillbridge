@@ -4,6 +4,7 @@ import com.skillbridge.repository.*;
 import com.skillbridge.entity.enums.ProjectStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -112,6 +113,7 @@ public class StatsController {
      * Only shows reviews from completed projects
      */
     @GetMapping("/reviews")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getRecentReviews() {
         var reviews = reviewRepository.findRecentFreelancerReviews(
                 org.springframework.data.domain.PageRequest.of(0, 6));
@@ -119,9 +121,24 @@ public class StatsController {
         List<Map<String, Object>> result = new ArrayList<>();
         for (var r : reviews) {
             if (r.getComment() == null || r.getComment().isBlank()) continue;
+
+            // Safe name extraction — avoids LazyInitializationException
+            String reviewerName = "Anonymous";
+            String reviewerRole = "CLIENT";
+            try {
+                if (r.getReviewer() != null) {
+                    reviewerName = r.getReviewer().getName();
+                    reviewerRole = r.getReviewer().getRole() != null
+                            ? r.getReviewer().getRole().name()
+                            : "CLIENT";
+                }
+            } catch (Exception ignored) {
+                // Proxy not initialized — use defaults
+            }
+
             Map<String, Object> data = new HashMap<>();
-            data.put("reviewerName", r.getReviewer().getName());
-            data.put("reviewerRole", r.getReviewer().getRole().name());
+            data.put("reviewerName", reviewerName);
+            data.put("reviewerRole", reviewerRole);
             data.put("comment",      r.getComment());
             data.put("rating",       r.getRating());
             result.add(data);

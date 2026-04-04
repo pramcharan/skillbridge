@@ -63,6 +63,7 @@ public class ProfileService {
         if (request.getSkills()             != null) user.setSkills(request.getSkills());
         if (request.getHourlyRate()         != null) user.setHourlyRate(request.getHourlyRate());
         if (request.getAvatarUrl()          != null) user.setAvatarUrl(request.getAvatarUrl());
+        if (request.getPortfolioUrl() != null) user.setPortfolioUrl(request.getPortfolioUrl());
         if (request.getAvailabilityStatus() != null) user.setAvailabilityStatus(
                 request.getAvailabilityStatus());
         if (request.getLocation() != null)
@@ -207,6 +208,7 @@ public class ProfileService {
         r.setLocation(user.getLocation());
         r.setBio(user.getBio());
         r.setAvatarUrl(user.getAvatarUrl());
+        r.setPortfolioUrl(user.getPortfolioUrl());
         r.setSkills(splitSkills(user.getSkills()));
         r.setHourlyRate(user.getHourlyRate());
         r.setAvgRating(user.getAvgRating());

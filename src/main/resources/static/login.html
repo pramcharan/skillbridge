@@ -17,6 +17,8 @@
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login — SkillBridge</title>
+    <meta name="description" content="SkillBridge connects top Indian freelancers with clients. AI-powered proposal scoring, real-time chat, and verified reviews.">
+    <meta name="theme-color" content="#00C9A7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -434,7 +436,12 @@
 </main>
 
 <div class="page-footer">
-    <p>© 2026 SkillBridge &nbsp;·&nbsp; <a href="/privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Terms</a></p>
+    <p>© 2026 SkillBridge</p>
+    <p style="margin-top:0.4rem;">
+        <a href="/privacy.html">Privacy Policy</a>
+        <span style="margin:0 0.5rem; color:var(--text3);">·</span>
+        <a href="/terms.html">Terms of Service</a>
+    </p>
 </div>
 
 <!-- JS files will be recreated — inline logic for now -->
@@ -500,10 +507,16 @@
             showSuccess('Signed in! Redirecting…');
 
             setTimeout(() => {
-                if      (data.role === 'FREELANCER') window.location.href = '/dashboard-freelancer.html';
-                else if (data.role === 'CLIENT')     window.location.href = '/dashboard-client.html';
-                else if (data.role === 'ADMIN')      window.location.href = '/admin.html';
-                else                                 window.location.href = '/';
+                if (data.onboardingComplete === false) {
+        window.location.href = '/onboarding.html';
+        return;
+    }
+
+    // ── Otherwise go to dashboard ──
+    if      (data.role === 'FREELANCER') window.location.href = '/dashboard-freelancer.html';
+    else if (data.role === 'CLIENT')     window.location.href = '/dashboard-client.html';
+    else if (data.role === 'ADMIN')      window.location.href = '/admin.html';
+    else                                 window.location.href = '/';
             }, 800);
 
         } catch (err) {

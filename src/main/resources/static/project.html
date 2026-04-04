@@ -5,21 +5,26 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Workspace - SkillBridge</title>
+    <meta name="description" content="SkillBridge connects top Indian freelancers with clients. AI-powered proposal scoring, real-time chat, and verified reviews.">
+    <meta name="theme-color" content="#00C9A7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         :root{
             --bg:#060D1A;--bg2:#0B1425;--card:#0D1829;--card2:#111f38;
             --teal:#00C9A7;--teal-dk:#00A389;--gold:#F5A623;--purple:#7B61FF;
             --rose:#FF6B8A;--blue:#4A90E2;
-            --text:#E8F0FE;--text2:#8BA3C7;--text3:#4A6080;
+            --text:#E8F0FE;--text2:#8BA3C7;--text3:#5A7090;
             --border:#1A2D4A;--border2:#243650;
         }
-        body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;overflow:hidden}
+        body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;overflow:auto}
 
+        /* ── NAV ─────────────────────────────────────────────── */
         nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:60px;background:rgba(6,13,26,.98);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;flex-shrink:0;backdrop-filter:blur(12px)}
         .nav-left{display:flex;align-items:center;gap:1rem}
         .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;background:linear-gradient(135deg,var(--teal),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
@@ -29,13 +34,14 @@
         .nav-links{display:flex;gap:1.25rem}
         .nav-links a{font-size:.83rem;color:var(--text3);text-decoration:none;transition:color .2s}
         .nav-links a:hover{color:var(--teal)}
-        .user-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--rose));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;color:#fff;border:2px solid var(--border2)}
+        .user-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--rose));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;color:#fff;border:2px solid var(--border2);overflow:hidden}
         .btn-logout{padding:.35rem .85rem;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;background:transparent;border:1px solid var(--border2);color:var(--text3);transition:all .2s}
         .btn-logout:hover{border-color:var(--rose);color:var(--rose)}
 
+        /* ── LAYOUT ──────────────────────────────────────────── */
         .workspace{display:grid;grid-template-columns:290px 1fr;flex:1;overflow:hidden;height:calc(100vh - 60px)}
 
-        /* SIDEBAR */
+        /* ── SIDEBAR ─────────────────────────────────────────── */
         .sidebar{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
         .sidebar::-webkit-scrollbar{width:4px}
         .sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
@@ -93,8 +99,21 @@
         .btn-cancel-proj{padding:.7rem 1rem;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;background:transparent;border:1px solid rgba(255,107,138,.3);color:var(--rose);transition:all .2s}
         .btn-cancel-proj:hover{background:rgba(255,107,138,.07);border-color:var(--rose)}
 
-        /* CHAT */
-        .chat-area{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+        /* ── STATUS BANNERS ──────────────────────────────────── */
+        .status-banner{text-align:center;padding:.9rem 1rem;border-radius:10px;display:flex;align-items:center;gap:.65rem}
+        .status-banner.completed{background:rgba(0,201,167,.05);border:1px solid rgba(0,201,167,.15)}
+        .status-banner.cancelled{background:rgba(255,107,138,.05);border:1px solid rgba(255,107,138,.15)}
+        .status-banner-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .status-banner.completed .status-banner-icon{background:rgba(0,201,167,.12);color:var(--teal)}
+        .status-banner.cancelled .status-banner-icon{background:rgba(255,107,138,.12);color:var(--rose)}
+        .status-banner-text{text-align:left}
+        .status-banner-title{font-size:.85rem;font-weight:700}
+        .status-banner.completed .status-banner-title{color:var(--teal)}
+        .status-banner.cancelled .status-banner-title{color:var(--rose)}
+        .status-banner-sub{font-size:.75rem;color:var(--text3);margin-top:.1rem}
+
+        /* ── CHAT AREA ───────────────────────────────────────── */
+        .chat-area{display:flex;flex-direction:column;overflow:hidden;height:100%;background:var(--bg)}
         .chat-header{padding:.85rem 1.5rem;border-bottom:1px solid var(--border);background:rgba(13,24,41,.95);display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(8px);flex-shrink:0}
         .ch-left{display:flex;align-items:center;gap:.75rem}
         .ch-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(0,201,167,.15),rgba(123,97,255,.15));border:1px solid rgba(0,201,167,.2);display:flex;align-items:center;justify-content:center;color:var(--teal)}
@@ -105,6 +124,19 @@
         .ws-dot.on{background:var(--teal);box-shadow:0 0 5px var(--teal)}
         .ws-dot.on + span{color:var(--teal)}
 
+        /* ── TAB BAR ─────────────────────────────────────────── */
+        .tab-bar{display:flex;gap:.25rem;padding:.6rem 1.25rem 0;border-bottom:1px solid var(--border);background:rgba(13,24,41,.95);flex-shrink:0}
+        .tab-btn{padding:.45rem .9rem;border-radius:8px 8px 0 0;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;background:transparent;border:1px solid transparent;border-bottom:none;color:var(--text3);transition:all .2s;display:flex;align-items:center;gap:.35rem;position:relative;bottom:-1px}
+        .tab-btn:hover{color:var(--text2);background:rgba(255,255,255,.04)}
+        .tab-btn.active{color:var(--teal);background:var(--bg);border-color:var(--border);border-bottom-color:var(--bg)}
+        .rev-badge{background:var(--gold);color:#000;font-size:.62rem;font-weight:800;padding:.1rem .42rem;border-radius:99px;line-height:1.5;display:none}
+
+        /* ── TAB PANELS ──────────────────────────────────────── */
+        .tab-panel{display:none;flex:1;flex-direction:column;overflow:hidden}
+        .tab-panel.active{display:flex}
+        #tab-revisions.active{overflow-y:auto;padding:1.25rem 1.5rem}
+
+        /* ── MESSAGES ────────────────────────────────────────── */
         .msgs{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:0;scroll-behavior:smooth}
         .msgs::-webkit-scrollbar{width:5px}
         .msgs::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
@@ -152,9 +184,10 @@
         .scroll-btn:hover{color:var(--teal);border-color:var(--teal)}
         .scroll-btn.show{display:flex}
 
-        .chat-input-area{padding:.85rem 1.25rem;border-top:1px solid var(--border);background:rgba(13,24,41,.96);flex-shrink:0;backdrop-filter:blur(8px)}
+        /* ── CHAT INPUT ──────────────────────────────────────── */
+        .chat-input-area{position:sticky;bottom:0;z-index:20;padding:.85rem 1.25rem;border-top:1px solid var(--border);background:rgba(13,24,41,.96);flex-shrink:0;backdrop-filter:blur(8px)}
         .input-toolbar{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem}
-        .tb-btn{width:30px;height:30px;border-radius:7px;background:transparent;border:1px solid var(--border);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+        .tb-btn{width:30px;height:30px;border-radius:7px;background:transparent;border:1px solid var(--border);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;font-family:'DM Sans',sans-serif;font-size:.78rem}
         .tb-btn:hover{color:var(--teal);border-color:var(--teal);background:rgba(0,201,167,.06)}
         .tb-div{width:1px;height:18px;background:var(--border);margin:0 .15rem}
         .char-cnt{font-size:.7rem;color:var(--text3);margin-left:auto}
@@ -182,7 +215,66 @@
         .up-cancel:hover{color:var(--rose)}
         .sys-msg{text-align:center;font-size:.75rem;color:var(--text3);padding:.4rem 1rem;font-style:italic}
 
-        /* MODAL */
+        /* Emoji picker */
+        #emoji-picker{
+            display:none;
+            position:absolute;
+            bottom:75px;left:20px;
+            background:var(--card);
+            border:1px solid var(--border2);
+            border-radius:12px;
+            padding:.55rem .65rem;
+            z-index:100;
+            box-shadow:0 8px 32px rgba(0,0,0,.5);
+            display:none;
+            flex-wrap:wrap;
+            gap:.25rem;
+            max-width:200px;
+        }
+        #emoji-picker span{
+            cursor:pointer;font-size:1.05rem;
+            padding:.2rem .25rem;border-radius:5px;
+            display:inline-flex;align-items:center;
+            line-height:1;transition:background .1s;
+        }
+        #emoji-picker span:hover{background:var(--card2)}
+
+        /* ── REVISIONS ───────────────────────────────────────── */
+        .rev-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem}
+        .rev-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem}
+        .btn-new-rev{display:flex;align-items:center;gap:.4rem;padding:.45rem 1rem;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;background:linear-gradient(135deg,var(--teal),var(--teal-dk));color:#000;transition:opacity .2s}
+        .btn-new-rev:hover{opacity:.88}
+
+        .rev-filters{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.1rem}
+        .rev-filter{padding:.35rem .85rem;border-radius:99px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;background:transparent;border:1px solid var(--border2);color:var(--text3);transition:all .2s}
+        .rev-filter:hover{border-color:var(--fc,var(--teal));color:var(--fc,var(--teal));background:rgba(255,255,255,.03)}
+        .rev-filter.active{border-color:var(--fc,var(--teal));color:var(--fc,var(--teal));background:rgba(255,255,255,.04)}
+
+        .rev-card{background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:1rem 1.1rem;margin-bottom:.85rem;transition:border-color .2s}
+        .rev-card:hover{border-color:var(--border)}
+        .rev-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;margin-bottom:.5rem}
+        .rev-card-title-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+        .rev-card-title{font-weight:600;font-size:.9rem;color:var(--text)}
+        .rev-status-pill{padding:.18rem .6rem;border-radius:99px;font-size:.67rem;font-weight:700;border:1px solid;letter-spacing:.04em}
+        .rev-date{font-size:.72rem;color:var(--text3);flex-shrink:0;white-space:nowrap}
+        .rev-desc{font-size:.84rem;color:var(--text2);margin-bottom:.7rem;line-height:1.55}
+        .rev-meta{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+        .rev-role-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.72rem;font-weight:600;color:var(--text3);background:rgba(255,255,255,.04);border:1px solid var(--border);padding:.2rem .55rem;border-radius:6px}
+        .rev-role-badge svg{flex-shrink:0}
+        .rev-resolved-by{display:inline-flex;align-items:center;gap:.3rem;font-size:.72rem;color:var(--teal);margin-left:auto}
+        .rev-resolution-note{margin-top:.65rem;padding:.6rem .8rem;background:rgba(255,255,255,.03);border-radius:8px;font-size:.78rem;color:var(--text3);border-left:2px solid var(--border2);line-height:1.5}
+        .rev-actions{display:flex;gap:.45rem;margin-top:.8rem;flex-wrap:wrap}
+        .rev-action-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.32rem .75rem;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;background:transparent;transition:all .2s}
+        .rev-action-btn.in-progress{border:1px solid var(--blue);color:var(--blue)}
+        .rev-action-btn.in-progress:hover{background:rgba(74,144,226,.08)}
+        .rev-action-btn.resolve{border:1px solid #2ecc71;color:#2ecc71}
+        .rev-action-btn.resolve:hover{background:rgba(46,204,113,.08)}
+        .rev-action-btn.reject{border:1px solid var(--rose);color:var(--rose)}
+        .rev-action-btn.reject:hover{background:rgba(255,107,138,.08)}
+        .rev-empty{text-align:center;color:var(--text3);padding:3rem 1rem;font-size:.85rem}
+        .rev-empty-icon{width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto .85rem;color:var(--text3)}
+
+        /* ── MODAL ───────────────────────────────────────────── */
         .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
         .modal-overlay.open{display:flex}
         .modal{background:var(--card);border:1px solid var(--border2);border-top:2px solid var(--teal);border-radius:20px;padding:2rem;width:100%;max-width:480px;animation:mOpen .3s cubic-bezier(.22,1,.36,1)}
@@ -190,6 +282,8 @@
         .modal h2{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;margin-bottom:.3rem}
         .modal-sub{color:var(--text2);font-size:.85rem;margin-bottom:1.5rem}
         .m-label{display:block;font-size:.82rem;font-weight:600;color:var(--text2);margin-bottom:.45rem}
+        .m-input{width:100%;padding:.75rem 1rem;border-radius:12px;background:var(--bg2);border:1px solid var(--border2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;margin-bottom:1.25rem;transition:border-color .2s}
+        .m-input:focus{border-color:var(--teal)}
         .star-row{display:flex;gap:.35rem;margin-bottom:.5rem}
         .star-btn{background:none;border:none;cursor:pointer;padding:.15rem;transition:transform .1s}
         .star-btn:hover{transform:scale(1.2)}
@@ -204,10 +298,16 @@
         .btn-m-submit:hover{opacity:.88}
         .btn-m-submit:disabled{opacity:.5;cursor:not-allowed}
 
+        /* ── TOAST ───────────────────────────────────────────── */
         .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(12px);background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:.75rem 1.25rem;font-size:.85rem;font-weight:600;z-index:300;opacity:0;pointer-events:none;transition:all .3s;white-space:nowrap}
         .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
         .toast.success{color:var(--teal);border-color:rgba(0,201,167,.3);background:rgba(13,24,41,.97)}
         .toast.error{color:var(--rose);border-color:rgba(255,107,138,.3);background:rgba(13,24,41,.97)}
+
+        code{background:rgba(255,255,255,.08);padding:3px 6px;border-radius:6px;font-size:.85em;font-family:monospace}
+        a{word-break:break-all}
+        strong{font-weight:700}
+        em{font-style:italic}
 
         @media(max-width:768px){.workspace{grid-template-columns:1fr}.sidebar{display:none}}
     </style>
@@ -226,13 +326,17 @@
             <a href="/my-projects.html">My Projects</a>
             <a href="/community.html">Community</a>
         </div>
-        <div class="user-av" id="user-av">?</div>
+        <div class="user-av" id="user-av"
+             onclick="window.location.href='/profile.html'"
+             title="View Profile"
+             style="cursor:pointer;">?</div>
         <button class="btn-logout" onclick="logout()">Logout</button>
     </div>
 </nav>
 
 <div class="workspace">
-    <!-- SIDEBAR -->
+
+    <!-- ── SIDEBAR ───────────────────────────────────────────── -->
     <div class="sidebar">
         <a href="#" id="back-link" class="back-link">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -260,26 +364,41 @@
         <div class="sec-label">Team</div>
         <div class="party-card">
             <div class="p-av cl" id="client-av">C</div>
-            <div class="p-info"><div class="p-role">Client</div><div class="p-name" id="client-name">--</div></div>
+            <div class="p-info">
+                <div class="p-role">Client</div>
+                <div class="p-name" id="client-name">--</div>
+            </div>
         </div>
         <div class="party-card">
             <div class="p-av fr" id="freelancer-av">F</div>
-            <div class="p-info"><div class="p-role">Freelancer</div><div class="p-name" id="freelancer-name">--</div></div>
+            <div class="p-info">
+                <div class="p-role">Freelancer</div>
+                <div class="p-name" id="freelancer-name">--</div>
+            </div>
         </div>
 
         <div class="sec-label">Timeline</div>
         <div class="tl-block">
             <div class="tl-item">
                 <div class="tl-dot done"></div>
-                <div class="tl-txt"><div class="tl-lbl">Project Started</div><div class="tl-date" id="started-date">--</div></div>
+                <div class="tl-txt">
+                    <div class="tl-lbl">Project Started</div>
+                    <div class="tl-date" id="started-date">--</div>
+                </div>
             </div>
             <div class="tl-item" id="tl-complete" style="display:none">
                 <div class="tl-dot done"></div>
-                <div class="tl-txt"><div class="tl-lbl">Completed</div><div class="tl-date" id="completed-date">--</div></div>
+                <div class="tl-txt">
+                    <div class="tl-lbl">Completed</div>
+                    <div class="tl-date" id="completed-date">--</div>
+                </div>
             </div>
             <div class="tl-item" id="tl-pending">
                 <div class="tl-dot pend"></div>
-                <div class="tl-txt"><div class="tl-lbl" style="color:var(--text3)">Awaiting Completion</div><div class="tl-date">In Progress</div></div>
+                <div class="tl-txt">
+                    <div class="tl-lbl" style="color:var(--text3)">Awaiting Completion</div>
+                    <div class="tl-date">In Progress</div>
+                </div>
             </div>
         </div>
 
@@ -287,15 +406,16 @@
         <div class="sidebar-actions" id="sidebar-actions"></div>
     </div>
 
-    <!-- CHAT -->
+    <!-- ── MAIN AREA ─────────────────────────────────────────── -->
     <div class="chat-area" style="position:relative">
+
         <div class="chat-header">
             <div class="ch-left">
                 <div class="ch-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 </div>
                 <div>
-                    <div class="ch-title">Project Chat</div>
+                    <div class="ch-title">Project Workspace</div>
                     <div class="ch-sub" id="chat-sub">Private workspace</div>
                 </div>
             </div>
@@ -305,57 +425,191 @@
             </div>
         </div>
 
-        <div class="msgs" id="msgs" onscroll="handleScroll()">
-            <div class="empty-chat">
-                <div class="empty-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-                <h4>Loading messages...</h4><p>Your workspace is setting up</p>
+        <!-- Tab Bar -->
+        <div class="tab-bar">
+            <button class="tab-btn active" id="tab-btn-chat" onclick="switchTab('chat')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Chat
+            </button>
+            <button class="tab-btn" id="tab-btn-revisions" onclick="switchTab('revisions')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.49"/></svg>
+                Revisions
+                <span class="rev-badge" id="openRevisionsBadge"></span>
+            </button>
+        </div>
+
+        <!-- ── CHAT TAB ─────────────────────────────────────── -->
+        <div id="tab-chat" class="tab-panel active">
+            <div class="msgs" id="msgs" onscroll="handleScroll()">
+                <div class="empty-chat">
+                    <div class="empty-icon">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <h4>Loading messages...</h4>
+                    <p>Your workspace is setting up</p>
+                </div>
+            </div>
+
+            <div class="typing-wrap">
+                <div class="typing" id="typing">
+                    <div class="tdots"><span></span><span></span><span></span></div>
+                    <span>Someone is typing</span>
+                </div>
+            </div>
+
+            <button class="scroll-btn" id="scroll-btn" onclick="scrollToBottom()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+
+            <div class="chat-input-area">
+                <div class="upload-preview" id="up-preview">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    <span class="up-name" id="up-name">file.pdf</span>
+                    <button class="up-cancel" onclick="cancelUpload()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+
+                <div class="input-toolbar">
+                    <!-- Bold -->
+                    <button class="tb-btn" title="Bold" onclick="insertMd('**','**')" style="font-weight:800" aria-label="Bold text">B</button>
+                    <!-- Italic -->
+                    <button class="tb-btn" title="Italic" onclick="insertMd('_','_')" style="font-style:italic" aria-label="Italic text">I</button>
+                    <!-- Code -->
+                    <button class="tb-btn" title="Code" onclick="insertMd('`','`')" aria-label="Insert code">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    </button>
+                    <!-- Emoji — SVG smiley face -->
+                    <button class="tb-btn" title="Insert emoji" onclick="toggleEmojiPicker()" aria-label="Insert emoji">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                            <line x1="9" y1="9" x2="9.01" y2="9" stroke-width="3"/>
+                            <line x1="15" y1="9" x2="15.01" y2="9" stroke-width="3"/>
+                        </svg>
+                    </button>
+                    <!-- Link — SVG chain link -->
+                    <button class="tb-btn" title="Insert link" onclick="insertLink()" aria-label="Insert link">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                        </svg>
+                    </button>
+                    <!-- Mention — SVG @ symbol -->
+                    <button class="tb-btn" title="Mention user" onclick="insertMention()" aria-label="Mention user">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/>
+                        </svg>
+                    </button>
+                    <div class="tb-div"></div>
+                    <!-- Attach -->
+                    <button class="tb-btn" title="Attach file" aria-label="Attach file" onclick="document.getElementById('file-in').click()">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    </button>
+                    <div class="char-cnt" id="char-cnt"></div>
+                </div>
+
+                <div class="input-row">
+                    <textarea class="chat-input" id="chat-input"
+                              placeholder="Type a message… (Enter to send, Shift+Enter for new line)"
+                              rows="1" maxlength="2000"
+                              onkeydown="handleKey(event)" oninput="handleInputChange(this)"></textarea>
+
+                    <!-- Emoji picker dropdown -->
+                    <div id="emoji-picker">
+                        <span onclick="addEmoji('😊')">😊</span>
+                        <span onclick="addEmoji('😂')">😂</span>
+                        <span onclick="addEmoji('🔥')">🔥</span>
+                        <span onclick="addEmoji('👍')">👍</span>
+                        <span onclick="addEmoji('❤️')">❤️</span>
+                        <span onclick="addEmoji('🚀')">🚀</span>
+                        <span onclick="addEmoji('👏')">👏</span>
+                        <span onclick="addEmoji('🎉')">🎉</span>
+                        <span onclick="addEmoji('💡')">💡</span>
+                        <span onclick="addEmoji('✅')">✅</span>
+                    </div>
+
+                    <button class="attach-btn" title="Attach file" onclick="document.getElementById('file-in').click()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    </button>
+                    <button class="btn-send" id="send-btn" onclick="sendMsg()">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </div>
+                <input type="file" id="file-in" style="display:none"
+                       accept="image/*,.pdf,.doc,.docx,.txt,.zip"
+                       onchange="handleFileSelect(event)">
             </div>
         </div>
 
-        <div class="typing-wrap">
-            <div class="typing" id="typing">
-                <div class="tdots"><span></span><span></span><span></span></div>
-                <span>Someone is typing</span>
+        <!-- ── REVISIONS TAB ────────────────────────────────── -->
+        <div id="tab-revisions" class="tab-panel">
+            <div class="rev-header">
+                <span class="rev-title">Revision Requests</span>
+                <button class="btn-new-rev" onclick="showRevisionModal()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    New Request
+                </button>
+            </div>
+            <div class="rev-filters" id="revisionFilters">
+                <button class="rev-filter active" onclick="filterRevisions('ALL',this)">All</button>
+                <button class="rev-filter" onclick="filterRevisions('OPEN',this)" style="--fc:var(--gold)">Open</button>
+                <button class="rev-filter" onclick="filterRevisions('IN_PROGRESS',this)" style="--fc:var(--blue)">In Progress</button>
+                <button class="rev-filter" onclick="filterRevisions('RESOLVED',this)" style="--fc:#2ecc71">Resolved</button>
+                <button class="rev-filter" onclick="filterRevisions('REJECTED',this)" style="--fc:var(--rose)">Rejected</button>
+            </div>
+            <div id="revisionsList">
+                <div class="rev-empty">
+                    <div class="rev-empty-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.49"/></svg>
+                    </div>
+                    Loading revisions…
+                </div>
             </div>
         </div>
 
-        <button class="scroll-btn" id="scroll-btn" onclick="scrollToBottom()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
+    </div><!-- end .chat-area -->
+</div><!-- end .workspace -->
 
-        <div class="chat-input-area">
-            <div class="upload-preview" id="up-preview">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                <span class="up-name" id="up-name">file.pdf</span>
-                <button class="up-cancel" onclick="cancelUpload()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-            </div>
-            <div class="input-toolbar">
-                <button class="tb-btn" title="Bold" onclick="insertMd('**','**')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg></button>
-                <button class="tb-btn" title="Italic" onclick="insertMd('_','_')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg></button>
-                <button class="tb-btn" title="Code" onclick="insertMd('`','`')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></button>
-                <div class="tb-div"></div>
-                <button class="tb-btn" title="Attach" onclick="document.getElementById('file-in').click()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
-                <div class="char-cnt" id="char-cnt"></div>
-            </div>
-            <div class="input-row">
-                <textarea class="chat-input" id="chat-input" placeholder="Type a message... (Enter to send, Shift+Enter for new line)" rows="1" maxlength="2000" onkeydown="handleKey(event)" oninput="handleInputChange(this)"></textarea>
-                <button class="attach-btn" title="Attach file" onclick="document.getElementById('file-in').click()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                </button>
-                <button class="btn-send" id="send-btn" onclick="sendMsg()">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                </button>
-            </div>
-            <input type="file" id="file-in" style="display:none" accept="image/*,.pdf,.doc,.docx,.txt,.zip" onchange="handleFileSelect(event)">
+<!-- ── CREATE REVISION MODAL ─────────────────────────────────── -->
+<div class="modal-overlay" id="revisionModalOverlay" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal">
+        <h2>Request a Revision</h2>
+        <p class="modal-sub">Describe what needs to be changed or revisited</p>
+        <label class="m-label">Title <span style="color:var(--rose)">*</span></label>
+        <input type="text" id="revisionTitle" class="m-input" maxlength="100"
+               placeholder="Brief summary of the revision">
+        <label class="m-label">Description <span style="color:var(--rose)">*</span></label>
+        <textarea id="revisionDesc" rows="4" placeholder="Describe in detail what needs to be changed…" class="rv-ta"></textarea>
+        <div class="modal-actions">
+            <button class="btn-m-cancel" onclick="document.getElementById('revisionModalOverlay').classList.remove('open')">Cancel</button>
+            <button class="btn-m-submit" onclick="submitRevision()">Submit Request</button>
         </div>
     </div>
 </div>
 
-<!-- Review Modal -->
+<!-- ── RESOLVE / REJECT REVISION MODAL ───────────────────────── -->
+<div class="modal-overlay" id="resolveRevisionOverlay" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal">
+        <h2 id="resolveRevisionTitle">Update Revision</h2>
+        <p class="modal-sub">Add an optional note about this status change</p>
+        <input type="hidden" id="resolveRevisionId">
+        <input type="hidden" id="resolveRevisionStatus">
+        <label class="m-label">Resolution Note <span style="color:var(--text3);font-weight:400">(optional)</span></label>
+        <textarea id="resolveNote" rows="3" placeholder="Add context or notes for the other party…" class="rv-ta"></textarea>
+        <div class="modal-actions">
+            <button class="btn-m-cancel" onclick="document.getElementById('resolveRevisionOverlay').classList.remove('open')">Cancel</button>
+            <button class="btn-m-submit" onclick="confirmRevisionUpdate()">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── REVIEW MODAL ───────────────────────────────────────────── -->
 <div class="modal-overlay" id="review-modal">
     <div class="modal">
         <h2>Leave a Review</h2>
-        <p class="modal-sub">Rate your experience working with <strong id="fl-name-modal" style="color:var(--text)">--</strong></p>
+        <p class="modal-sub">Rate your experience with <strong id="fl-name-modal" style="color:var(--text)">--</strong></p>
         <label class="m-label">Your Rating <span style="color:var(--rose)">*</span></label>
         <div class="star-row">
             <button class="star-btn" onclick="setRating(1)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
@@ -367,7 +621,7 @@
         <div class="star-label" id="star-label"></div>
         <div id="rv-err" style="color:var(--rose);font-size:.78rem;margin:-.5rem 0 1rem;display:none">Please select a rating</div>
         <label class="m-label">Comment <span style="color:var(--text3);font-weight:400;font-size:.75rem">(optional)</span></label>
-        <textarea class="rv-ta" id="rv-comment" placeholder="Share your experience..." maxlength="1000"></textarea>
+        <textarea class="rv-ta" id="rv-comment" placeholder="Share your experience working on this project…" maxlength="1000"></textarea>
         <div class="modal-actions">
             <button class="btn-m-cancel" onclick="closeReview()">Cancel</button>
             <button class="btn-m-submit" id="rv-submit-btn" onclick="submitReview()">Submit Review</button>
@@ -382,193 +636,589 @@
 <script src="/js/auth.js"></script>
 <script>
     requireAuth();
-    const projectId=new URLSearchParams(window.location.search).get('id');
-    if(!projectId) window.location.replace('/dashboard-freelancer.html');
+    const projectId = new URLSearchParams(window.location.search).get('id');
+    if (!projectId) window.location.replace('/dashboard-freelancer.html');
 
-    let stomp=null,me=null,proj=null,connected=false,selFile=null;
+    let stomp = null, me = null, proj = null, connected = false, selFile = null;
+    let currentUserName = '';
+    let allRevisions = [];
+    let activeRevisionFilter = 'ALL';
 
-    async function init(){
-        try{
-            const[pr,pj]=await Promise.all([api.get('/api/v1/profile'),api.get('/api/v1/projects/'+projectId)]);
-            me=await pr.json(); proj=await pj.json();
-            const ini=(me.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-            document.getElementById('user-av').textContent=ini;
-            const role=localStorage.getItem('sb_role');
-            const dl=role==='CLIENT'?'/dashboard-client.html':'/dashboard-freelancer.html';
-            document.getElementById('dashboard-link').href=dl;
-            document.getElementById('back-link').href=dl;
-            renderInfo(proj); await loadMsgs(); connectWS();
-        }catch(e){console.error(e);toast('Failed to load project','error');}
+    // ── INIT ──────────────────────────────────────────────────
+
+    async function init() {
+        try {
+            const [pr, pj] = await Promise.all([
+                api.get('/api/v1/profile'),
+                api.get('/api/v1/projects/' + projectId)
+            ]);
+            me = await pr.json();
+            currentUserName = me.name || '';
+            proj = await pj.json();
+
+            const av = document.getElementById('user-av');
+            const savedAvatar = localStorage.getItem('sb_avatar') || me.avatarUrl;
+            if (savedAvatar) {
+                av.innerHTML = `<img src="${savedAvatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                if (me.avatarUrl) localStorage.setItem('sb_avatar', me.avatarUrl);
+            } else {
+                av.textContent = (me.name || '?')[0].toUpperCase();
+            }
+
+            const role = localStorage.getItem('sb_role');
+            const dl = role === 'CLIENT' ? '/dashboard-client.html' : '/dashboard-freelancer.html';
+            document.getElementById('dashboard-link').href = dl;
+            document.getElementById('back-link').href = dl;
+            renderInfo(proj);
+            await loadMsgs();
+            connectWS();
+        } catch (e) {
+            console.error(e);
+            toast('Failed to load project', 'error');
+        }
     }
 
-    function renderInfo(p){
-        document.title=p.title+' - SkillBridge';
-        document.getElementById('nav-proj-name').textContent=p.title;
-        document.getElementById('proj-id').textContent='#'+p.id;
-        document.getElementById('proj-title').textContent=p.title;
-        document.getElementById('job-title-sub').textContent=p.jobTitle||'--';
-        document.getElementById('stat-rate').textContent=p.acceptedRate?'$'+p.acceptedRate:'--';
-        document.getElementById('stat-budget').textContent=p.budget?'$'+Number(p.budget).toLocaleString():'--';
-        document.getElementById('client-name').textContent=p.clientName||'--';
-        document.getElementById('freelancer-name').textContent=p.freelancerName||'--';
-        document.getElementById('client-av').textContent=(p.clientName||'C')[0].toUpperCase();
-        document.getElementById('freelancer-av').textContent=(p.freelancerName||'F')[0].toUpperCase();
-        document.getElementById('fl-name-modal').textContent=p.freelancerName||'the freelancer';
-        document.getElementById('started-date').textContent=fmtDate(p.createdAt);
-        document.getElementById('chat-sub').textContent=(p.clientName||'--')+' & '+(p.freelancerName||'--');
-        const sm={'ACTIVE':'s-active','COMPLETED':'s-completed','CANCELLED':'s-cancelled'};
-        const b=document.getElementById('status-badge');
-        b.innerHTML='<span class="status-dot"></span>'+p.status;
-        b.className='status-pill '+(sm[p.status]||'s-active');
-        if(p.status==='COMPLETED'&&p.completedAt){
-            document.getElementById('tl-pending').style.display='none';
-            document.getElementById('tl-complete').style.display='flex';
-            document.getElementById('completed-date').textContent=fmtDate(p.completedAt);
+    // ── TABS ──────────────────────────────────────────────────
+
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.add('active');
+        document.getElementById('tab-btn-' + tab).classList.add('active');
+        if (tab === 'revisions') loadRevisions();
+    }
+
+    // ── PROJECT INFO ──────────────────────────────────────────
+
+    function renderInfo(p) {
+        document.title = p.title + ' - SkillBridge';
+        document.getElementById('nav-proj-name').textContent = p.title;
+        document.getElementById('proj-id').textContent = '#' + p.id;
+        document.getElementById('proj-title').textContent = p.title;
+        document.getElementById('job-title-sub').textContent = p.jobTitle || '--';
+        document.getElementById('stat-rate').textContent = p.acceptedRate ? '$' + p.acceptedRate : '--';
+        document.getElementById('stat-budget').textContent = p.budget ? '$' + Number(p.budget).toLocaleString() : '--';
+        document.getElementById('client-name').textContent = p.clientName || '--';
+        document.getElementById('freelancer-name').textContent = p.freelancerName || '--';
+        document.getElementById('client-av').textContent = (p.clientName || 'C')[0].toUpperCase();
+        document.getElementById('freelancer-av').textContent = (p.freelancerName || 'F')[0].toUpperCase();
+        document.getElementById('fl-name-modal').textContent = p.freelancerName || 'the freelancer';
+        document.getElementById('started-date').textContent = fmtDate(p.createdAt);
+        document.getElementById('chat-sub').textContent = (p.clientName || '--') + ' · ' + (p.freelancerName || '--');
+        const sm = { 'ACTIVE': 's-active', 'COMPLETED': 's-completed', 'CANCELLED': 's-cancelled' };
+        const b = document.getElementById('status-badge');
+        b.innerHTML = '<span class="status-dot"></span>' + p.status;
+        b.className = 'status-pill ' + (sm[p.status] || 's-active');
+        if (p.status === 'COMPLETED' && p.completedAt) {
+            document.getElementById('tl-pending').style.display = 'none';
+            document.getElementById('tl-complete').style.display = 'flex';
+            document.getElementById('completed-date').textContent = fmtDate(p.completedAt);
         }
         renderActions(p);
     }
 
-    function renderActions(p){
-        const el=document.getElementById('sidebar-actions');
-        const role=localStorage.getItem('sb_role');
-        if(p.status==='ACTIVE'){
-            el.innerHTML='<button class="btn-complete" onclick="updateStatus(\'COMPLETED\')"><span style="display:flex;align-items:center;justify-content:center;gap:.5rem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Mark as Completed</span></button>'+(role==='CLIENT'?'<button class="btn-cancel-proj" onclick="updateStatus(\'CANCELLED\')">Cancel Project</button>':'');
-        } else if(p.status==='COMPLETED'){
-            if(role==='CLIENT') checkReview(p.id);
-            else el.innerHTML='<div style="text-align:center;padding:.75rem;background:rgba(0,201,167,.05);border:1px solid rgba(0,201,167,.15);border-radius:10px"><div style="font-size:1.25rem;margin-bottom:.25rem">&#x1F389;</div><div style="font-size:.82rem;color:var(--teal);font-weight:600">Project completed!</div></div>';
+    function toggleEmojiPicker() {
+        const picker = document.getElementById('emoji-picker');
+        const isHidden = picker.style.display === 'none' || !picker.style.display;
+        picker.style.display = isHidden ? 'flex' : 'none';
+    }
+
+    function addEmoji(emoji) {
+        const input = document.getElementById('chat-input');
+        const pos = input.selectionStart;
+        input.value = input.value.substring(0, pos) + emoji + input.value.substring(pos);
+        input.focus();
+        document.getElementById('emoji-picker').style.display = 'none';
+    }
+
+    function insertMention() {
+        const name = prompt("Enter username:");
+        if (!name) return;
+        const input = document.getElementById('chat-input');
+        input.value += ` @${name} `;
+        input.focus();
+    }
+
+    function insertLink() {
+        const url = prompt("Enter URL:");
+        if (!url) return;
+        const input = document.getElementById('chat-input');
+        const pos = input.selectionStart;
+        input.value = input.value.substring(0, pos) + url + input.value.substring(pos);
+        input.focus();
+    }
+
+    document.addEventListener('click', function(e) {
+        const picker = document.getElementById('emoji-picker');
+        if (picker && !picker.contains(e.target) && !e.target.closest('[onclick="toggleEmojiPicker()"]')) {
+            picker.style.display = 'none';
+        }
+    });
+
+    function formatMsg(text) {
+        text = escH(text);
+        text = text.replace(/(https?:\/\/[^\s]+)/g,
+            '<a href="$1" target="_blank" rel="noopener noreferrer" style="color:#4A90E2;text-decoration:underline">$1</a>');
+        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        text = text.replace(/_(.*?)_/g, '<em>$1</em>');
+        text = text.replace(/`(.*?)`/g, '<code>$1</code>');
+        text = text.replace(/@([a-zA-Z0-9_]+)/g,
+            '<span style="color:#00C9A7;font-weight:600;background:rgba(0,201,167,0.1);padding:2px 6px;border-radius:6px">@$1</span>');
+        text = text.replace(/\n/g, '<br>');
+        return text;
+    }
+
+    function renderActions(p) {
+        const el = document.getElementById('sidebar-actions');
+        const role = localStorage.getItem('sb_role');
+        if (p.status === 'ACTIVE') {
+            el.innerHTML = `
+                <button class="btn-complete" onclick="updateStatus('COMPLETED')">
+                    <span style="display:flex;align-items:center;justify-content:center;gap:.5rem">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        Mark as Completed
+                    </span>
+                </button>
+                ${role === 'CLIENT' ? '<button class="btn-cancel-proj" onclick="updateStatus(\'CANCELLED\')">Cancel Project</button>' : ''}
+            `;
+        } else if (p.status === 'COMPLETED') {
+            if (role === 'CLIENT') checkReview(p.id);
+            else el.innerHTML = `
+                <div class="status-banner completed">
+                    <div class="status-banner-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="status-banner-text">
+                        <div class="status-banner-title">Project Completed</div>
+                        <div class="status-banner-sub">Great work on this project</div>
+                    </div>
+                </div>`;
         } else {
-            el.innerHTML='<div style="text-align:center;padding:.75rem;background:rgba(255,107,138,.05);border:1px solid rgba(255,107,138,.15);border-radius:10px"><div style="font-size:.82rem;color:var(--rose);font-weight:600">Project '+(p.status||'').toLowerCase()+'</div></div>';
+            el.innerHTML = `
+                <div class="status-banner cancelled">
+                    <div class="status-banner-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    </div>
+                    <div class="status-banner-text">
+                        <div class="status-banner-title">Project ${(p.status || '').charAt(0) + (p.status || '').slice(1).toLowerCase()}</div>
+                        <div class="status-banner-sub">This project is no longer active</div>
+                    </div>
+                </div>`;
         }
     }
 
-    async function loadMsgs(){
-        try{const r=await api.get('/api/v1/projects/'+projectId+'/messages');renderMsgs(await r.json());}
-        catch(e){console.error(e);}
+    // ── MESSAGES ──────────────────────────────────────────────
+
+    async function loadMsgs() {
+        try {
+            const r = await api.get('/api/v1/projects/' + projectId + '/messages');
+            renderMsgs(await r.json());
+        } catch (e) { console.error(e); }
     }
 
-    function smartDate(s){
-        const d=new Date(s),t=new Date(),y=new Date();y.setDate(y.getDate()-1);
-        if(d.toDateString()===t.toDateString())return'Today';
-        if(d.toDateString()===y.toDateString())return'Yesterday';
-        return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+    function smartDate(s) {
+        const d = new Date(s), t = new Date(), y = new Date();
+        y.setDate(y.getDate() - 1);
+        if (d.toDateString() === t.toDateString()) return 'Today';
+        if (d.toDateString() === y.toDateString()) return 'Yesterday';
+        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
-    function renderMsgs(msgs){
-        const a=document.getElementById('msgs');
-        if(!msgs||!msgs.length){
-            a.innerHTML='<div class="empty-chat"><div class="empty-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h4>No messages yet</h4><p>Start the conversation and discuss your project goals</p></div>';
+    function renderMsgs(msgs) {
+        const a = document.getElementById('msgs');
+        if (!msgs || !msgs.length) {
+            a.innerHTML = `<div class="empty-chat">
+                <div class="empty-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                <h4>No messages yet</h4><p>Start the conversation and discuss your project goals</p>
+            </div>`;
             return;
         }
-        let html='',lastD='',lastS=null;
-        msgs.forEach(m=>{
-            const d=smartDate(m.createdAt);
-            if(d!==lastD){if(lastD!=='')html+='<div class="msg-spacer"></div>';html+='<div class="date-div"><span>'+d+'</span></div>';lastD=d;lastS=null;}
-            html+=buildMsg(m,lastS===m.senderId);lastS=m.senderId;
+        let html = '', lastD = '', lastS = null;
+        msgs.forEach(m => {
+            const d = smartDate(m.createdAt);
+            if (d !== lastD) {
+                if (lastD !== '') html += '<div class="msg-spacer"></div>';
+                html += `<div class="date-div"><span>${d}</span></div>`;
+                lastD = d; lastS = null;
+            }
+            html += buildMsg(m, lastS === m.senderId);
+            lastS = m.senderId;
         });
-        a.innerHTML=html;scrollToBottom();
+        a.innerHTML = html;
+        scrollToBottom();
     }
 
-    function buildMsg(m,grouped){
-        const ini=(m.senderName||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-        const t=new Date(m.createdAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-        const c=m.isFile?renderFile(m):escH(m.content);
-        return'<div class="msg-row'+(m.mine?' mine':'')+(grouped?' grouped':'')+'"><div class="m-av">'+ini+'</div><div class="m-wrap">'+(!m.mine&&!grouped?'<div class="m-name">'+escH(m.senderName||'')+'</div>':'')+'<div class="m-bubble">'+c+'</div><div class="m-meta"><span class="m-time">'+t+'</span>'+(m.mine&&m.isRead?'<span class="m-seen"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Seen</span>':'')+'</div></div></div>';
+    function buildMsg(m, grouped) {
+        const ini = (m.senderName || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        const t = new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const c = m.isFile ? renderFile(m) : formatMsg(m.content);
+        return `<div class="msg-row${m.mine ? ' mine' : ''}${grouped ? ' grouped' : ''}"${m.id ? ` id="msg_${m.id}"` : ''}>
+            <div class="m-av">${ini}</div>
+            <div class="m-wrap">
+                ${!m.mine && !grouped ? `<div class="m-name">${escH(m.senderName || '')}</div>` : ''}
+                <div class="m-bubble">${c}</div>
+                <div class="m-meta">
+                    <span class="m-time">${t}</span>
+                    ${m.mine && m.isRead ? `<span class="m-seen"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Seen</span>` : ''}
+                </div>
+            </div>
+        </div>`;
     }
 
-    function renderFile(m){
-        if(m.fileType&&m.fileType.startsWith('image/'))return'<img src="'+m.fileUrl+'" alt="'+(m.fileName||'image')+'" class="m-img" onclick="window.open(\''+m.fileUrl+'\',\'_blank\')">';
-        return'<a href="'+m.fileUrl+'" target="_blank" class="m-file"><div class="m-file-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></div><div><div class="m-file-name">'+(m.fileName||'File')+'</div><div class="m-file-hint">Click to download</div></div></a>';
+    function renderFile(m) {
+        if (m.fileType && m.fileType.startsWith('image/'))
+            return `<img src="${m.fileUrl}" alt="${m.fileName || 'image'}" class="m-img" onclick="window.open('${m.fileUrl}','_blank')">`;
+        return `<a href="${m.fileUrl}" target="_blank" class="m-file">
+            <div class="m-file-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            </div>
+            <div>
+                <div class="m-file-name">${escH(m.fileName || 'File')}</div>
+                <div class="m-file-hint">Click to download</div>
+            </div>
+        </a>`;
     }
 
-    function appendMsg(m){
-        const a=document.getElementById('msgs'),e=a.querySelector('.empty-chat');
-        if(e)e.remove();
-        const d=document.createElement('div');d.innerHTML=buildMsg(m,false);a.appendChild(d.firstElementChild);scrollToBottom();
+    function appendMsg(m) {
+        const a = document.getElementById('msgs');
+        const e = a.querySelector('.empty-chat');
+        if (e) e.remove();
+        const d = document.createElement('div');
+        d.innerHTML = buildMsg(m, false);
+        a.appendChild(d.firstElementChild);
+        scrollToBottom();
     }
-    function sysMsg(t){const a=document.getElementById('msgs'),d=document.createElement('div');d.className='sys-msg';d.textContent=t;a.appendChild(d);scrollToBottom();}
-    function scrollToBottom(){const a=document.getElementById('msgs');a.scrollTop=a.scrollHeight;}
-    function handleScroll(){const a=document.getElementById('msgs'),b=document.getElementById('scroll-btn');b.classList.toggle('show',a.scrollHeight-a.scrollTop-a.clientHeight>200);}
 
-    function connectWS(){
-        const tk=localStorage.getItem('sb_jwt');if(!tk)return;
-        try{
-            const s=new SockJS('/ws');stomp=Stomp.over(s);stomp.debug=null;
-            stomp.connect({Authorization:'Bearer '+tk},
-                ()=>{connected=true;setWS(true);stomp.subscribe('/topic/project.'+projectId,msg=>{const m=JSON.parse(msg.body);m.mine=(m.senderId===me.id);if(m.senderId!==me.id)appendMsg(m);});},
-                ()=>{connected=false;setWS(false);setTimeout(connectWS,3000);}
+    function sysMsg(t) {
+        const a = document.getElementById('msgs'), d = document.createElement('div');
+        d.className = 'sys-msg'; d.textContent = t; a.appendChild(d); scrollToBottom();
+    }
+
+    function scrollToBottom() { const a = document.getElementById('msgs'); a.scrollTop = a.scrollHeight; }
+
+    function handleScroll() {
+        const a = document.getElementById('msgs'), b = document.getElementById('scroll-btn');
+        b.classList.toggle('show', a.scrollHeight - a.scrollTop - a.clientHeight > 200);
+    }
+
+    // ── WEBSOCKET ─────────────────────────────────────────────
+
+    function connectWS() {
+        const tk = localStorage.getItem('sb_jwt'); if (!tk) return;
+        try {
+            const s = new SockJS('/ws'); stomp = Stomp.over(s); stomp.debug = null;
+            stomp.connect({ Authorization: 'Bearer ' + tk },
+                () => {
+                    connected = true; setWS(true);
+                    stomp.subscribe('/topic/project.' + projectId, msg => {
+                        const m = JSON.parse(msg.body);
+                        if (m.type === 'MESSAGE_DELETED') {
+                            const el = document.getElementById('msg_' + m.messageId);
+                            if (el) el.remove();
+                            return;
+                        }
+                        m.mine = (m.senderId === me.id);
+                        if (m.senderId !== me.id) appendMsg(m);
+                    });
+                },
+                () => { connected = false; setWS(false); setTimeout(connectWS, 3000); }
             );
-        }catch(e){setWS(false);}
-    }
-    function setWS(on){document.getElementById('ws-dot').className='ws-dot'+(on?' on':'');document.getElementById('ws-text').textContent=on?'Connected':'Reconnecting...';}
-
-    async function sendMsg(){
-        const input=document.getElementById('chat-input'),c=input.value.trim();
-        if(!c&&!selFile)return;
-        if(selFile){await uploadFile();return;}
-        input.value='';handleInputChange(input);
-        appendMsg({content:c,mine:true,senderName:me?.name||'You',senderId:me?.id,createdAt:new Date().toISOString(),isRead:false});
-        try{if(connected&&stomp)stomp.send('/app/chat.'+projectId,{},JSON.stringify({content:c}));else await api.post('/api/v1/projects/'+projectId+'/messages',{content:c});}
-        catch(e){console.error(e);}
-    }
-    function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
-    function handleInputChange(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';const l=el.value.length,cc=document.getElementById('char-cnt');if(l>1500){cc.textContent=l+'/2000';cc.className=l>1900?'char-cnt limit':'char-cnt warn';}else cc.textContent='';}
-    function insertMd(b,a){const i=document.getElementById('chat-input'),s=i.selectionStart,e=i.selectionEnd,sel=i.value.substring(s,e);i.value=i.value.substring(0,s)+b+sel+a+i.value.substring(e);i.focus();i.setSelectionRange(s+b.length,s+b.length+sel.length);}
-
-    function handleFileSelect(ev){const f=ev.target.files[0];if(!f)return;selFile=f;document.getElementById('up-name').textContent=f.name;document.getElementById('up-preview').classList.add('show');ev.target.value='';}
-    function cancelUpload(){selFile=null;document.getElementById('up-preview').classList.remove('show');}
-    async function uploadFile(){
-        if(!selFile)return;const f=selFile,fd=new FormData();fd.append('file',f);cancelUpload();sysMsg('Uploading '+f.name+'...');
-        try{
-            const r=await fetch('/api/v1/upload/chat/'+projectId,{method:'POST',headers:{'Authorization':'Bearer '+localStorage.getItem('sb_jwt')},body:fd});
-            if(r.ok){
-                const d=await r.json();
-                if(connected&&stomp)stomp.send('/app/chat.'+projectId,{},JSON.stringify({content:'[file]',fileUrl:d.url,fileName:d.fileName,fileType:d.fileType,isFile:true}));
-                const a=document.getElementById('msgs'),sm=a.querySelectorAll('.sys-msg');if(sm.length)sm[sm.length-1].remove();
-                appendMsg({content:'[file]',mine:true,senderName:me?.name||'You',senderId:me?.id,createdAt:new Date().toISOString(),isFile:true,fileUrl:d.url,fileName:d.fileName,fileType:d.fileType});
-            }else toast('Upload failed','error');
-        }catch(e){toast('Upload error','error');}
+        } catch (e) { setWS(false); }
     }
 
-    async function updateStatus(status){
-        if(!confirm('Are you sure you want to '+(status==='COMPLETED'?'complete':'cancel')+' this project?'))return;
-        try{const r=await api.patch('/api/v1/projects/'+projectId+'/status',{status});if(r.ok)window.location.reload();}
-        catch(e){toast('Failed to update status','error');}
+    function setWS(on) {
+        document.getElementById('ws-dot').className = 'ws-dot' + (on ? ' on' : '');
+        document.getElementById('ws-text').textContent = on ? 'Connected' : 'Reconnecting...';
     }
 
-    async function checkReview(pid){
-        const el=document.getElementById('sidebar-actions');
-        try{
-            const r=await api.get('/api/v1/reviews/project/'+pid);
-            if(r.status===204){
-                el.innerHTML='<div style="text-align:center;padding:.75rem;background:rgba(0,201,167,.05);border:1px solid rgba(0,201,167,.15);border-radius:10px;margin-bottom:.5rem"><div style="font-size:1.25rem;margin-bottom:.25rem">&#x1F389;</div><div style="font-size:.82rem;color:var(--teal);font-weight:600">Project completed!</div></div><button class="btn-complete" onclick="openReview()"><span style="display:flex;align-items:center;justify-content:center;gap:.5rem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Leave a Review</span></button>';
-            }else{const rv=await r.json();el.innerHTML='<div style="text-align:center;padding:.75rem;background:rgba(245,166,35,.05);border:1px solid rgba(245,166,35,.15);border-radius:10px"><div style="font-size:.82rem;color:var(--gold);font-weight:700;margin-bottom:.25rem">'+'&#9733;'.repeat(rv.rating)+'&#9734;'.repeat(5-rv.rating)+'</div><div style="font-size:.78rem;color:var(--text3)">You rated '+rv.rating+'/5</div></div>';}
-        }catch(e){el.innerHTML='<div style="font-size:.82rem;color:var(--teal);text-align:center">Project completed</div>';}
+    // ── SEND MESSAGE ──────────────────────────────────────────
+
+    async function sendMsg() {
+        const input = document.getElementById('chat-input'), c = input.value.trim();
+        if (!c && !selFile) return;
+        if (selFile) { await uploadFile(); return; }
+        input.value = ''; handleInputChange(input);
+        appendMsg({ content: c, mine: true, senderName: me?.name || 'You', senderId: me?.id, createdAt: new Date().toISOString(), isRead: false });
+        try {
+            if (connected && stomp) stomp.send('/app/chat.' + projectId, {}, JSON.stringify({ content: c }));
+            else await api.post('/api/v1/projects/' + projectId + '/messages', { content: c });
+        } catch (e) { console.error(e); }
     }
 
-    function openReview(){document.getElementById('review-modal').classList.add('open');}
-    function closeReview(){document.getElementById('review-modal').classList.remove('open');}
-    let selRating=0;
-    const starLbls=['','Poor','Fair','Good','Great','Excellent!'];
-    function setRating(v){
-        selRating=v;
-        document.querySelectorAll('.star-btn svg').forEach((s,i)=>{s.style.fill=i<v?'var(--gold)':'none';s.style.stroke=i<v?'var(--gold)':'currentColor';});
-        const sl=document.getElementById('star-label');sl.textContent=starLbls[v];sl.style.color='var(--gold)';
-        document.getElementById('rv-err').style.display='none';
-    }
-    async function submitReview(){
-        if(selRating===0){document.getElementById('rv-err').style.display='block';return;}
-        const c=document.getElementById('rv-comment').value.trim();
-        const btn=document.getElementById('rv-submit-btn');btn.disabled=true;btn.textContent='Submitting...';
-        try{
-            const r=await api.post('/api/v1/reviews',{projectId:Number(projectId),rating:selRating,comment:c||null});
-            if(r.ok){closeReview();toast('Review submitted!','success');checkReview(projectId);}
-            else{const d=await r.json();toast(d.message||'Failed to submit','error');btn.disabled=false;btn.textContent='Submit Review';}
-        }catch(e){toast('Network error','error');btn.disabled=false;btn.textContent='Submit Review';}
+    function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } }
+
+    function handleInputChange(el) {
+        el.style.height = 'auto';
+        el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+        const l = el.value.length, cc = document.getElementById('char-cnt');
+        if (l > 1500) { cc.textContent = l + '/2000'; cc.className = l > 1900 ? 'char-cnt limit' : 'char-cnt warn'; }
+        else cc.textContent = '';
     }
 
-    function escH(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-    function fmtDate(s){if(!s)return'--';return new Date(s).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});}
-    function toast(msg,type='success'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type+' show';setTimeout(()=>t.classList.remove('show'),3200);}
+    function insertMd(b, a) {
+        const i = document.getElementById('chat-input'), s = i.selectionStart, e = i.selectionEnd, sel = i.value.substring(s, e);
+        i.value = i.value.substring(0, s) + b + sel + a + i.value.substring(e);
+        i.focus(); i.setSelectionRange(s + b.length, s + b.length + sel.length);
+    }
+
+    function handleFileSelect(ev) {
+        const f = ev.target.files[0]; if (!f) return; selFile = f;
+        document.getElementById('up-name').textContent = f.name;
+        document.getElementById('up-preview').classList.add('show');
+        ev.target.value = '';
+    }
+
+    function cancelUpload() { selFile = null; document.getElementById('up-preview').classList.remove('show'); }
+
+    async function uploadFile() {
+        if (!selFile) return;
+        const f = selFile, fd = new FormData(); fd.append('file', f); cancelUpload();
+        sysMsg('Uploading ' + f.name + '...');
+        try {
+            const r = await fetch('/api/v1/upload/chat/' + projectId, {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('sb_jwt') },
+                body: fd
+            });
+            if (r.ok) {
+                const d = await r.json();
+                if (connected && stomp) stomp.send('/app/chat.' + projectId, {}, JSON.stringify({ content: '[file]', fileUrl: d.url, fileName: d.fileName, fileType: d.fileType, isFile: true }));
+                const a = document.getElementById('msgs'), sm = a.querySelectorAll('.sys-msg');
+                if (sm.length) sm[sm.length - 1].remove();
+                appendMsg({ content: '[file]', mine: true, senderName: me?.name || 'You', senderId: me?.id, createdAt: new Date().toISOString(), isFile: true, fileUrl: d.url, fileName: d.fileName, fileType: d.fileType });
+            } else toast('Upload failed', 'error');
+        } catch (e) { toast('Upload error', 'error'); }
+    }
+
+    // ── PROJECT STATUS ────────────────────────────────────────
+
+    async function updateStatus(status) {
+        if (!confirm('Are you sure you want to ' + (status === 'COMPLETED' ? 'complete' : 'cancel') + ' this project?')) return;
+        try {
+            const r = await api.patch('/api/v1/projects/' + projectId + '/status', { status });
+            if (r.ok) window.location.reload();
+        } catch (e) { toast('Failed to update status', 'error'); }
+    }
+
+    // ── REVIEW ────────────────────────────────────────────────
+
+    async function checkReview(pid) {
+        const el = document.getElementById('sidebar-actions');
+        try {
+            const r = await api.get('/api/v1/reviews/project/' + pid);
+            if (r.status === 204) {
+                el.innerHTML = `
+                    <div class="status-banner completed" style="margin-bottom:.5rem">
+                        <div class="status-banner-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="status-banner-text">
+                            <div class="status-banner-title">Project Completed</div>
+                            <div class="status-banner-sub">Share your experience</div>
+                        </div>
+                    </div>
+                    <button class="btn-complete" onclick="openReview()">
+                        <span style="display:flex;align-items:center;justify-content:center;gap:.5rem">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            Leave a Review
+                        </span>
+                    </button>`;
+            } else {
+                const rv = await r.json();
+                const stars = Array.from({ length: 5 }, (_, i) => `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="${i < rv.rating ? 'var(--gold)' : 'none'}" stroke="${i < rv.rating ? 'var(--gold)' : 'var(--text3)'}" stroke-width="1.5">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>`).join('');
+                el.innerHTML = `
+                    <div class="status-banner completed">
+                        <div class="status-banner-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="status-banner-text">
+                            <div style="display:flex;gap:2px;margin-bottom:.2rem">${stars}</div>
+                            <div class="status-banner-sub">You rated ${rv.rating}/5</div>
+                        </div>
+                    </div>`;
+            }
+        } catch (e) {
+            el.innerHTML = '<div style="font-size:.82rem;color:var(--teal);text-align:center">Project completed</div>';
+        }
+    }
+
+    function openReview() { document.getElementById('review-modal').classList.add('open'); }
+    function closeReview() { document.getElementById('review-modal').classList.remove('open'); }
+
+    let selRating = 0;
+    const starLbls = ['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'];
+
+    function setRating(v) {
+        selRating = v;
+        document.querySelectorAll('.star-btn svg').forEach((s, i) => {
+            s.style.fill = i < v ? 'var(--gold)' : 'none';
+            s.style.stroke = i < v ? 'var(--gold)' : 'currentColor';
+        });
+        const sl = document.getElementById('star-label');
+        sl.textContent = starLbls[v]; sl.style.color = 'var(--gold)';
+        document.getElementById('rv-err').style.display = 'none';
+    }
+
+    async function submitReview() {
+        if (selRating === 0) { document.getElementById('rv-err').style.display = 'block'; return; }
+        const c = document.getElementById('rv-comment').value.trim();
+        const btn = document.getElementById('rv-submit-btn');
+        btn.disabled = true; btn.textContent = 'Submitting...';
+        try {
+            const r = await api.post('/api/v1/reviews', { projectId: Number(projectId), rating: selRating, comment: c || null });
+            if (r.ok) { closeReview(); toast('Review submitted', 'success'); checkReview(projectId); }
+            else { const d = await r.json(); toast(d.message || 'Failed to submit', 'error'); btn.disabled = false; btn.textContent = 'Submit Review'; }
+        } catch (e) { toast('Network error', 'error'); btn.disabled = false; btn.textContent = 'Submit Review'; }
+    }
+
+    // ── REVISIONS ─────────────────────────────────────────────
+
+    async function loadRevisions() {
+        const res = await api.get('/api/v1/projects/' + projectId + '/revisions');
+        if (!res.ok) return;
+        allRevisions = await res.json();
+        updateRevisionBadge();
+        renderRevisions();
+    }
+
+    function updateRevisionBadge() {
+        const open = allRevisions.filter(r => r.status === 'OPEN').length;
+        const badge = document.getElementById('openRevisionsBadge');
+        if (open > 0) { badge.textContent = open; badge.style.display = 'inline'; }
+        else badge.style.display = 'none';
+    }
+
+    function filterRevisions(status, btn) {
+        activeRevisionFilter = status;
+        document.querySelectorAll('.rev-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderRevisions();
+    }
+
+    const icnClient = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    const icnFreelancer = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`;
+    const icnCheck = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+    const icnInProgress = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.49"/></svg>`;
+    const icnReject = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+
+    const statusConfig = {
+        OPEN:        { color: 'var(--gold)',  label: 'Open' },
+        IN_PROGRESS: { color: 'var(--blue)',  label: 'In Progress' },
+        RESOLVED:    { color: '#2ecc71',      label: 'Resolved' },
+        REJECTED:    { color: 'var(--rose)',  label: 'Rejected' }
+    };
+
+    function renderRevisions() {
+        const list = document.getElementById('revisionsList');
+        const filtered = activeRevisionFilter === 'ALL'
+            ? allRevisions
+            : allRevisions.filter(r => r.status === activeRevisionFilter);
+
+        if (!filtered.length) {
+            const label = activeRevisionFilter === 'ALL' ? '' : statusConfig[activeRevisionFilter]?.label.toLowerCase() + ' ';
+            list.innerHTML = `<div class="rev-empty">
+                <div class="rev-empty-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.49"/></svg>
+                </div>
+                No ${label}revision requests yet.
+            </div>`;
+            return;
+        }
+
+        list.innerHTML = filtered.map(r => {
+            const cfg = statusConfig[r.status] || { color: 'var(--text3)', label: r.status };
+            const isMyRevision = r.requesterName === currentUserName;
+            const canAct = (r.status === 'OPEN' || r.status === 'IN_PROGRESS') && !isMyRevision;
+            return `
+            <div class="rev-card">
+                <div class="rev-card-top">
+                    <div class="rev-card-title-row">
+                        <span class="rev-card-title">${escH(r.title)}</span>
+                        <span class="rev-status-pill" style="color:${cfg.color};border-color:${cfg.color}">${cfg.label}</span>
+                    </div>
+                    <span class="rev-date">${fmtDate(r.createdAt)}</span>
+                </div>
+                <p class="rev-desc">${escH(r.description)}</p>
+                <div class="rev-meta">
+                    <span class="rev-role-badge">
+                        ${r.requesterIsClient ? icnClient : icnFreelancer}
+                        ${r.requesterIsClient ? 'Client' : 'Freelancer'}: <strong style="color:var(--text2);margin-left:.15rem">${escH(r.requesterName)}</strong>
+                    </span>
+                    ${r.resolvedByName ? `<span class="rev-resolved-by">${icnCheck} Resolved by ${escH(r.resolvedByName)}</span>` : ''}
+                </div>
+                ${r.resolutionNote ? `<div class="rev-resolution-note">${escH(r.resolutionNote)}</div>` : ''}
+                ${canAct ? `
+                    <div class="rev-actions">
+                        ${r.status === 'OPEN' ? `<button class="rev-action-btn in-progress" onclick="openResolveModal(${r.id},'IN_PROGRESS','Mark In Progress')">${icnInProgress} In Progress</button>` : ''}
+                        <button class="rev-action-btn resolve" onclick="openResolveModal(${r.id},'RESOLVED','Mark as Resolved')">${icnCheck} Resolve</button>
+                        <button class="rev-action-btn reject" onclick="openResolveModal(${r.id},'REJECTED','Reject Revision')">${icnReject} Reject</button>
+                    </div>` : ''}
+            </div>`;
+        }).join('');
+    }
+
+    function showRevisionModal() {
+        document.getElementById('revisionTitle').value = '';
+        document.getElementById('revisionDesc').value = '';
+        document.getElementById('revisionModalOverlay').classList.add('open');
+    }
+
+    async function submitRevision() {
+        const title = document.getElementById('revisionTitle').value.trim();
+        const description = document.getElementById('revisionDesc').value.trim();
+        if (!title || !description) return toast('Please fill in all fields.', 'error');
+        const res = await api.post('/api/v1/projects/' + projectId + '/revisions', { title, description });
+        if (res.ok) {
+            document.getElementById('revisionModalOverlay').classList.remove('open');
+            await loadRevisions();
+            toast('Revision request submitted', 'success');
+        } else {
+            const err = await res.json();
+            toast(err.message || 'Failed to submit revision.', 'error');
+        }
+    }
+
+    function openResolveModal(revisionId, status, label) {
+        document.getElementById('resolveRevisionId').value = revisionId;
+        document.getElementById('resolveRevisionStatus').value = status;
+        document.getElementById('resolveRevisionTitle').textContent = label;
+        document.getElementById('resolveNote').value = '';
+        document.getElementById('resolveRevisionOverlay').classList.add('open');
+    }
+
+    async function confirmRevisionUpdate() {
+        const revisionId = document.getElementById('resolveRevisionId').value;
+        const status = document.getElementById('resolveRevisionStatus').value;
+        const resolutionNote = document.getElementById('resolveNote').value.trim();
+        const res = await api.patch('/api/v1/projects/' + projectId + '/revisions/' + revisionId + '/status',
+            { status, resolutionNote: resolutionNote || null });
+        if (res.ok) {
+            document.getElementById('resolveRevisionOverlay').classList.remove('open');
+            await loadRevisions();
+            toast('Revision updated', 'success');
+        } else {
+            const err = await res.json();
+            toast(err.message || 'Failed to update revision.', 'error');
+        }
+    }
+
+    // ── UTILS ─────────────────────────────────────────────────
+
+    function escH(s) {
+        return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    function fmtDate(s) {
+        if (!s) return '--';
+        return new Date(s).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+    function toast(msg, type = 'success') {
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.className = 'toast ' + type + ' show';
+        setTimeout(() => t.classList.remove('show'), 3200);
+    }
 
     init();
 </script>

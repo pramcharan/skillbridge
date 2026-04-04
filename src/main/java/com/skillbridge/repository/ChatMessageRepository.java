@@ -1,6 +1,7 @@
 package com.skillbridge.repository;
 
 import com.skillbridge.entity.ChatMessage;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -49,4 +50,15 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 
     @Query("SELECT MAX(m.createdAt) FROM ChatMessage m WHERE m.project.id = :projectId")
     Optional<Instant> findLastMessageTime(@Param("projectId") Long projectId);
+
+    @Modifying
+    @Query("DELETE FROM ChatMessage m WHERE m.id = :messageId")
+    void deleteByMessageId(@Param("messageId") Long messageId);
+
+    Optional<ChatMessage> findByIdAndProjectId(Long id, Long projectId);
+
+    @Query("SELECT m FROM ChatMessage m JOIN FETCH m.sender " +
+            "WHERE m.project.id = :projectId ORDER BY m.createdAt DESC")
+    List<ChatMessage> findByProjectIdPaged(@Param("projectId") Long projectId,
+                                           Pageable pageable);
 }

@@ -5,10 +5,14 @@ import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -58,5 +62,30 @@ public class FileUploadService {
                 )
         );
         return (String) result.get("secure_url");
+    }
+
+    public Map<String, String> uploadJobAttachment(MultipartFile file, Long jobId) {
+        if (file.getSize() > 10 * 1024 * 1024)
+            throw new RuntimeException("File too large. Max 10MB.");
+
+        String originalName = StringUtils.cleanPath(
+                Objects.requireNonNull(file.getOriginalFilename()));
+
+        try {
+            Map<String, Object> options = new HashMap<>();
+            options.put("folder", "skillbridge/job-attachments/" + jobId);
+            options.put("resource_type", "auto");
+            options.put("public_id", UUID.randomUUID().toString());
+
+            Map<?, ?> result = cloudinary.uploader()
+                    .upload(file.getBytes(), options);
+
+            return Map.of(
+                    "url",  result.get("secure_url").toString(),
+                    "name", originalName
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Upload failed: " + e.getMessage());
+        }
     }
 }

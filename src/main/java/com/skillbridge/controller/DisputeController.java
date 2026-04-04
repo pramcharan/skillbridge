@@ -1,6 +1,5 @@
 package com.skillbridge.controller;
 
-import com.skillbridge.dto.*;
 import com.skillbridge.dto.request.DisputeReplyRequest;
 import com.skillbridge.dto.request.DisputeRequest;
 import com.skillbridge.dto.request.DisputeResolveRequest;

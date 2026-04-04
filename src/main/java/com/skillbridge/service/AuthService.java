@@ -74,9 +74,14 @@ public class AuthService {
         String token = jwtUtil.generateToken(
                 saved.getEmail(), saved.getRole().name(), saved.getId());
 
-        return new AuthResponse(
-                token, saved.getRole().name(),
-                saved.getId(), saved.getName(), saved.getEmail());
+        return AuthResponse.builder()
+                .token(token)
+                .role(user.getRole().name())
+                .userId(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .onboardingComplete(user.isOnboardingComplete()) // ← ADD
+                .build();
     }
 
     // ── LOGIN ────────────────────────────────────────────────────────
@@ -115,9 +120,14 @@ public class AuthService {
         String token = jwtUtil.generateToken(
                 user.getEmail(), user.getRole().name(), user.getId());
 
-        return new AuthResponse(
-                token, user.getRole().name(),
-                user.getId(), user.getName(), user.getEmail());
+        return AuthResponse.builder()
+                .token(token)
+                .role(user.getRole().name())
+                .userId(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .onboardingComplete(user.isOnboardingComplete()) // ← ADD
+                .build();
     }
 
     // ── LOGOUT ───────────────────────────────────────────────────────
@@ -148,8 +158,7 @@ public class AuthService {
                         request.getEmail().toLowerCase().trim())
                 .ifPresent(user -> {
                     // Delete any existing unused tokens for this user
-                    var existing = resetTokenRepository
-                            .findByTokenAndIsUsedFalse("dummy");
+                    resetTokenRepository.deleteByUserId(user.getId());
                     // Generate new token
                     String token = UUID.randomUUID().toString();
                     PasswordResetToken resetToken = new PasswordResetToken();

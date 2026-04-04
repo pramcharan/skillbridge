@@ -3,6 +3,7 @@ package com.skillbridge.controller;
 import com.skillbridge.exception.BadRequestException;
 import com.skillbridge.repository.UserRepository;
 import com.skillbridge.service.FileUploadService;
+import com.skillbridge.service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +19,7 @@ public class FileUploadController {
 
     private final FileUploadService fileUploadService;
     private final UserRepository userRepository;
+    private final JobService jobService;
 
     // POST /api/v1/upload/chat/{projectId}
     @PostMapping("/chat/{projectId}")
@@ -51,5 +53,18 @@ public class FileUploadController {
             throw new BadRequestException(
                     "Upload failed: " + e.getMessage());
         }
+    }
+
+    // Add to FileUploadController
+
+    @PostMapping("/job/{jobId}")
+    public ResponseEntity<Map<String, String>> uploadJobAttachment(
+            @PathVariable Long jobId,
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal String email) {
+
+        Map<String, String> uploaded = fileUploadService.uploadJobAttachment(file, jobId);
+        jobService.addAttachment(jobId, uploaded.get("url"), uploaded.get("name"), email);
+        return ResponseEntity.ok(uploaded);
     }
 }

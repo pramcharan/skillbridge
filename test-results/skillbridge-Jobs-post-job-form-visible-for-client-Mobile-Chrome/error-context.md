@@ -1,0 +1,84 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - navigation [ref=e2]:
+    - link "SkillBridge" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e4]:
+      - text: Already have an account?
+      - link "Sign in" [ref=e5] [cursor=pointer]:
+        - /url: /login.html
+  - main [ref=e6]:
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - heading "Create Account" [level=1] [ref=e10]
+        - paragraph [ref=e11]: Join SkillBridge free — no credit card required
+        - generic [ref=e12]: 12,400+ professionals on the platform
+      - generic [ref=e14]:
+        - generic [ref=e15] [cursor=pointer]:
+          - img [ref=e17]
+          - generic [ref=e20]: Freelancer
+          - generic [ref=e21]: Find work & grow your career
+        - generic [ref=e22] [cursor=pointer]:
+          - img [ref=e24]
+          - generic [ref=e27]: Client
+          - generic [ref=e28]: Hire top talent fast
+      - generic [ref=e29]:
+        - generic [ref=e30]: Full Name
+        - generic [ref=e31]:
+          - generic:
+            - img
+          - textbox "Full Name" [ref=e32]:
+            - /placeholder: Arjun Sharma
+      - generic [ref=e33]:
+        - generic [ref=e34]: Email Address
+        - generic [ref=e35]:
+          - generic:
+            - img
+          - textbox "Email Address" [active] [ref=e36]:
+            - /placeholder: you@example.com
+            - text: priya@playwright.com
+      - generic [ref=e37]:
+        - generic [ref=e38]: Password
+        - generic [ref=e39]:
+          - generic:
+            - img
+          - textbox "Password" [ref=e40]:
+            - /placeholder: Min. 8 characters
+          - button "Toggle password visibility" [ref=e41] [cursor=pointer]:
+            - img [ref=e42]
+      - generic [ref=e47]:
+        - checkbox "I agree to SkillBridge's Terms of Service and Privacy Policy" [ref=e48] [cursor=pointer]
+        - generic [ref=e49]:
+          - text: I agree to SkillBridge's
+          - link "Terms of Service" [ref=e50] [cursor=pointer]:
+            - /url: /terms.html
+          - text: and
+          - link "Privacy Policy" [ref=e51] [cursor=pointer]:
+            - /url: /privacy.html
+      - button "Create Account" [ref=e52] [cursor=pointer]:
+        - generic [ref=e53]: Create Account
+      - generic [ref=e55]: or continue with
+      - generic [ref=e56]:
+        - link "Google" [ref=e57] [cursor=pointer]:
+          - /url: /oauth2/authorization/google
+          - img [ref=e58]
+          - text: Google
+        - link "GitHub" [ref=e63] [cursor=pointer]:
+          - /url: /oauth2/authorization/github
+          - img [ref=e64]
+          - text: GitHub
+      - generic [ref=e66]:
+        - text: Already have an account?
+        - link "Sign in" [ref=e67] [cursor=pointer]:
+          - /url: /login.html
+  - generic [ref=e68]:
+    - paragraph [ref=e69]: © 2026 SkillBridge
+    - paragraph [ref=e70]:
+      - link "Privacy Policy" [ref=e71] [cursor=pointer]:
+        - /url: /privacy.html
+      - text: ·
+      - link "Terms of Service" [ref=e72] [cursor=pointer]:
+        - /url: /terms.html
+```

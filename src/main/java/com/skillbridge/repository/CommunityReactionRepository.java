@@ -26,4 +26,6 @@ public interface CommunityReactionRepository
     long countByMessageIdAndEmoji(
             @Param("msgId")  Long msgId,
             @Param("emoji")  String emoji);
+
+    void deleteByMessageId(Long messageId);
 }

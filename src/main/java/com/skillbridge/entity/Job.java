@@ -45,6 +45,13 @@ public class Job {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String requiredSkills;
 
+
+    @Column(columnDefinition = "TEXT")
+    private String attachmentUrls; // comma-separated Cloudinary URLs
+
+    @Column(columnDefinition = "TEXT")
+    private String attachmentNames; // comma-separated original filenames
+
     private Double budget;
     private Instant deadline;
     private Instant autoExpireAt;

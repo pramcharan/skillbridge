@@ -2,6 +2,7 @@ package com.skillbridge.service;
 
 import com.skillbridge.dto.ai.AiMatchResult;
 import com.skillbridge.dto.mapper.JobMapper;
+import com.skillbridge.dto.request.JobAttachmentDTO;
 import com.skillbridge.dto.request.PostJobRequest;
 import com.skillbridge.dto.request.UpdateJobRequest;
 import com.skillbridge.dto.response.JobCardResponse;
@@ -10,6 +11,8 @@ import com.skillbridge.entity.Job;
 import com.skillbridge.entity.User;
 import com.skillbridge.entity.enums.JobCategory;
 import com.skillbridge.entity.enums.JobStatus;
+import com.skillbridge.entity.enums.Role;
+import com.skillbridge.exception.ForbiddenException;
 import com.skillbridge.exception.ResourceNotFoundException;
 import com.skillbridge.repository.JobRepository;
 import com.skillbridge.repository.ProposalRepository;
@@ -26,6 +29,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -39,10 +44,16 @@ public class JobService {
     private final JobMapper          jobMapper;
     private final AiScoringOrchestrator aiScoringOrchestrator;
 
+    private static final int MAX_JOB_ATTACHMENTS = 5;
+
     // ── POST JOB ─────────────────────────────────────────────────────
     @Transactional
     public JobDetailResponse postJob(PostJobRequest request, String clientEmail) {
         User client = findUserByEmail(clientEmail);
+
+        if (client.getRole() != Role.CLIENT && client.getRole() != Role.ADMIN) {
+            throw new ForbiddenException("Only clients can post jobs");
+        }
 
         Job job = new Job();
         job.setClient(client);
@@ -158,6 +169,8 @@ public class JobService {
 
         return response;
     }
+
+
 
     // ── GET JOBS BY CLIENT ─────────────────────────────────────────────
     @Transactional(readOnly = true)
@@ -275,5 +288,83 @@ public class JobService {
             r.setClientName(j.getClient().getName());
         }
         return r;
+    }
+
+    @Transactional(readOnly = true)
+    public List<JobAttachmentDTO> getAttachments(Long jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
+
+        return parseAttachments(job);
+    }
+
+    @Transactional
+    public List<JobAttachmentDTO> addAttachment(Long jobId, String fileUrl,
+                                                String fileName, String clientEmail) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
+
+        if (!job.getClient().getEmail().equals(clientEmail))
+            throw new AccessDeniedException("Not authorised");
+
+        List<String> urls  = parseCsv(job.getAttachmentUrls());
+        List<String> names = parseCsv(job.getAttachmentNames());
+
+        if (urls.size() >= MAX_JOB_ATTACHMENTS)
+            throw new RuntimeException("Maximum " + MAX_JOB_ATTACHMENTS + " attachments allowed");
+
+        urls.add(fileUrl);
+        names.add(fileName);
+
+        job.setAttachmentUrls(String.join(",", urls));
+        job.setAttachmentNames(String.join(",", names));
+        jobRepository.save(job);
+
+        return parseAttachments(job);
+    }
+
+    @Transactional
+    public List<JobAttachmentDTO> removeAttachment(Long jobId, String fileUrl,
+                                                   String clientEmail) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
+
+        if (!job.getClient().getEmail().equals(clientEmail))
+            throw new RuntimeException("Not authorised");
+
+        List<String> urls  = new ArrayList<>(parseCsv(job.getAttachmentUrls()));
+        List<String> names = new ArrayList<>(parseCsv(job.getAttachmentNames()));
+
+        int idx = urls.indexOf(fileUrl);
+        if (idx >= 0) {
+            urls.remove(idx);
+            names.remove(idx);
+        }
+
+        job.setAttachmentUrls(urls.isEmpty()  ? null : String.join(",", urls));
+        job.setAttachmentNames(names.isEmpty() ? null : String.join(",", names));
+        jobRepository.save(job);
+
+        return parseAttachments(job);
+    }
+
+// ── helpers ──────────────────────────────────────────────────
+
+    private List<String> parseCsv(String csv) {
+        if (csv == null || csv.isBlank()) return new ArrayList<>();
+        return new ArrayList<>(Arrays.asList(csv.split(",")));
+    }
+
+    private List<JobAttachmentDTO> parseAttachments(Job job) {
+        List<String> urls  = parseCsv(job.getAttachmentUrls());
+        List<String> names = parseCsv(job.getAttachmentNames());
+        List<JobAttachmentDTO> result = new ArrayList<>();
+        for (int i = 0; i < urls.size(); i++) {
+            result.add(new JobAttachmentDTO(
+                    urls.get(i),
+                    i < names.size() ? names.get(i) : "attachment-" + (i + 1)
+            ));
+        }
+        return result;
     }
 }

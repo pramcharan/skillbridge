@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -88,5 +89,41 @@ public class AdminController {
     @GetMapping("/ai-health")
     public ResponseEntity<Map<String, Object>> getAiHealth() {
         return ResponseEntity.ok(adminService.getAiHealthData());
+    }
+
+    // ── Project chat ──────────────────────────────────────────────
+
+    @GetMapping("/chats/project/{projectId}")
+    public ResponseEntity<List<Map<String, Object>>> getProjectMessages(
+            @PathVariable Long projectId,
+            @RequestParam(defaultValue = "0") int page) {
+        return ResponseEntity.ok(
+                adminService.getProjectChatMessages(projectId, page));
+    }
+
+    @DeleteMapping("/chats/project/{projectId}/messages/{messageId}")
+    public ResponseEntity<Void> deleteProjectMessage(
+            @PathVariable Long projectId,
+            @PathVariable Long messageId) {
+        adminService.deleteProjectChatMessage(messageId, projectId);
+        return ResponseEntity.noContent().build();
+    }
+
+// ── Community chat ────────────────────────────────────────────
+
+    @GetMapping("/chats/community/{room}")
+    public ResponseEntity<List<Map<String, Object>>> getCommunityMessages(
+            @PathVariable String room,
+            @RequestParam(defaultValue = "0") int page) {
+        return ResponseEntity.ok(
+                adminService.getCommunityRoomMessages(room, page));
+    }
+
+    @DeleteMapping("/chats/community/{room}/messages/{messageId}")
+    public ResponseEntity<Void> deleteCommunityMessage(
+            @PathVariable String room,
+            @PathVariable Long messageId) {
+        adminService.deleteCommunityMessage(messageId, room);
+        return ResponseEntity.noContent().build();
     }
 }

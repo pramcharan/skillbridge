@@ -1,6 +1,5 @@
 package com.skillbridge.service;
 
-import com.skillbridge.dto.*;
 import com.skillbridge.dto.request.DisputeReplyRequest;
 import com.skillbridge.dto.request.DisputeRequest;
 import com.skillbridge.dto.request.DisputeResolveRequest;
@@ -78,6 +77,7 @@ public class DisputeService {
         DisputeTicket ticket = new DisputeTicket();
         ticket.setProject(project);
         ticket.setReporter(reporter);
+        ticket.setRaisedBy(reporter);  // same person who raises the dispute
         ticket.setRespondent(respondent);
         ticket.setReason(req.getReason().trim());
         ticket.setDescription(req.getDescription().trim());
@@ -123,7 +123,7 @@ public class DisputeService {
             throw new BadRequestException(
                     "Only the respondent can reply to this dispute.");
         }
-        if (ticket.getStatus() == DisputeStatus.RESOLVED ||
+        if (ticket.getStatus() == DisputeStatus.RESOLVED_COMPLETE ||
                 ticket.getStatus() == DisputeStatus.CLOSED) {
             throw new BadRequestException(
                     "This dispute is already closed.");
@@ -158,14 +158,14 @@ public class DisputeService {
         }
 
         DisputeTicket ticket = getTicket(disputeId);
-        if (ticket.getStatus() == DisputeStatus.RESOLVED) {
+        if (ticket.getStatus() == DisputeStatus.RESOLVED_COMPLETE) {
             throw new BadRequestException("Dispute already resolved.");
         }
 
         DisputeResolution resolution =
                 DisputeResolution.valueOf(req.getResolution());
 
-        ticket.setStatus(DisputeStatus.RESOLVED);
+        ticket.setStatus(DisputeStatus.RESOLVED_COMPLETE);
         ticket.setResolution(resolution);
         ticket.setAdminNotes(req.getAdminNotes());
         ticket.setResolvedBy(admin);

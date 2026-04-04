@@ -16,6 +16,7 @@ public class UserProfileResponse {
     private String location;
     private String             bio;
     private String             avatarUrl;
+    private String portfolioUrl;
     private List<String>       skills;
     private Double             hourlyRate;
     private Double             avgRating;

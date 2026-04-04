@@ -4,381 +4,615 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community — SkillBridge</title>
+    <meta name="description" content="SkillBridge connects top Indian freelancers with clients. AI-powered proposal scoring, real-time chat, and verified reviews.">
+    <meta name="theme-color" content="#00C9A7">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <style>
-        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-          --bg:#060D1A; --card:#0D1829; --card2:#111f38;
-          --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623;
-          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
-          --border:#1A2D4A; --border2:#243650;
+            --bg: #060D1A; --bg2: #0B1425; --card: #0D1829; --card2: #111f38;
+            --teal: #00C9A7; --teal-dk: #00A389; --gold: #F5A623; --purple: #7B61FF;
+            --rose: #FF6B8A; --blue: #4A90E2;
+            --text: #E8F0FE; --text2: #8BA3C7; --text3: #5A7090;
+            --border: #1A2D4A; --border2: #243650;
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        body { font-family:'DM Sans',sans-serif; background:var(--bg);
-          color:var(--text); height:100vh; display:flex;
-          flex-direction:column; overflow:hidden; }
+        /* ── NAV ──────────────────────────────────────────── */
+        nav {
+            height: 60px;
+            background: rgba(6,13,26,.98);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            gap: 1rem;
+            flex-shrink: 0;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+        }
+        .nav-logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, var(--teal), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+        .nav-sep { width: 1px; height: 20px; background: var(--border); }
+        .nav-links { display: flex; gap: 1.25rem; }
+        .nav-links a {
+            font-size: .83rem;
+            color: var(--text3);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color .2s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--teal); }
+        .nav-right { display: flex; align-items: center; gap: .75rem; margin-left: auto; }
+        .user-av {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--rose));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: .82rem; color: #fff;
+            border: 2px solid var(--border2);
+            cursor: pointer; overflow: hidden;
+        }
+        .btn-logout {
+            padding: .35rem .85rem; border-radius: 8px;
+            font-size: .82rem; font-weight: 600; cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            background: transparent; border: 1px solid var(--border2);
+            color: var(--text3); transition: all .2s;
+        }
+        .btn-logout:hover { border-color: var(--rose); color: var(--rose); }
 
-        /* ── Nav ── */
-        nav { height:56px; background:var(--card);
-              border-bottom:1px solid var(--border);
-              display:flex; align-items:center; padding:0 1.25rem;
-              gap:1rem; flex-shrink:0; z-index:10; }
-        .nav-logo { font-family:'Syne',sans-serif; font-weight:800;
-          font-size:1.15rem;
-          background:linear-gradient(135deg,var(--teal),var(--gold));
-          -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-        .nav-links { display:flex; gap:0.85rem; margin-left:auto; }
-        .nav-links a { font-size:0.82rem; color:var(--text2);
-          text-decoration:none; transition:color 0.2s; }
-        .nav-links a:hover,
-        .nav-links a.active { color:var(--teal); }
+        /* ── LAYOUT ───────────────────────────────────────── */
+        .layout { display: flex; flex: 1; overflow: hidden; }
 
-        /* ── Layout ── */
-        .layout { display:flex; flex:1; overflow:hidden; }
-
-        /* ── Sidebar ── */
+        /* ── LEFT SIDEBAR ─────────────────────────────────── */
         .sidebar {
-          width:220px; flex-shrink:0; background:var(--card);
-          border-right:1px solid var(--border);
-          display:flex; flex-direction:column; overflow-y:auto;
+            width: 230px; flex-shrink: 0; background: var(--bg2);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow-y: auto;
+            scrollbar-width: thin; scrollbar-color: var(--border) transparent;
         }
-        .sidebar-section { padding:0.85rem 0.75rem 0.4rem; }
-        .sidebar-label { font-size:0.68rem; font-weight:700;
-          letter-spacing:0.1em; text-transform:uppercase;
-          color:var(--text3); margin-bottom:0.5rem; padding:0 0.5rem; }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
 
+        .sidebar-section { padding: .9rem .75rem .4rem; }
+        .sidebar-label {
+            font-size: .68rem; font-weight: 700;
+            letter-spacing: .1em; text-transform: uppercase;
+            color: var(--text3); margin-bottom: .5rem; padding: 0 .5rem;
+        }
         .room-btn {
-          width:100%; display:flex; align-items:center; gap:0.6rem;
-          padding:0.55rem 0.75rem; border-radius:8px;
-          font-size:0.85rem; font-weight:500; color:var(--text2);
-          background:transparent; border:none; cursor:pointer;
-          font-family:'DM Sans',sans-serif;
-          transition:all 0.15s; text-align:left;
+            width: 100%; display: flex; align-items: center; gap: .6rem;
+            padding: .55rem .75rem; border-radius: 8px;
+            font-size: .85rem; font-weight: 500; color: var(--text2);
+            background: transparent; border: none; cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all .15s; text-align: left;
         }
-        .room-btn:hover { background:var(--card2); color:var(--text); }
-        .room-btn.active { background:rgba(0,201,167,0.1);
-          color:var(--teal); font-weight:600; }
-        .room-icon { font-size:1rem; width:20px; text-align:center; }
+        .room-btn:hover { background: var(--card); color: var(--text); }
+        .room-btn.active {
+            background: rgba(0,201,167,.1);
+            color: var(--teal); font-weight: 600;
+        }
+        .room-icon { color: var(--text3); flex-shrink: 0; }
+        .room-btn.active .room-icon { color: var(--teal); }
         .room-badge {
-          margin-left:auto; min-width:18px; height:18px;
-          background:var(--rose); color:#fff;
-          border-radius:99px; font-size:0.68rem; font-weight:700;
-          display:flex; align-items:center; justify-content:center;
-          padding:0 4px;
+            margin-left: auto; min-width: 18px; height: 18px;
+            background: var(--rose); color: #fff;
+            border-radius: 99px; font-size: .65rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 4px;
         }
 
-        /* Spotlight in sidebar */
-        .spotlight-section { padding:0.75rem; border-top:1px solid var(--border); margin-top:auto; }
-        .spotlight-title { font-size:0.68rem; font-weight:700;
-          letter-spacing:0.1em; text-transform:uppercase;
-          color:var(--text3); margin-bottom:0.6rem; }
+        /* Spotlight */
+        .spotlight-section {
+            padding: .75rem; border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+        .spotlight-title {
+            font-size: .68rem; font-weight: 700;
+            letter-spacing: .1em; text-transform: uppercase;
+            color: var(--text3); margin-bottom: .6rem;
+            display: flex; align-items: center; gap: .4rem;
+        }
         .spotlight-user {
-          display:flex; align-items:center; gap:0.5rem;
-          padding:0.4rem 0.3rem; border-radius:7px;
-          transition:background 0.15s; cursor:pointer;
+            display: flex; align-items: center; gap: .5rem;
+            padding: .4rem .3rem; border-radius: 8px;
+            transition: background .15s; cursor: pointer;
         }
-        .spotlight-user:hover { background:var(--card2); }
+        .spotlight-user:hover { background: var(--card); }
         .spotlight-avatar {
-          width:28px; height:28px; border-radius:50%;
-          background:var(--card2); object-fit:cover;
-          font-size:0.7rem; display:flex; align-items:center;
-          justify-content:center; color:var(--text2); flex-shrink:0;
-          border:1px solid var(--border2);
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--card2); font-size: .7rem;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text2); flex-shrink: 0;
+            border: 1px solid var(--border2); overflow: hidden;
         }
-        .spotlight-name { font-size:0.78rem; font-weight:600;
-          color:var(--text); }
-        .spotlight-rating { font-size:0.7rem; color:var(--gold); }
+        .spotlight-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .spotlight-name { font-size: .78rem; font-weight: 600; color: var(--text); }
+        .spotlight-rating {
+            font-size: .7rem; color: var(--text3);
+            display: flex; align-items: center; gap: .25rem; margin-top: .1rem;
+        }
+        .spotlight-rating svg { color: var(--gold); }
 
-        /* ── Main chat area ── */
-        .chat-area { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+        /* ── MAIN CHAT ────────────────────────────────────── */
+        .chat-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Room header */
         .room-header {
-          padding:0.85rem 1.25rem; border-bottom:1px solid var(--border);
-          display:flex; align-items:center; gap:0.75rem; flex-shrink:0;
+            padding: .85rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(13,24,41,.95);
+            display: flex; align-items: center; gap: .75rem;
+            flex-shrink: 0; backdrop-filter: blur(8px);
         }
-        .room-name { font-family:'Syne',sans-serif; font-weight:700;
-          font-size:1rem; }
-        .room-desc { font-size:0.78rem; color:var(--text2); }
+        .rh-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: linear-gradient(135deg, rgba(0,201,167,.15), rgba(123,97,255,.15));
+            border: 1px solid rgba(0,201,167,.2);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--teal); flex-shrink: 0;
+        }
+        .room-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem; }
+        .room-desc { font-size: .75rem; color: var(--text3); margin-top: .05rem; }
         .online-pill {
-          margin-left:auto; display:flex; align-items:center; gap:0.35rem;
-          padding:0.25rem 0.65rem; border-radius:99px;
-          background:rgba(0,201,167,0.08);
-          border:1px solid rgba(0,201,167,0.15);
-          font-size:0.75rem; font-weight:600; color:var(--teal);
+            margin-left: auto; display: flex; align-items: center; gap: .4rem;
+            padding: .3rem .75rem; border-radius: 99px;
+            background: rgba(0,201,167,.08);
+            border: 1px solid rgba(0,201,167,.15);
+            font-size: .75rem; font-weight: 600; color: var(--teal);
         }
-        .online-dot { width:7px; height:7px; border-radius:50%;
-          background:var(--teal); animation:pulse 2s infinite; }
-        @keyframes pulse {
-          0%,100% { opacity:1; } 50% { opacity:0.4; }
+        .online-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--teal); animation: opulse 2s infinite;
         }
+        @keyframes opulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
 
         /* Pinned bar */
         .pinned-bar {
-          background:rgba(245,166,35,0.06);
-          border-bottom:1px solid rgba(245,166,35,0.15);
-          padding:0.55rem 1.25rem;
-          display:flex; align-items:flex-start; gap:0.6rem;
-          flex-shrink:0;
+            background: rgba(245,166,35,.05);
+            border-bottom: 1px solid rgba(245,166,35,.15);
+            padding: .55rem 1.5rem;
+            display: flex; align-items: center; gap: .65rem;
+            flex-shrink: 0;
         }
-        .pinned-bar.hidden { display:none; }
-        .pin-icon { color:var(--gold); flex-shrink:0; margin-top:2px; }
-        .pinned-content { font-size:0.8rem; color:var(--text2); line-height:1.4; }
-        .pinned-author { font-weight:600; color:var(--text); }
-
-        /* Messages */
-        .messages {
-          flex:1; overflow-y:auto; padding:1rem 1.25rem;
-          display:flex; flex-direction:column; gap:0.2rem;
-        }
-        .messages::-webkit-scrollbar { width:4px; }
-        .messages::-webkit-scrollbar-thumb { background:var(--border2); border-radius:4px; }
-
-        /* Message row */
-        .msg-row {
-          display:flex; gap:0.65rem; padding:0.35rem 0.5rem;
-          border-radius:8px; transition:background 0.15s;
-          align-items:flex-start;
-        }
-        .msg-row:hover { background:var(--card2); }
-        .msg-row:hover .msg-actions { opacity:1; }
-
-        .msg-avatar {
-          width:32px; height:32px; border-radius:50%;
-          background:var(--card2); object-fit:cover; flex-shrink:0;
-          font-size:0.75rem; display:flex; align-items:center;
-          justify-content:center; color:var(--text2); margin-top:2px;
-          border:1px solid var(--border2);
-        }
-        .msg-body { flex:1; min-width:0; }
-        .msg-meta { display:flex; align-items:baseline; gap:0.5rem;
-          margin-bottom:0.2rem; }
-        .msg-name { font-weight:700; font-size:0.85rem; color:var(--text); }
-        .msg-name.admin  { color:var(--rose); }
-        .msg-name.client { color:var(--gold); }
-        .msg-name.freelancer { color:var(--teal); }
-        .msg-time { font-size:0.72rem; color:var(--text3); }
-        .msg-text { font-size:0.88rem; color:var(--text); line-height:1.55;
-          word-break:break-word; }
-        .msg-text .mention {
-          color:var(--teal); font-weight:600; cursor:pointer;
-        }
-
-        /* Reactions display */
-        .msg-reactions { display:flex; flex-wrap:wrap; gap:0.3rem; margin-top:0.4rem; }
-        .reaction-chip {
-          display:flex; align-items:center; gap:0.25rem;
-          padding:0.15rem 0.5rem; border-radius:99px; font-size:0.78rem;
-          background:var(--card); border:1px solid var(--border2);
-          cursor:pointer; transition:all 0.15s; user-select:none;
-        }
-        .reaction-chip:hover { border-color:var(--teal); }
-        .reaction-chip.reacted { background:rgba(0,201,167,0.1);
-          border-color:rgba(0,201,167,0.3); color:var(--teal); }
-        .reaction-count { font-size:0.75rem; color:var(--text2); }
-
-        /* Message action buttons */
-        .msg-actions {
-          display:flex; gap:0.25rem; opacity:0; transition:opacity 0.15s;
-          align-items:center; flex-shrink:0;
-        }
-        .action-btn {
-          padding:0.25rem 0.4rem; border-radius:6px;
-          background:var(--card); border:1px solid var(--border2);
-          color:var(--text2); font-size:0.75rem; cursor:pointer;
-          transition:all 0.15s; line-height:1;
-        }
-        .action-btn:hover { border-color:var(--teal); color:var(--teal); }
-
-        /* Emoji picker */
-        .emoji-picker {
-          display:flex; gap:0.3rem; padding:0.4rem 0.5rem;
-          background:var(--card); border:1px solid var(--border2);
-          border-radius:10px; position:absolute; z-index:100;
-          box-shadow:0 4px 20px rgba(0,0,0,0.5);
-        }
-        .emoji-opt { font-size:1.1rem; cursor:pointer; padding:0.15rem 0.2rem;
-          border-radius:5px; transition:background 0.1s; }
-        .emoji-opt:hover { background:var(--card2); }
+        .pinned-bar.hidden { display: none; }
+        .pin-icon { color: var(--gold); flex-shrink: 0; }
+        .pinned-content { font-size: .8rem; color: var(--text2); line-height: 1.4; }
+        .pinned-author { font-weight: 600; color: var(--text); }
 
         /* Date divider */
         .date-divider {
-          display:flex; align-items:center; gap:0.75rem;
-          margin:0.75rem 0; color:var(--text3); font-size:0.75rem;
+            display: flex; align-items: center; gap: .75rem;
+            margin: .75rem 0; color: var(--text3); font-size: .72rem;
+            font-weight: 600; letter-spacing: .04em;
         }
         .date-divider::before, .date-divider::after {
-          content:''; flex:1; height:1px; background:var(--border);
+            content: ''; flex: 1; height: 1px; background: var(--border);
         }
+
+        /* Messages */
+        .messages {
+            flex: 1; overflow-y: auto;
+            padding: .75rem 1.25rem;
+            display: flex; flex-direction: column; gap: .1rem;
+            scroll-behavior: smooth;
+        }
+        .messages::-webkit-scrollbar { width: 5px; }
+        .messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+        .msg-row {
+            display: flex; gap: .65rem; padding: .35rem .6rem;
+            border-radius: 10px; transition: background .15s;
+            align-items: flex-start; position: relative;
+        }
+        .msg-row:hover { background: var(--card2); }
+        .msg-row:hover .msg-actions { opacity: 1; pointer-events: all; }
+
+        .msg-avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple), var(--teal));
+            font-size: .75rem; font-weight: 700; display: flex;
+            align-items: center; justify-content: center;
+            color: #fff; flex-shrink: 0; margin-top: 2px;
+            border: 1px solid var(--border2); overflow: hidden;
+        }
+        .msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .msg-body { flex: 1; min-width: 0; }
+        .msg-meta {
+            display: flex; align-items: baseline; gap: .5rem; margin-bottom: .2rem;
+        }
+        .msg-name { font-weight: 700; font-size: .85rem; color: var(--text); }
+        .msg-name.admin  { color: var(--rose); }
+        .msg-name.client { color: var(--gold); }
+        .msg-name.freelancer { color: var(--teal); }
+        .msg-role-tag {
+            font-size: .62rem; font-weight: 700; letter-spacing: .06em;
+            text-transform: uppercase; padding: .1rem .45rem;
+            border-radius: 4px; background: rgba(0,201,167,.1);
+            color: var(--teal); border: 1px solid rgba(0,201,167,.2);
+        }
+        .msg-role-tag.client-tag {
+            background: rgba(245,166,35,.1); color: var(--gold);
+            border-color: rgba(245,166,35,.2);
+        }
+        .msg-time { font-size: .7rem; color: var(--text3); }
+        .msg-text {
+            font-size: .875rem; color: var(--text);
+            line-height: 1.6; word-break: break-word;
+        }
+        .msg-text .mention {
+            color: var(--teal); font-weight: 600;
+            background: rgba(0,201,167,.1); padding: 1px 5px;
+            border-radius: 5px; cursor: pointer;
+        }
+        .msg-text a { color: var(--blue); text-decoration: underline; word-break: break-all; }
+        .msg-text code {
+            background: rgba(255,255,255,.08); padding: 2px 6px;
+            border-radius: 5px; font-size: .85em; font-family: monospace;
+        }
+        .msg-text strong { font-weight: 700; }
+        .msg-text em { font-style: italic; }
+
+        /* Own messages */
+        .msg-row.own { flex-direction: row-reverse; }
+        .msg-row.own .msg-body { align-items: flex-end; }
+        .msg-row.own .msg-meta { flex-direction: row-reverse; }
+        .msg-row.own .msg-text-bubble {
+            background: linear-gradient(135deg, rgba(0,201,167,.14), rgba(0,163,137,.1));
+            border: 1px solid rgba(0,201,167,.2);
+            border-radius: 14px 2px 14px 14px;
+            padding: .55rem .95rem;
+            display: inline-block; max-width: 85%;
+            box-shadow: 0 2px 8px rgba(0,201,167,.07);
+        }
+        .msg-row.own .msg-actions { flex-direction: row-reverse; }
+
+        /* Pin badge */
+        .pinned-badge {
+            display: inline-flex; align-items: center; gap: .25rem;
+            font-size: .68rem; color: var(--gold);
+            background: rgba(245,166,35,.1);
+            border: 1px solid rgba(245,166,35,.2);
+            padding: .1rem .45rem; border-radius: 5px;
+            margin-left: .35rem;
+        }
+
+        /* Reactions */
+        .msg-reactions {
+            display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .4rem;
+        }
+        .reaction-chip {
+            display: flex; align-items: center; gap: .25rem;
+            padding: .18rem .55rem; border-radius: 99px;
+            font-size: .8rem; background: var(--card);
+            border: 1px solid var(--border2); cursor: pointer;
+            transition: all .15s; user-select: none;
+        }
+        .reaction-chip:hover { border-color: var(--teal); }
+        .reaction-chip.reacted {
+            background: rgba(0,201,167,.1);
+            border-color: rgba(0,201,167,.3); color: var(--teal);
+        }
+        .reaction-count { font-size: .73rem; color: var(--text2); }
+
+        /* Message actions */
+        .msg-actions {
+            display: flex; gap: .25rem; opacity: 0;
+            pointer-events: none; transition: opacity .15s;
+            align-items: center; flex-shrink: 0;
+            position: absolute; right: .5rem; top: .35rem;
+            background: var(--card); border: 1px solid var(--border2);
+            border-radius: 8px; padding: .2rem .3rem;
+        }
+        .msg-row.own .msg-actions { right: auto; left: .5rem; }
+        .action-btn {
+            width: 26px; height: 26px; border-radius: 6px;
+            background: transparent; border: none;
+            color: var(--text3); cursor: pointer;
+            transition: all .15s; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .action-btn:hover { color: var(--teal); background: rgba(0,201,167,.08); }
+
+        /* Reply block */
+        .reply-quote {
+            font-size: .77rem; color: var(--text3);
+            border-left: 2px solid var(--teal);
+            padding-left: .5rem; margin-bottom: .35rem;
+            border-radius: 0 4px 4px 0;
+            background: rgba(0,201,167,.05);
+            padding: .25rem .5rem;
+        }
+        .reply-quote strong { color: var(--teal); display: block; font-size: .7rem; margin-bottom: .1rem; }
 
         /* File message */
         .file-msg {
-          display:inline-flex; align-items:center; gap:0.5rem;
-          padding:0.5rem 0.85rem; border-radius:10px;
-          background:var(--card2); border:1px solid var(--border2);
-          text-decoration:none; color:var(--text); font-size:0.83rem;
-          transition:border-color 0.2s; max-width:300px;
+            display: inline-flex; align-items: center; gap: .55rem;
+            padding: .55rem .9rem; border-radius: 10px;
+            background: rgba(74,144,226,.08);
+            border: 1px solid rgba(74,144,226,.2);
+            text-decoration: none; color: var(--text); font-size: .83rem;
+            transition: border-color .2s; max-width: 300px; margin-top: .2rem;
         }
-        .file-msg:hover { border-color:var(--teal); }
+        .file-msg:hover { border-color: var(--blue); }
+        .file-msg-icon {
+            width: 32px; height: 32px; border-radius: 7px;
+            background: rgba(74,144,226,.15);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--blue); flex-shrink: 0;
+        }
+
+        /* Skeletons */
+        .msg-skeleton { display: flex; gap: .65rem; padding: .5rem .6rem; }
+        .sk-av {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: var(--card2); flex-shrink: 0;
+            animation: sk 1.4s ease-in-out infinite;
+        }
+        .sk-body { flex: 1; display: flex; flex-direction: column; gap: .45rem; padding-top: .2rem; }
+        .sk-line {
+            height: 10px; border-radius: 99px;
+            background: var(--card2); animation: sk 1.4s ease-in-out infinite;
+        }
+        @keyframes sk { 0%,100% { opacity: .35; } 50% { opacity: .7; } }
+
+        /* Emoji picker */
+        .emoji-picker {
+            display: none; flex-wrap: wrap; gap: .3rem;
+            padding: .5rem .6rem; background: var(--card);
+            border: 1px solid var(--border2); border-radius: 12px;
+            position: fixed; z-index: 200;
+            box-shadow: 0 8px 32px rgba(0,0,0,.5);
+            max-width: 220px;
+        }
+        .emoji-opt {
+            font-size: 1.15rem; cursor: pointer; padding: .2rem .25rem;
+            border-radius: 6px; transition: background .1s; line-height: 1;
+        }
+        .emoji-opt:hover { background: var(--card2); }
+
+        /* Reply preview bar */
+        .reply-bar {
+            display: none; align-items: center; gap: .6rem;
+            padding: .5rem .85rem; margin: 0 1.25rem .5rem;
+            background: rgba(0,201,167,.05);
+            border: 1px solid rgba(0,201,167,.15);
+            border-radius: 8px;
+        }
+        .reply-bar.show { display: flex; }
+        .reply-bar-text { font-size: .8rem; color: var(--text2); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .reply-bar-cancel {
+            background: none; border: none; cursor: pointer;
+            color: var(--text3); padding: 0; display: flex;
+            align-items: center; transition: color .2s;
+        }
+        .reply-bar-cancel:hover { color: var(--rose); }
 
         /* Input area */
         .input-area {
-          padding:0.85rem 1.25rem 1rem; border-top:1px solid var(--border);
-          flex-shrink:0;
+            padding: .85rem 1.25rem 1rem;
+            border-top: 1px solid var(--border);
+            background: rgba(13,24,41,.96);
+            flex-shrink: 0; backdrop-filter: blur(8px);
         }
-        .input-row {
-          display:flex; align-items:center; gap:0.6rem;
-          background:var(--card2); border:1px solid var(--border2);
-          border-radius:12px; padding:0.4rem 0.4rem 0.4rem 1rem;
-          transition:border-color 0.2s;
+        .input-toolbar {
+            display: flex; align-items: center; gap: .35rem;
+            margin-bottom: .5rem;
         }
-        .input-row:focus-within { border-color:var(--teal); }
-        .msg-input {
-          flex:1; background:transparent; border:none; outline:none;
-          color:var(--text); font-family:'DM Sans',sans-serif;
-          font-size:0.9rem; resize:none; max-height:120px;
-          line-height:1.5;
+        .tb-btn {
+            width: 28px; height: 28px; border-radius: 7px;
+            background: transparent; border: 1px solid var(--border);
+            color: var(--text3); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .2s; flex-shrink: 0;
+            font-family: 'DM Sans', sans-serif; font-size: .78rem; font-weight: 700;
         }
-        .msg-input::placeholder { color:var(--text3); }
-        .input-actions { display:flex; gap:0.35rem; align-items:center; }
-        .input-btn {
-          padding:0.45rem; border-radius:8px; background:transparent;
-          border:none; color:var(--text2); cursor:pointer;
-          transition:color 0.15s; display:flex; align-items:center;
-        }
-        .input-btn:hover { color:var(--teal); }
-        .send-btn {
-          padding:0.55rem 1rem; border-radius:8px;
-          background:linear-gradient(135deg,var(--teal),var(--teal-dk));
-          border:none; color:#000; font-weight:700; font-size:0.85rem;
-          cursor:pointer; font-family:'DM Sans',sans-serif;
-          transition:opacity 0.2s; white-space:nowrap;
-        }
-        .send-btn:hover { opacity:0.9; }
-        .send-btn:disabled { opacity:0.4; cursor:not-allowed; }
-        .typing-hint { font-size:0.75rem; color:var(--text3);
-          margin-top:0.35rem; min-height:1.1em; padding:0 0.25rem; }
+        .tb-btn:hover { color: var(--teal); border-color: var(--teal); background: rgba(0,201,167,.06); }
+        .tb-div { width: 1px; height: 16px; background: var(--border); margin: 0 .1rem; }
 
-        /* Right panel */
+        .input-row {
+            display: flex; align-items: flex-end; gap: .6rem;
+        }
+        .msg-input {
+            flex: 1; background: var(--card2);
+            border: 1px solid var(--border2); border-radius: 14px;
+            padding: .75rem 1rem; color: var(--text);
+            font-family: 'DM Sans', sans-serif; font-size: .9rem;
+            resize: none; max-height: 120px; line-height: 1.55;
+            transition: border-color .2s, box-shadow .2s; outline: none;
+        }
+        .msg-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,201,167,.08); }
+        .msg-input::placeholder { color: var(--text3); }
+        .attach-btn {
+            width: 42px; height: 42px; border-radius: 12px;
+            border: 1px solid var(--border2); background: var(--card2);
+            color: var(--text2); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: all .2s;
+        }
+        .attach-btn:hover { color: var(--teal); border-color: var(--teal); }
+        .send-btn {
+            width: 42px; height: 42px; border-radius: 12px;
+            border: none; cursor: pointer;
+            background: linear-gradient(135deg, var(--teal), var(--teal-dk));
+            color: #000; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: all .2s;
+            box-shadow: 0 2px 12px rgba(0,201,167,.3);
+        }
+        .send-btn:hover { opacity: .88; transform: scale(1.05); }
+        .send-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+        .typing-hint {
+            font-size: .73rem; color: var(--text3);
+            min-height: 1.2em; padding: .3rem .25rem 0;
+            font-style: italic;
+        }
+
+        /* ── RIGHT PANEL ──────────────────────────────────── */
         .right-panel {
-          width:220px; flex-shrink:0; background:var(--card);
-          border-left:1px solid var(--border);
-          display:flex; flex-direction:column; overflow-y:auto;
+            width: 220px; flex-shrink: 0; background: var(--bg2);
+            border-left: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow-y: auto;
+            scrollbar-width: thin; scrollbar-color: var(--border) transparent;
         }
-        .panel-section { padding:0.85rem 0.85rem 0.5rem; }
-        .panel-label { font-size:0.68rem; font-weight:700;
-          letter-spacing:0.1em; text-transform:uppercase;
-          color:var(--text3); margin-bottom:0.6rem; }
+        .right-panel::-webkit-scrollbar { width: 4px; }
+        .right-panel::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+        .panel-section { padding: .9rem .85rem .5rem; }
+        .panel-label {
+            font-size: .68rem; font-weight: 700;
+            letter-spacing: .1em; text-transform: uppercase;
+            color: var(--text3); margin-bottom: .6rem;
+        }
         .online-user {
-          display:flex; align-items:center; gap:0.5rem;
-          padding:0.35rem 0.25rem; border-radius:7px;
-          transition:background 0.15s;
+            display: flex; align-items: center; gap: .5rem;
+            padding: .4rem .25rem; border-radius: 8px;
+            transition: background .15s; cursor: default;
         }
-        .online-user:hover { background:var(--card2); }
-        .online-avatar { position:relative; }
-        .online-avatar img, .online-avatar .av-placeholder {
-          width:26px; height:26px; border-radius:50%;
-          object-fit:cover; background:var(--card2);
-          font-size:0.65rem; display:flex; align-items:center;
-          justify-content:center; color:var(--text2);
-          border:1px solid var(--border2);
+        .online-user:hover { background: var(--card); }
+        .online-avatar-wrap { position: relative; }
+        .online-av {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--card2); font-size: .65rem;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text2); border: 1px solid var(--border2); overflow: hidden;
         }
+        .online-av img { width: 100%; height: 100%; object-fit: cover; }
         .online-indicator {
-          position:absolute; bottom:0; right:0;
-          width:8px; height:8px; border-radius:50%;
-          background:var(--teal); border:1px solid var(--bg);
+            position: absolute; bottom: 0; right: 0;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--teal); border: 1.5px solid var(--bg2);
         }
-        .online-name { font-size:0.78rem; color:var(--text); font-weight:500; }
+        .online-name { font-size: .78rem; color: var(--text); font-weight: 500; }
+
+        /* WS status */
+        .ws-pill {
+            display: flex; align-items: center; gap: .4rem;
+            font-size: .73rem; color: var(--text3);
+            background: var(--card); border: 1px solid var(--border);
+            padding: .28rem .7rem; border-radius: 99px;
+        }
+        .ws-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); transition: all .3s; }
+        .ws-dot.on { background: var(--teal); box-shadow: 0 0 5px var(--teal); }
+        .ws-dot.on + span { color: var(--teal); }
 
         /* Toast */
         .toast {
-          position:fixed; bottom:1.5rem; right:1.5rem;
-          padding:0.75rem 1.1rem; border-radius:10px;
-          font-size:0.85rem; font-weight:600; z-index:2000;
-          opacity:0; transform:translateY(6px);
-          transition:all 0.3s; pointer-events:none;
+            position: fixed; bottom: 1.5rem; left: 50%;
+            transform: translateX(-50%) translateY(12px);
+            background: var(--card2); border: 1px solid var(--border2);
+            border-radius: 12px; padding: .75rem 1.25rem;
+            font-size: .85rem; font-weight: 600; z-index: 300;
+            opacity: 0; pointer-events: none; transition: all .3s;
+            white-space: nowrap;
         }
-        .toast.show { opacity:1; transform:translateY(0); }
-        .toast.success { background:#0D2A24; color:var(--teal);
-          border:1px solid rgba(0,201,167,0.2); }
-        .toast.error { background:#2A0D18; color:var(--rose);
-          border:1px solid rgba(255,107,138,0.2); }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { color: var(--teal); border-color: rgba(0,201,167,.3); background: rgba(13,24,41,.97); }
+        .toast.error   { color: var(--rose); border-color: rgba(255,107,138,.3); background: rgba(13,24,41,.97); }
 
-        /* Loading */
-        .msg-skeleton {
-          display:flex; gap:0.65rem; padding:0.35rem 0.5rem;
+        .empty-state {
+            text-align: center; padding: 3.5rem 2rem; color: var(--text3);
         }
-        .sk-av { width:32px; height:32px; border-radius:50%;
-          background:var(--card2); flex-shrink:0; animation:sk 1.4s infinite; }
-        .sk-body { flex:1; display:flex; flex-direction:column; gap:0.4rem; }
-        .sk-line { height:10px; border-radius:99px;
-          background:var(--card2); animation:sk 1.4s infinite; }
-        @keyframes sk { 0%,100% { opacity:0.4; } 50% { opacity:0.8; } }
+        .empty-state-icon {
+            width: 52px; height: 52px; border-radius: 16px;
+            background: rgba(255,255,255,.03); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1rem; color: var(--text3);
+        }
+        .empty-state p { font-size: .85rem; margin-top: .35rem; line-height: 1.5; }
+
+        @media (max-width: 900px) { .right-panel { display: none; } }
+        @media (max-width: 640px) { .sidebar { display: none; } }
     </style>
 </head>
 <body>
 
-<!-- Nav -->
+<!-- ── NAV ─────────────────────────────────────────────── -->
 <nav>
-    <a href="/index.html" class="nav-logo">SkillBridge</a>
+    <a href="/" class="nav-logo">SkillBridge</a>
+    <div class="nav-sep"></div>
     <div class="nav-links">
-        <a href="/jobs.html">Browse Jobs</a>
-        <a href="/my-projects.html">Projects</a>
+        <a href="/dashboard-freelancer.html" id="dashboard-link">Dashboard</a>
+        <a href="/my-projects.html">My Projects</a>
         <a href="/community.html" class="active">Community</a>
-        <a href="/profile.html">Profile</a>
+    </div>
+    <div class="nav-right">
+        <div class="ws-pill">
+            <div class="ws-dot" id="ws-dot"></div>
+            <span id="ws-text">Connecting…</span>
+        </div>
+        <div class="user-av" id="user-av"
+             onclick="window.location.href='/profile.html'"
+             title="View Profile">?</div>
+        <button class="btn-logout" onclick="logout()">Logout</button>
     </div>
 </nav>
 
-<!-- Layout -->
 <div class="layout">
 
-    <!-- Left sidebar — rooms -->
+    <!-- ── LEFT SIDEBAR ───────────────────────────────── -->
     <div class="sidebar">
         <div class="sidebar-section">
             <div class="sidebar-label">Channels</div>
-            <button class="room-btn active" id="room-general"
-                    onclick="switchRoom('general')">
-                <span class="room-icon">#</span> general
+            <button class="room-btn active" id="room-general" onclick="switchRoom('general')">
+                <svg class="room-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                general
             </button>
-            <button class="room-btn" id="room-developers"
-                    onclick="switchRoom('developers')">
-                <span class="room-icon">#</span> developers
+            <button class="room-btn" id="room-developers" onclick="switchRoom('developers')">
+                <svg class="room-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                developers
             </button>
-            <button class="room-btn" id="room-creatives"
-                    onclick="switchRoom('creatives')">
-                <span class="room-icon">#</span> creatives
+            <button class="room-btn" id="room-creatives" onclick="switchRoom('creatives')">
+                <svg class="room-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
+                creatives
             </button>
-            <button class="room-btn" id="room-opportunities"
-                    onclick="switchRoom('opportunities')">
-                <span class="room-icon">#</span> opportunities
+            <button class="room-btn" id="room-opportunities" onclick="switchRoom('opportunities')">
+                <svg class="room-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                opportunities
             </button>
-            <button class="room-btn" id="room-help"
-                    onclick="switchRoom('help')">
-                <span class="room-icon">#</span> help
+            <button class="room-btn" id="room-help" onclick="switchRoom('help')">
+                <svg class="room-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                help
             </button>
         </div>
 
-        <!-- Freelancer Spotlight -->
         <div class="spotlight-section">
             <div class="spotlight-title">
-                ⭐ Freelancer Spotlight
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)" stroke="var(--gold)" stroke-width="1.5">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                Freelancer Spotlight
             </div>
-            <div id="spotlight-list">
-                <!-- Injected by JS -->
-            </div>
+            <div id="spotlight-list"></div>
         </div>
     </div>
 
-    <!-- Main chat -->
+    <!-- ── MAIN CHAT ───────────────────────────────────── -->
     <div class="chat-area">
 
-        <!-- Room header -->
         <div class="room-header">
+            <div class="rh-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
             <div>
                 <div class="room-name" id="room-title"># general</div>
-                <div class="room-desc" id="room-desc">
-                    General discussion for everyone
-                </div>
+                <div class="room-desc" id="room-desc">General discussion for everyone</div>
             </div>
             <div class="online-pill">
                 <div class="online-dot"></div>
@@ -386,89 +620,86 @@
             </div>
         </div>
 
-        <!-- Pinned messages bar -->
         <div class="pinned-bar hidden" id="pinned-bar">
             <div class="pin-icon">
-                <svg width="14" height="14" viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24z"/>
                 </svg>
             </div>
-            <div class="pinned-content" id="pinned-content">
-                <!-- Injected -->
-            </div>
+            <div class="pinned-content" id="pinned-content"></div>
         </div>
 
-        <!-- Messages -->
         <div class="messages" id="messages">
-            <!-- Skeleton loaders -->
-            ${[1,2,3].map(() => `
-            <div class="msg-skeleton">
-                <div class="sk-av"></div>
-                <div class="sk-body">
-                    <div class="sk-line" style="width:30%"></div>
-                    <div class="sk-line" style="width:70%"></div>
-                </div>
-            </div>`).join('')}
+            <div class="msg-skeleton"><div class="sk-av"></div><div class="sk-body"><div class="sk-line" style="width:28%"></div><div class="sk-line" style="width:65%"></div></div></div>
+            <div class="msg-skeleton"><div class="sk-av"></div><div class="sk-body"><div class="sk-line" style="width:20%"></div><div class="sk-line" style="width:80%"></div></div></div>
+            <div class="msg-skeleton"><div class="sk-av"></div><div class="sk-body"><div class="sk-line" style="width:35%"></div><div class="sk-line" style="width:55%"></div></div></div>
         </div>
 
-        <!-- Input area -->
+        <!-- Reply preview -->
+        <div class="reply-bar" id="reply-bar">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+            <span class="reply-bar-text" id="reply-bar-text">Replying to…</span>
+            <button class="reply-bar-cancel" onclick="clearReply()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
         <div class="input-area">
+            <div class="input-toolbar">
+                <!-- Bold -->
+                <button class="tb-btn" title="Bold" onclick="wrapText('**','**')" style="font-weight:800;font-style:normal">B</button>
+                <!-- Italic -->
+                <button class="tb-btn" title="Italic" onclick="wrapText('_','_')" style="font-style:italic">I</button>
+                <!-- Code -->
+                <button class="tb-btn" title="Code" onclick="wrapText('`','`')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </button>
+                <div class="tb-div"></div>
+                <!-- Emoji -->
+                <button class="tb-btn" title="Insert emoji" onclick="showQuickEmoji(event)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-width="2.5"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-width="2.5"/></svg>
+                </button>
+                <!-- Link -->
+                <button class="tb-btn" title="Insert link" onclick="insertLink()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                </button>
+                <!-- Mention -->
+                <button class="tb-btn" title="Mention user" onclick="insertMention()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
+                </button>
+            </div>
             <div class="input-row">
                 <textarea class="msg-input" id="msg-input"
                           placeholder="Message #general"
                           rows="1"
                           oninput="autoResize(this)"
                           onkeydown="handleKey(event)"></textarea>
-
-                <div class="input-actions">
-                    <!-- Emoji trigger -->
-                    <button class="input-btn" title="Emoji"
-                            onclick="showQuickEmoji()">
-                        <svg width="18" height="18" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                            <line x1="9" y1="9" x2="9.01" y2="9"/>
-                            <line x1="15" y1="9" x2="15.01" y2="9"/>
-                        </svg>
-                    </button>
-                    <!-- File attach -->
-                    <label class="input-btn" title="Attach file"
-                           for="community-file-input">
-                        <svg width="18" height="18" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-                        </svg>
-                    </label>
-                    <input type="file" id="community-file-input"
-                           style="display:none"
-                           accept="image/*,.pdf,.doc,.docx,.txt"
-                           onchange="uploadCommunityFile(event)">
-
-                    <button class="send-btn" id="send-btn"
-                            onclick="sendMessage()">Send</button>
-                </div>
+                <label class="attach-btn" title="Attach file" for="community-file-input">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                </label>
+                <input type="file" id="community-file-input" style="display:none"
+                       accept="image/*,.pdf,.doc,.docx,.txt"
+                       onchange="uploadCommunityFile(event)">
+                <button class="send-btn" id="send-btn" onclick="sendMessage()">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
             </div>
             <div class="typing-hint" id="typing-hint"></div>
         </div>
     </div>
 
-    <!-- Right panel — online users -->
+    <!-- ── RIGHT PANEL ─────────────────────────────────── -->
     <div class="right-panel">
         <div class="panel-section">
             <div class="panel-label">Online Now</div>
-            <div id="online-users-list">
-                <!-- Injected by JS -->
-            </div>
+            <div id="online-users-list"></div>
         </div>
     </div>
 
-</div>
+</div><!-- end .layout -->
 
-<!-- Floating emoji picker (hidden by default) -->
-<div class="emoji-picker" id="emoji-picker" style="display:none;">
+<!-- Floating emoji picker -->
+<div class="emoji-picker" id="emoji-picker">
     <span class="emoji-opt" onclick="insertEmoji('👍')">👍</span>
     <span class="emoji-opt" onclick="insertEmoji('❤️')">❤️</span>
     <span class="emoji-opt" onclick="insertEmoji('😂')">😂</span>
@@ -477,36 +708,59 @@
     <span class="emoji-opt" onclick="insertEmoji('🔥')">🔥</span>
     <span class="emoji-opt" onclick="insertEmoji('💡')">💡</span>
     <span class="emoji-opt" onclick="insertEmoji('🎉')">🎉</span>
+    <span class="emoji-opt" onclick="insertEmoji('😊')">😊</span>
+    <span class="emoji-opt" onclick="insertEmoji('🤝')">🤝</span>
+    <span class="emoji-opt" onclick="insertEmoji('✅')">✅</span>
+    <span class="emoji-opt" onclick="insertEmoji('⭐')">⭐</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/auth.js"></script>
 <script src="/js/api.js"></script>
 <script>
-    // ── State ──────────────────────────────────────────────────────────────
-    let currentRoom    = 'general';
-    let stompClient    = null;
-    let currentUser    = null;
-    let isAdmin        = false;
-    let subscriptions  = {};
-    let emojiTargetMsg = null;
+    // ── State ───────────────────────────────────────────────────
+    let currentRoom   = 'general';
+    let stompClient   = null;
+    let currentUser   = null;
+    let isAdmin       = false;
+    let subscriptions = {};
+    let pickerMsgId   = null;
+    let replyingTo    = null;
+    let connected     = false;
 
     const ROOM_META = {
-        general:      { title:'# general',      desc:'General discussion for everyone' },
-        developers:   { title:'# developers',   desc:'Tech talk, code reviews, dev help' },
-        creatives:    { title:'# creatives',    desc:'Design, writing, and creative work' },
-        opportunities:{ title:'# opportunities',desc:'Job leads, collabs, and gigs' },
-        help:         { title:'# help',         desc:'Ask anything, get help from the community' }
+        general:       { title: '# general',       desc: 'General discussion for everyone' },
+        developers:    { title: '# developers',    desc: 'Tech talk, code reviews, dev help' },
+        creatives:     { title: '# creatives',     desc: 'Design, writing, and creative work' },
+        opportunities: { title: '# opportunities', desc: 'Job leads, collabs, and gigs' },
+        help:          { title: '# help',          desc: 'Ask anything, get help from the community' }
     };
 
-    // ── Init ───────────────────────────────────────────────────────────────
+    // ── Init ─────────────────────────────────────────────────────
     async function init() {
+        if (typeof requireAuth === 'function') requireAuth();
         try {
-            const res  = await api.get('/api/v1/users/me');
+            const res = await api.get('/api/v1/profile');
             currentUser = await res.json();
-            isAdmin     = currentUser.role === 'ADMIN';
+            isAdmin = currentUser.role === 'ADMIN';
+
+            const av = document.getElementById('user-av');
+            const savedAvatar = localStorage.getItem('sb_avatar') || currentUser.avatarUrl;
+            if (savedAvatar) {
+                av.innerHTML = `<img src="${savedAvatar}" style="width:100%;height:100%;object-fit:cover;">`;
+                if (currentUser.avatarUrl) localStorage.setItem('sb_avatar', currentUser.avatarUrl);
+            } else {
+                av.textContent = (currentUser.name || '?')[0].toUpperCase();
+            }
+
+            const role = localStorage.getItem('sb_role');
+            document.getElementById('dashboard-link').href =
+                role === 'CLIENT' ? '/dashboard-client.html' : '/dashboard-freelancer.html';
+
         } catch(e) {
             window.location.href = '/login.html';
             return;
@@ -515,126 +769,105 @@
         connectWebSocket();
         loadSpotlight();
 
-        // Check for room param
         const params = new URLSearchParams(window.location.search);
         const room   = params.get('room');
-        if (room && ROOM_META[room]) switchRoom(room);
-        else switchRoom('general');
+        switchRoom((room && ROOM_META[room]) ? room : 'general');
     }
 
-    // ── WebSocket ──────────────────────────────────────────────────────────
+    // ── WebSocket ────────────────────────────────────────────────
     function connectWebSocket() {
-        const socket = new SockJS('/ws');
-        stompClient  = Stomp.over(socket);
-        stompClient.debug = null; // suppress logs
+        const token = localStorage.getItem('sb_jwt');
+        if (!token) return;
+        try {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.debug = null;
+            stompClient.connect({ Authorization: 'Bearer ' + token },
+                () => {
+                    connected = true; setWS(true);
+                    subscribeToRoom(currentRoom);
+                },
+                () => {
+                    connected = false; setWS(false);
+                    setTimeout(connectWebSocket, 3000);
+                }
+            );
+        } catch(e) { setWS(false); }
+    }
 
-        const token = localStorage.getItem('token');
-        stompClient.connect(
-            { Authorization: 'Bearer ' + token },
-            () => {
-                subscribeToRoom(currentRoom);
-            },
-            err => {
-                console.error('WS error:', err);
-                setTimeout(connectWebSocket, 3000);
-            }
-        );
+    function setWS(on) {
+        document.getElementById('ws-dot').className = 'ws-dot' + (on ? ' on' : '');
+        document.getElementById('ws-text').textContent = on ? 'Connected' : 'Reconnecting…';
     }
 
     function subscribeToRoom(room) {
-        // Unsubscribe old
-        Object.values(subscriptions).forEach(s => s.unsubscribe());
+        Object.values(subscriptions).forEach(s => { try { s.unsubscribe(); } catch(e){} });
         subscriptions = {};
 
-        // Messages
-        subscriptions.messages = stompClient.subscribe(
-            `/topic/community.${room}`,
-            frame => {
-                const msg = JSON.parse(frame.body);
-                appendMessage(msg);
-                scrollToBottom();
+        subscriptions.messages = stompClient.subscribe(`/topic/community.${room}`, frame => {
+            const msg = JSON.parse(frame.body);
+            if (msg.type === 'MESSAGE_DELETED') {
+                const el = document.getElementById('msg-' + msg.messageId);
+                if (el) el.remove();
+                return;
             }
-        );
+            appendMessage(msg);
+            scrollToBottom();
+        });
 
-        // Presence
-        subscriptions.presence = stompClient.subscribe(
-            `/topic/community.${room}.presence`,
-            frame => {
-                const data = JSON.parse(frame.body);
-                updatePresenceUI(data);
-            }
-        );
+        subscriptions.presence = stompClient.subscribe(`/topic/community.${room}.presence`, frame => {
+            updatePresenceUI(JSON.parse(frame.body));
+        });
 
-        // Reactions
-        subscriptions.reactions = stompClient.subscribe(
-            `/topic/community.${room}.reactions`,
-            frame => {
-                const data = JSON.parse(frame.body);
-                updateReactionUI(data);
-            }
-        );
+        subscriptions.reactions = stompClient.subscribe(`/topic/community.${room}.reactions`, frame => {
+            updateReactionUI(JSON.parse(frame.body));
+        });
 
-        // Pin updates
-        subscriptions.pin = stompClient.subscribe(
-            `/topic/community.${room}.pin`,
-            frame => {
-                const msg = JSON.parse(frame.body);
-                loadPinned(room);
-            }
-        );
+        subscriptions.pin = stompClient.subscribe(`/topic/community.${room}.pin`, () => {
+            loadPinned(room);
+        });
 
-        // Join room
-        stompClient.send('/app/community.join', {},
-            JSON.stringify({ room }));
+        stompClient.send('/app/community.join', {}, JSON.stringify({ room }));
     }
 
-    // ── Room switching ─────────────────────────────────────────────────────
+    // ── Room switching ────────────────────────────────────────────
     async function switchRoom(room) {
-        // Leave old room
         if (currentRoom && stompClient && stompClient.connected) {
-            stompClient.send('/app/community.leave', {},
-                JSON.stringify({ room: currentRoom }));
+            stompClient.send('/app/community.leave', {}, JSON.stringify({ room: currentRoom }));
         }
-
         currentRoom = room;
         document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('room-' + room)?.classList.add('active');
+        const rb = document.getElementById('room-' + room);
+        if (rb) rb.classList.add('active');
 
         const meta = ROOM_META[room];
-        document.getElementById('room-title').textContent  = meta.title;
-        document.getElementById('room-desc').textContent   = meta.desc;
-        document.getElementById('msg-input').placeholder   = `Message ${meta.title}`;
+        document.getElementById('room-title').textContent = meta.title;
+        document.getElementById('room-desc').textContent  = meta.desc;
+        document.getElementById('msg-input').placeholder  = `Message ${meta.title}`;
 
-        // Clear messages, show skeletons
         showSkeletons();
 
-        // Subscribe to new room
-        if (stompClient && stompClient.connected) {
-            subscribeToRoom(room);
-        }
+        if (stompClient && stompClient.connected) subscribeToRoom(room);
 
-        // Load data
-        await Promise.all([
-            loadMessages(room),
-            loadPresence(room),
-            loadPinned(room)
-        ]);
+        await Promise.all([loadMessages(room), loadPresence(room), loadPinned(room)]);
     }
 
-    // ── Load messages ──────────────────────────────────────────────────────
+    // ── Load messages ─────────────────────────────────────────────
     async function loadMessages(room) {
         try {
             const res  = await api.get(`/api/v1/community/${room}/messages`);
             const msgs = await res.json();
-
             const container = document.getElementById('messages');
             container.innerHTML = '';
 
-            if (msgs.length === 0) {
+            if (!msgs.length) {
                 container.innerHTML = `
-                    <div style="text-align:center;padding:3rem;color:var(--text3);">
-                        <div style="font-size:2rem;margin-bottom:0.75rem;">💬</div>
-                        <div>No messages yet. Start the conversation!</div>
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div style="font-weight:600;color:var(--text2)">No messages yet</div>
+                        <p>Be the first to say something in ${ROOM_META[room]?.title || room}!</p>
                     </div>`;
                 return;
             }
@@ -649,141 +882,137 @@
                 }
                 container.insertAdjacentHTML('beforeend', buildMessageHTML(msg));
             });
-
             scrollToBottom();
-        } catch(e) {
-            showToast('Failed to load messages', 'error');
-        }
+        } catch(e) { showToast('Failed to load messages', 'error'); }
     }
 
-    // ── Load presence ──────────────────────────────────────────────────────
+    // ── Load presence ─────────────────────────────────────────────
     async function loadPresence(room) {
         try {
             const res  = await api.get(`/api/v1/community/${room}/presence`);
-            const data = await res.json();
-            updatePresenceUI(data);
+            updatePresenceUI(await res.json());
         } catch(e) {}
     }
 
-    // ── Load pinned ────────────────────────────────────────────────────────
+    // ── Load pinned ───────────────────────────────────────────────
     async function loadPinned(room) {
         try {
-            const res   = await api.get(`/api/v1/community/${room}/pinned`);
-            const pins  = await res.json();
-            const bar   = document.getElementById('pinned-bar');
-            const cont  = document.getElementById('pinned-content');
-
-            if (pins.length === 0) {
-                bar.classList.add('hidden');
-                return;
-            }
-
+            const res  = await api.get(`/api/v1/community/${room}/pinned`);
+            const pins = await res.json();
+            const bar  = document.getElementById('pinned-bar');
+            const cont = document.getElementById('pinned-content');
+            if (!pins.length) { bar.classList.add('hidden'); return; }
             bar.classList.remove('hidden');
             const latest = pins[0];
-            cont.innerHTML = `
-                <span class="pinned-author">${latest.senderName}:</span>
-                ${escapeHtml(latest.content).substring(0, 120)}
-                ${pins.length > 1
-                    ? `<span style="color:var(--gold);margin-left:0.35rem;
-                                   font-size:0.75rem;cursor:pointer;"
-                              onclick="showAllPinned()">
-                           +${pins.length - 1} more
-                       </span>` : ''}`;
+            const preview = escapeHtml(latest.content).substring(0, 120);
+            cont.innerHTML = `<span class="pinned-author">${escapeHtml(latest.senderName)}:</span>
+                <span style="cursor:pointer" onclick="highlightMsg(${latest.id})">${preview}${latest.content.length > 120 ? '…' : ''}</span>
+                ${pins.length > 1 ? `<span style="color:var(--gold);margin-left:.35rem;font-size:.73rem;cursor:pointer" onclick="showToast('${pins.length} pinned messages','success')">+${pins.length-1} more</span>` : ''}`;
         } catch(e) {}
     }
 
-    // ── Build message HTML ─────────────────────────────────────────────────
+    // ── Build message HTML ────────────────────────────────────────
     function buildMessageHTML(msg) {
+        const isOwn = currentUser && (msg.senderId === currentUser.id || msg.senderEmail === currentUser.email);
         const roleClass = msg.senderRole?.toLowerCase() || '';
-        const initials  = (msg.senderName || '?')
-            .split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+        const initials  = (msg.senderName || '?').split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
 
-        const avatar = msg.senderAvatar
-            ? `<img src="${msg.senderAvatar}" class="msg-avatar"
-                    alt="${msg.senderName}"
-                    onerror="this.outerHTML='<div class=msg-avatar>${initials}</div>'">`
-            : `<div class="msg-avatar">${initials}</div>`;
+        const avatarHTML = msg.senderAvatar
+            ? `<div class="msg-avatar"><img src="${msg.senderAvatar}" alt="${escapeHtml(msg.senderName)}" onerror="this.parentElement.textContent='${initials}'"></div>`
+            : `<div class="msg-avatar" style="background:${stringToGradient(msg.senderName)}">${initials}</div>`;
 
-        const content = msg.isFile
-            ? renderFileMessage(msg)
-            : renderTextWithMentions(escapeHtml(msg.content));
+        const roleTag = msg.senderRole && msg.senderRole !== 'FREELANCER'
+            ? `<span class="msg-role-tag ${msg.senderRole === 'CLIENT' ? 'client-tag' : ''}">${msg.senderRole}</span>` : '';
 
+        const replyBlock = msg.replyToContent ? `
+            <div class="reply-quote">
+                <strong>${escapeHtml(msg.replyToSenderName || 'Someone')}</strong>
+                ${escapeHtml(msg.replyToContent).substring(0, 80)}${msg.replyToContent.length > 80 ? '…' : ''}
+            </div>` : '';
+
+        const content = msg.fileUrl ? renderFileMessage(msg) : formatMessage(msg.content);
         const reactions = buildReactionChips(msg);
-        const time      = formatTime(msg.createdAt);
+        const time = formatTime(msg.createdAt);
 
-        const pinBtn = isAdmin ? `
-            <button class="action-btn"
-                    onclick="togglePin(${msg.id})" title="Pin">
-                📌
-            </button>` : '';
+        const pinnedBadge = msg.pinned ? `
+            <span class="pinned-badge">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24z"/></svg>
+                Pinned
+            </span>` : '';
+
+        const textContent = `<div class="${isOwn ? 'msg-text-bubble' : ''}">
+            ${replyBlock}
+            <div class="msg-text">${content}</div>
+            ${reactions}
+        </div>`;
 
         return `
-        <div class="msg-row" id="msg-${msg.id}">
-            ${avatar}
+        <div class="msg-row${isOwn ? ' own' : ''}" id="msg-${msg.id}">
+            ${avatarHTML}
             <div class="msg-body">
                 <div class="msg-meta">
-                    <span class="msg-name ${roleClass}">${escapeHtml(msg.senderName)}</span>
+                    <span class="msg-name ${roleClass}">${escapeHtml(msg.senderName || '')}</span>
+                    ${roleTag}
                     <span class="msg-time">${time}</span>
-                    ${msg.pinned
-                        ? '<span style="font-size:0.72rem;color:var(--gold);">📌 pinned</span>'
-                        : ''}
+                    ${pinnedBadge}
                 </div>
-                <div class="msg-text">${content}</div>
-                ${reactions}
+                ${textContent}
             </div>
             <div class="msg-actions">
-                <button class="action-btn"
-                        onclick="openEmojiPicker(${msg.id}, event)">
-                    😊
+                <button class="action-btn" title="React" onclick="openEmojiPicker(${msg.id}, event)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-width="2.5"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-width="2.5"/></svg>
                 </button>
-                ${pinBtn}
+                <button class="action-btn" title="Reply" onclick="setReply(${msg.id}, '${escapeHtml(msg.content).replace(/'/g,"&#39;")}', '${escapeHtml(msg.senderName || '').replace(/'/g,"&#39;")}')">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+                </button>
+                <button class="action-btn" title="${msg.pinned ? 'Unpin' : 'Pin'}" onclick="togglePin(${msg.id})">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="${msg.pinned ? 'var(--gold)' : 'none'}" stroke="${msg.pinned ? 'var(--gold)' : 'currentColor'}" stroke-width="2"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24z"/></svg>
+                </button>
             </div>
         </div>`;
     }
 
     function buildReactionChips(msg) {
-        if (!msg.reactions || Object.keys(msg.reactions).length === 0) {
+        if (!msg.reactions || !Object.keys(msg.reactions).length) {
             return `<div class="msg-reactions" id="reactions-${msg.id}"></div>`;
         }
         const chips = Object.entries(msg.reactions)
             .filter(([, count]) => count > 0)
             .map(([emoji, count]) => {
                 const reacted = msg.reactedBy?.includes(emoji);
-                return `<span class="reaction-chip ${reacted ? 'reacted' : ''}"
-                             onclick="reactToMessage(${msg.id}, '${emoji}')">
-                            ${emoji}
-                            <span class="reaction-count">${count}</span>
-                        </span>`;
+                return `<span class="reaction-chip${reacted ? ' reacted' : ''}" onclick="reactToMessage(${msg.id}, '${emoji}')">
+                    ${emoji} <span class="reaction-count">${count}</span>
+                </span>`;
             }).join('');
         return `<div class="msg-reactions" id="reactions-${msg.id}">${chips}</div>`;
     }
 
-    function renderTextWithMentions(text) {
-        return text.replace(/@(\w+)/g,
-            '<span class="mention">@$1</span>');
-    }
-
     function renderFileMessage(msg) {
         if (msg.fileType && msg.fileType.startsWith('image/')) {
-            return `<img src="${msg.fileUrl}" alt="${msg.fileName || 'image'}"
-                         style="max-width:280px;border-radius:8px;
-                                display:block;cursor:pointer;margin-top:0.25rem;"
-                         onclick="window.open('${msg.fileUrl}','_blank')"
-                         onerror="this.style.display='none'">`;
+            return `<img src="${msg.fileUrl}" alt="${escapeHtml(msg.fileName || 'image')}"
+                style="max-width:280px;border-radius:10px;display:block;cursor:pointer;
+                       margin-top:.35rem;border:1px solid var(--border2);"
+                onclick="window.open('${msg.fileUrl}','_blank')"
+                onerror="this.style.display='none'">`;
         }
         return `<a class="file-msg" href="${msg.fileUrl}" target="_blank">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2">
-                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-            </svg>
-            ${escapeHtml(msg.fileName || 'Download file')}
+            <div class="file-msg-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                    <polyline points="13 2 13 9 20 9"/>
+                </svg>
+            </div>
+            <div>
+                <div style="font-weight:600;font-size:.83rem">${escapeHtml(msg.fileName || 'Download file')}</div>
+                <div style="font-size:.7rem;color:var(--text3)">Click to download</div>
+            </div>
         </a>`;
     }
 
-    // ── Send message ───────────────────────────────────────────────────────
+    // ── Send message ──────────────────────────────────────────────
     function sendMessage() {
         const input   = document.getElementById('msg-input');
-        const content = input.value.trim();
+        const content = input.value.trim();        // ✅ Fixed: was referencing undefined `text`
         if (!content) return;
 
         if (!stompClient || !stompClient.connected) {
@@ -793,75 +1022,74 @@
         }
 
         stompClient.send('/app/community.send', {}, JSON.stringify({
-            room:    currentRoom,
-            content: content,
-            isFile:  false
+            room: currentRoom,
+            content,
+            replyTo: replyingTo || null
         }));
+
+        // Optimistic render
+        appendMessage({
+            id: 'tmp_' + Date.now(),
+            senderId: currentUser.id,
+            senderEmail: currentUser.email,
+            senderName: currentUser.name,
+            senderRole: currentUser.role,
+            content,
+            createdAt: new Date().toISOString(),
+            replyToContent: replyingTo ? document.getElementById('reply-bar-text').textContent : null,
+            reactions: {}
+        });
 
         input.value = '';
         autoResize(input);
+        replyingTo = null;
+        clearReply();
+        scrollToBottom();
     }
 
-    function handleKey(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    }
-
-    // ── Append incoming message ────────────────────────────────────────────
     function appendMessage(msg) {
         const container = document.getElementById('messages');
-        // Remove empty state if present
-        const empty = container.querySelector('[style*="No messages"]');
+        const empty = container.querySelector('.empty-state');
         if (empty) empty.remove();
-
         container.insertAdjacentHTML('beforeend', buildMessageHTML(msg));
     }
 
-    // ── Reactions ──────────────────────────────────────────────────────────
-    let pickerMsgId = null;
+    function handleKey(e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    }
 
+    // ── Reply ─────────────────────────────────────────────────────
+    function setReply(msgId, text, senderName) {
+        replyingTo = msgId;
+        const label = `Replying to ${senderName}: ${text.length > 55 ? text.substring(0,55)+'…' : text}`;
+        document.getElementById('reply-bar-text').textContent = label;
+        document.getElementById('reply-bar').classList.add('show');
+        document.getElementById('msg-input').focus();
+    }
+
+    function clearReply() {
+        replyingTo = null;
+        document.getElementById('reply-bar').classList.remove('show');
+    }
+
+    // ── Emoji / Reactions ─────────────────────────────────────────
     function openEmojiPicker(msgId, event) {
         event.stopPropagation();
         pickerMsgId = msgId;
         const picker = document.getElementById('emoji-picker');
         picker.style.display = 'flex';
-        picker.style.top  = (event.clientY - 60) + 'px';
-        picker.style.left = (event.clientX - 160) + 'px';
-        picker.style.position = 'fixed';
+        const x = Math.min(event.clientX - 110, window.innerWidth - 240);
+        picker.style.left = Math.max(x, 8) + 'px';
+        picker.style.top  = (event.clientY - 70) + 'px';
     }
 
-    document.addEventListener('click', () => {
-        document.getElementById('emoji-picker').style.display = 'none';
+    function showQuickEmoji(event) {
         pickerMsgId = null;
-    });
-
-    async function reactToMessage(msgId, emoji) {
-        document.getElementById('emoji-picker').style.display = 'none';
-        try {
-            await api.post(
-                `/api/v1/community/messages/${msgId}/react?emoji=${encodeURIComponent(emoji)}`,
-                {});
-        } catch(e) {
-            showToast('Reaction failed', 'error');
-        }
-    }
-
-    // Called from emoji picker
-    function reactFromPicker(emoji) {
-        if (pickerMsgId) reactToMessage(pickerMsgId, emoji);
-    }
-
-    function showQuickEmoji() {
-        const input  = document.getElementById('msg-input');
         const picker = document.getElementById('emoji-picker');
         picker.style.display = 'flex';
-        const rect = input.getBoundingClientRect();
-        picker.style.top  = (rect.top - 60) + 'px';
+        const rect = document.getElementById('msg-input').getBoundingClientRect();
         picker.style.left = rect.left + 'px';
-        picker.style.position = 'fixed';
-        pickerMsgId = null; // means insert into input
+        picker.style.top  = (rect.top - 90) + 'px';
     }
 
     function insertEmoji(emoji) {
@@ -870,82 +1098,76 @@
             reactToMessage(pickerMsgId, emoji);
         } else {
             const input = document.getElementById('msg-input');
-            input.value += emoji;
+            const pos = input.selectionStart;
+            input.value = input.value.substring(0, pos) + emoji + input.value.substring(pos);
             input.focus();
         }
         pickerMsgId = null;
     }
 
-    // ── Update reaction UI from WebSocket ─────────────────────────────────
+    document.addEventListener('click', function(e) {
+        const picker = document.getElementById('emoji-picker');
+        if (!picker.contains(e.target)) { picker.style.display = 'none'; }
+    });
+
+    async function reactToMessage(msgId, emoji) {
+        try {
+            await api.post(`/api/v1/community/messages/${msgId}/react?emoji=${encodeURIComponent(emoji)}`, {});
+        } catch(e) { showToast('Reaction failed', 'error'); }
+    }
+
     function updateReactionUI(data) {
         const container = document.getElementById(`reactions-${data.messageId}`);
         if (!container) return;
-
         const chip = [...container.querySelectorAll('.reaction-chip')]
             .find(c => c.textContent.trim().startsWith(data.emoji));
-
-        if (data.count === 0) {
-            chip?.remove();
-            return;
-        }
-
-        const isMe     = data.userId === currentUser?.id;
-        const reacted  = data.added && isMe;
-
+        if (data.count === 0) { chip?.remove(); return; }
+        const isMe    = data.userId === currentUser?.id;
+        const reacted = data.added && isMe;
         if (chip) {
             chip.querySelector('.reaction-count').textContent = data.count;
             chip.classList.toggle('reacted', reacted);
-        } else if (data.count > 0) {
+        } else {
             container.insertAdjacentHTML('beforeend', `
-                <span class="reaction-chip ${reacted ? 'reacted' : ''}"
-                      onclick="reactToMessage(${data.messageId}, '${data.emoji}')">
-                    ${data.emoji}
-                    <span class="reaction-count">${data.count}</span>
+                <span class="reaction-chip${reacted ? ' reacted' : ''}" onclick="reactToMessage(${data.messageId}, '${data.emoji}')">
+                    ${data.emoji} <span class="reaction-count">${data.count}</span>
                 </span>`);
         }
     }
 
-    // ── Pin ────────────────────────────────────────────────────────────────
+    // ── Pin ───────────────────────────────────────────────────────
     async function togglePin(msgId) {
         try {
             await api.post(`/api/v1/community/messages/${msgId}/pin`, {});
-            showToast('Pin updated', 'success');
-        } catch(e) {
-            showToast('Failed to update pin', 'error');
-        }
+            await loadPinned(currentRoom);
+        } catch(e) { showToast('Failed to update pin', 'error'); }
     }
 
-    // ── Presence UI ────────────────────────────────────────────────────────
-    function updatePresenceUI(data) {
-        document.getElementById('online-count').textContent =
-            data.onlineCount || 0;
+    function highlightMsg(msgId) {
+        const el = document.getElementById('msg-' + msgId);
+        if (!el) return;
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.style.transition = 'background .3s';
+        el.style.background = 'rgba(245,166,35,.08)';
+        setTimeout(() => { el.style.background = ''; }, 2000);
+    }
 
+    // ── Presence UI ───────────────────────────────────────────────
+    function updatePresenceUI(data) {
+        document.getElementById('online-count').textContent = data.onlineCount || 0;
         const list = document.getElementById('online-users-list');
-        if (!data.users || data.users.length === 0) {
-            list.innerHTML = `<div style="font-size:0.78rem;color:var(--text3);
-                padding:0.25rem;">No one online</div>`;
+        if (!data.users?.length) {
+            list.innerHTML = `<div style="font-size:.78rem;color:var(--text3);padding:.25rem">No one online</div>`;
             return;
         }
-
         list.innerHTML = data.users.map(u => {
-            const initials = (u.name || '?')
-                .split(' ').map(w => w[0]).join('')
-                .substring(0, 2).toUpperCase();
-            return `
-            <div class="online-user">
-                <div class="online-avatar">
-                    ${u.avatar
-                        ? `<img src="${u.avatar}" alt="${u.name}"
-                                style="width:26px;height:26px;border-radius:50%;
-                                       object-fit:cover;border:1px solid var(--border2);"
-                                onerror="this.outerHTML='<div style=width:26px;height:26px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:var(--text2);border:1px solid var(--border2);>${initials}</div>'">`
-                        : `<div style="width:26px;height:26px;border-radius:50%;
-                                      background:var(--card2);display:flex;
-                                      align-items:center;justify-content:center;
-                                      font-size:0.65rem;color:var(--text2);
-                                      border:1px solid var(--border2);">
-                               ${initials}
-                           </div>`}
+            const ini = (u.name || '?').split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+            const av  = u.avatar
+                ? `<img src="${u.avatar}" style="width:28px;height:28px;border-radius:50%;object-fit:cover" onerror="this.outerHTML='<div style=width:28px;height:28px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--text2)>${ini}</div>'">`
+                : `<div style="width:28px;height:28px;border-radius:50%;background:${stringToGradient(u.name)};display:flex;align-items:center;justify-content:center;font-size:.65rem;color:#fff;font-weight:700">${ini}</div>`;
+            return `<div class="online-user">
+                <div class="online-avatar-wrap">
+                    <div class="online-av">${av}</div>
                     <div class="online-indicator"></div>
                 </div>
                 <span class="online-name">${escapeHtml(u.name)}</span>
@@ -953,91 +1175,114 @@
         }).join('');
     }
 
-    // ── File upload ────────────────────────────────────────────────────────
-    async function uploadCommunityFile(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        // Use room as "projectId" conceptually — adjust endpoint as needed
-        const formData = new FormData();
-        formData.append('file', file);
-
-        showToast('Uploading…', 'success');
-        try {
-            const res = await fetch('/api/v1/upload/chat/0', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
-                },
-                body: formData
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                stompClient.send('/app/community.send', {}, JSON.stringify({
-                    room:     currentRoom,
-                    content:  '[file]',
-                    isFile:   true,
-                    fileUrl:  data.url,
-                    fileName: data.fileName,
-                    fileType: data.fileType
-                }));
-            } else {
-                showToast('Upload failed', 'error');
-            }
-        } catch(e) {
-            showToast('Upload error', 'error');
-        }
-        event.target.value = '';
-    }
-
-    // ── Spotlight ──────────────────────────────────────────────────────────
+    // ── Spotlight ─────────────────────────────────────────────────
     async function loadSpotlight() {
         try {
             const res   = await api.get('/api/v1/community/spotlight');
             const users = await res.json();
             const list  = document.getElementById('spotlight-list');
-
-            if (!users || users.length === 0) {
-                list.innerHTML = `<div style="font-size:0.75rem;
-                    color:var(--text3);">No data yet</div>`;
+            if (!users?.length) {
+                list.innerHTML = `<div style="font-size:.75rem;color:var(--text3)">No data yet</div>`;
                 return;
             }
-
             list.innerHTML = users.map(u => {
-                const initials = (u.name || '?')
-                    .split(' ').map(w => w[0]).join('')
-                    .substring(0,2).toUpperCase();
-                return `
-                <div class="spotlight-user"
-                     onclick="window.location='/profile.html?id=${u.id}'">
+                const ini = (u.name || '?').split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+                const stars = u.avgRating ? Math.round(u.avgRating) : 0;
+                const starSVGs = Array.from({length: 5}, (_, i) =>
+                    `<svg width="10" height="10" viewBox="0 0 24 24" fill="${i < stars ? 'var(--gold)' : 'none'}" stroke="var(--gold)" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+                ).join('');
+                return `<div class="spotlight-user" onclick="window.location='/profile.html?id=${u.id}'">
                     ${u.avatar
-                        ? `<img src="${u.avatar}" class="spotlight-avatar">`
-                        : `<div class="spotlight-avatar">${initials}</div>`}
+                    ? `<div class="spotlight-avatar"><img src="${u.avatar}" alt="${escapeHtml(u.name)}"></div>`
+                    : `<div class="spotlight-avatar" style="background:${stringToGradient(u.name)};color:#fff;font-weight:700">${ini}</div>`}
                     <div>
-                        <div class="spotlight-name">
-                            ${escapeHtml(u.name)}
-                        </div>
-                        <div class="spotlight-rating">
-                            ⭐ ${u.avgRating
-                                ? u.avgRating.toFixed(1)
-                                : 'New'} · ${u.reviewCount || 0} reviews
-                        </div>
+                        <div class="spotlight-name">${escapeHtml(u.name)}</div>
+                        <div class="spotlight-rating">${starSVGs} <span>${u.avgRating ? u.avgRating.toFixed(1) : 'New'}</span></div>
                     </div>
                 </div>`;
             }).join('');
         } catch(e) {}
     }
 
-    // ── Heartbeat (keep presence alive) ───────────────────────────────────
-    setInterval(() => {
-        if (stompClient && stompClient.connected) {
-            stompClient.send('/app/community.join', {},
-                JSON.stringify({ room: currentRoom }));
-        }
-    }, 60_000); // every 60 seconds
+    // ── File upload ───────────────────────────────────────────────
+    async function uploadCommunityFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const fd = new FormData();
+        fd.append('file', file);
+        showToast('Uploading…', 'success');
+        try {
+            const res = await fetch('/api/v1/upload/chat/0', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('sb_jwt') },
+                body: fd
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (stompClient && stompClient.connected) {
+                    stompClient.send('/app/community.send', {}, JSON.stringify({
+                        room: currentRoom, content: '[file]',
+                        fileUrl: data.url, fileName: data.fileName, fileType: data.fileType
+                    }));
+                }
+            } else { showToast('Upload failed', 'error'); }
+        } catch(e) { showToast('Upload error', 'error'); }
+        event.target.value = '';
+    }
 
-    // ── Helpers ────────────────────────────────────────────────────────────
+    // ── Format helpers ────────────────────────────────────────────
+    function formatMessage(text) {
+        text = escapeHtml(text);
+        text = text.replace(/(https?:\/\/[^\s]+)/g,
+            '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        text = text.replace(/_(.*?)_/g, '<em>$1</em>');
+        text = text.replace(/`(.*?)`/g, '<code>$1</code>');
+        text = text.replace(/@([a-zA-Z0-9_]+)/g,
+            '<span class="mention">@$1</span>');
+        text = text.replace(/\n/g, '<br>');
+        return text;
+    }
+
+    function wrapText(start, end) {
+        const input = document.getElementById('msg-input');
+        const s = input.selectionStart, e = input.selectionEnd;
+        const sel = input.value.substring(s, e);
+        input.value = input.value.substring(0, s) + start + sel + end + input.value.substring(e);
+        input.focus();
+        input.setSelectionRange(s + start.length, s + start.length + sel.length);
+    }
+
+    function insertLink() {
+        const url = prompt('Enter URL:');
+        if (!url) return;
+        const input = document.getElementById('msg-input');
+        const pos = input.selectionStart;
+        input.value = input.value.substring(0, pos) + url + input.value.substring(pos);
+        input.focus();
+    }
+
+    function insertMention() {
+        const name = prompt('Enter username:');
+        if (!name) return;
+        const input = document.getElementById('msg-input');
+        input.value += ` @${name} `;
+        input.focus();
+    }
+
+    function stringToGradient(name) {
+        const colors = [
+            'linear-gradient(135deg,#7B61FF,#00C9A7)',
+            'linear-gradient(135deg,#F5A623,#FF6B8A)',
+            'linear-gradient(135deg,#4A90E2,#7B61FF)',
+            'linear-gradient(135deg,#00C9A7,#4A90E2)',
+            'linear-gradient(135deg,#FF6B8A,#F5A623)',
+        ];
+        let hash = 0;
+        for (let i = 0; i < (name||'').length; i++) hash = (name.charCodeAt(i) + hash * 31) | 0;
+        return colors[Math.abs(hash) % colors.length];
+    }
+
     function autoResize(el) {
         el.style.height = 'auto';
         el.style.height = Math.min(el.scrollHeight, 120) + 'px';
@@ -1049,50 +1294,45 @@
     }
 
     function showSkeletons() {
-        document.getElementById('messages').innerHTML =
-            [1,2,3].map(() => `
-            <div class="msg-skeleton">
-                <div class="sk-av"></div>
-                <div class="sk-body">
-                    <div class="sk-line" style="width:25%"></div>
-                    <div class="sk-line" style="width:65%"></div>
-                </div>
-            </div>`).join('');
+        document.getElementById('messages').innerHTML = `
+            <div class="msg-skeleton"><div class="sk-av"></div><div class="sk-body"><div class="sk-line" style="width:25%"></div><div class="sk-line" style="width:68%"></div></div></div>
+            <div class="msg-skeleton"><div class="sk-av"></div><div class="sk-body"><div class="sk-line" style="width:18%"></div><div class="sk-line" style="width:82%"></div></div></div>
+            <div class="msg-skeleton"><div class="sk-av"></div><div class="sk-body"><div class="sk-line" style="width:30%"></div><div class="sk-line" style="width:55%"></div></div></div>`;
     }
 
     function escapeHtml(str) {
         if (!str) return '';
-        return str.replace(/&/g,'&amp;')
-                  .replace(/</g,'&lt;')
-                  .replace(/>/g,'&gt;')
-                  .replace(/"/g,'&quot;');
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     function formatTime(iso) {
         if (!iso) return '';
-        return new Date(iso).toLocaleTimeString([], {
-            hour:'2-digit', minute:'2-digit'});
+        return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
     function formatDate(iso) {
         if (!iso) return '';
-        const d    = new Date(iso);
-        const now  = new Date();
+        const d = new Date(iso), now = new Date();
         const diff = Math.floor((now - d) / 86400000);
         if (diff === 0) return 'Today';
         if (diff === 1) return 'Yesterday';
-        return d.toLocaleDateString([], {
-            month:'short', day:'numeric'});
+        return d.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
-    function showToast(msg, type='success') {
+    function showToast(msg, type = 'success') {
         const t = document.getElementById('toast');
         t.textContent = msg;
         t.className   = `toast ${type} show`;
-        setTimeout(() => t.classList.remove('show'), 2500);
+        setTimeout(() => t.classList.remove('show'), 2800);
     }
 
-    // ── Start ──────────────────────────────────────────────────────────────
+    // ── Heartbeat ─────────────────────────────────────────────────
+    setInterval(() => {
+        if (stompClient && stompClient.connected) {
+            stompClient.send('/app/community.join', {}, JSON.stringify({ room: currentRoom }));
+        }
+    }, 60_000);
+
     init();
 </script>
 </body>

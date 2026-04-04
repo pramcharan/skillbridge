@@ -51,6 +51,7 @@ public class SecurityConfig {
                                 "/post-job.html", "/profile.html",
                                 "/community-chat.html", "/proposals-client.html",
                                 "/reset-password.html",
+                                "/onboarding.html",
                                 "/project.html",
                                 "/my-projects.html",
                                 "/community.html",
@@ -59,6 +60,8 @@ public class SecurityConfig {
                                 "/forgot-password.html",
                                 "/disputes.html"
                         ).permitAll()
+
+                        .requestMatchers("/privacy.html", "/terms.html").permitAll()
 
                         // ── Static assets ─────────────────────────────────────────────
                         .requestMatchers("/uploads/**", "/css/**", "/js/**", "/lib/**",
@@ -139,7 +142,8 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }

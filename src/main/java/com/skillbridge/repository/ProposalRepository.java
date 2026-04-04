@@ -92,32 +92,26 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
 
 
 
-    @Query("SELECT AVG(p.aiScore) FROM Proposal p WHERE p.status = :status AND p.aiScore IS NOT NULL")
+    @Query("SELECT AVG(p.aiMatchScore) FROM Proposal p WHERE p.status = :status AND p.aiMatchScore IS NOT NULL")
     Optional<Double> avgScoreByStatus(@Param("status") ProposalStatus status);
 
     @Query("""
     SELECT
-      CASE
-        WHEN p.aiScore BETWEEN 0  AND 20  THEN '0–20'
-        WHEN p.aiScore BETWEEN 21 AND 40  THEN '21–40'
-        WHEN p.aiScore BETWEEN 41 AND 60  THEN '41–60'
-        WHEN p.aiScore BETWEEN 61 AND 80  THEN '61–80'
-        ELSE '81–100'
-      END,
-      COUNT(p)
-    FROM Proposal p
-    WHERE p.aiScore IS NOT NULL
-    GROUP BY 1
-    ORDER BY 1
+      SUM(CASE WHEN p.aiMatchScore BETWEEN 0  AND 20  THEN 1 ELSE 0 END),
+      SUM(CASE WHEN p.aiMatchScore BETWEEN 21 AND 40  THEN 1 ELSE 0 END),
+      SUM(CASE WHEN p.aiMatchScore BETWEEN 41 AND 60  THEN 1 ELSE 0 END),
+      SUM(CASE WHEN p.aiMatchScore BETWEEN 61 AND 80  THEN 1 ELSE 0 END),
+      SUM(CASE WHEN p.aiMatchScore BETWEEN 81 AND 100 THEN 1 ELSE 0 END)
+    FROM Proposal p WHERE p.aiMatchScore IS NOT NULL
     """)
-    List<Object[]> scoreDistribution();
+    Object[] scoreDistribution();
 
     @Query("""
-    SELECT j.title, AVG(p.aiScore)
+    SELECT j.id, j.title, AVG(p.aiMatchScore)
     FROM Proposal p JOIN p.job j
-    WHERE p.aiScore IS NOT NULL
+    WHERE p.aiMatchScore IS NOT NULL
     GROUP BY j.id, j.title
-    ORDER BY AVG(p.aiScore) DESC
+    ORDER BY AVG(p.aiMatchScore) DESC
     """)
     List<Object[]> topJobsByAvgScore(Pageable pageable);
 

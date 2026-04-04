@@ -5,6 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile — SkillBridge</title>
+    <meta name="description" content="SkillBridge connects top Indian freelancers with clients. AI-powered proposal scoring, real-time chat, and verified reviews.">
+    <meta name="theme-color" content="#00C9A7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -12,7 +14,7 @@
         :root {
           --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
           --teal:#00C9A7; --teal-dk:#00A389; --gold:#F5A623; --purple:#7B61FF;
-          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#4A6080;
+          --rose:#FF6B8A; --text:#E8F0FE; --text2:#8BA3C7; --text3:#5A7090;
           --border:#1A2D4A; --border2:#243650;
         }
 
@@ -445,6 +447,42 @@
           border-radius:6px;
         }
         @keyframes shimmer { to { background-position:-200% 0; } }
+
+        /* ── REVIEWS ── */
+        .review-card {
+            background:var(--card2); border:1px solid var(--border2);
+            border-radius:16px; padding:1.25rem; margin-bottom:0.85rem;
+            transition:border-color 0.2s;
+        }
+        .review-card:hover { border-color:rgba(245,166,35,0.3); }
+        .review-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem; }
+        .review-author { display:flex; align-items:center; gap:0.65rem; }
+        .review-av {
+            width:36px; height:36px; border-radius:50%; flex-shrink:0;
+            background:linear-gradient(135deg,var(--teal),var(--purple));
+            display:flex; align-items:center; justify-content:center;
+            font-weight:700; font-size:0.85rem; color:#fff;
+        }
+        .review-name { font-weight:600; font-size:0.88rem; }
+        .review-date { font-size:0.75rem; color:var(--text3); margin-top:0.1rem; }
+        .review-stars { color:var(--gold); font-size:0.9rem; letter-spacing:0.05em; }
+        .review-comment { font-size:0.85rem; color:var(--text2); line-height:1.6; }
+        .review-summary-card {
+            background:linear-gradient(135deg,rgba(0,201,167,0.06),rgba(245,166,35,0.04));
+            border:1px solid var(--border2); border-radius:16px;
+            padding:1.25rem 1.5rem; margin-bottom:1.25rem;
+            display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;
+        }
+        .rs-rating {
+            font-family:'Syne',sans-serif; font-weight:800; font-size:2.5rem;
+            background:linear-gradient(135deg,var(--gold),var(--teal));
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+        }
+        .reviews-empty {
+            text-align:center; padding:3rem 2rem;
+            background:var(--card); border:1px dashed var(--border2); border-radius:16px;
+            color:var(--text3);
+        }
     </style>
 </head>
 <body>
@@ -487,7 +525,7 @@
                 </div>
                 <button class="avatar-upload-btn"
                         onclick="document.getElementById('avatar-input').click()"
-                        title="Upload photo">
+                        title="Upload photo" aria-label="Upload photo">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2.5">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -587,6 +625,17 @@
             </svg>
             Settings
         </button>
+        <button class="tab-btn" id="tab-reviews" onclick="switchTab('reviews')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            Reviews
+            <span id="reviews-count-badge" style="display:none;
+        background:rgba(245,166,35,0.15);color:var(--gold);
+        border-radius:99px;padding:0.05rem 0.45rem;font-size:0.7rem;
+        font-weight:700;"></span>
+        </button>
     </div>
 
     <!-- ════════════ TAB: EDIT PROFILE ════════════ -->
@@ -625,10 +674,15 @@
                 </div>
                 <div class="hint">Press Enter or comma after each skill. Max 15.</div>
             </div>
-            <div class="form-row">
+            <div class="form-row" style="grid-template-columns:1fr 1fr 1fr;">
                 <div class="form-group">
                     <label>Hourly Rate (USD)</label>
                     <input type="number" id="hourly-rate" placeholder="e.g. 45" min="1">
+                </div>
+                <div class="form-group">
+                    <label for="portfolioUrl">Portfolio URL</label>
+                    <input type="url" id="portfolioUrl" class="form-control"
+                           placeholder="https://github.com/yourusername">
                 </div>
                 <div class="form-group">
                     <label>Availability</label>
@@ -868,6 +922,21 @@
         </div>
     </div>
 
+    <!-- ════════════ TAB: REVIEWS ════════════ -->
+    <div id="panel-reviews" class="tab-panel">
+        <div id="reviews-summary" style="display:none;" class="review-summary-card">
+            <div class="rs-rating" id="reviews-avg">—</div>
+            <div>
+                <div style="font-size:0.95rem;font-weight:700;" id="reviews-count-text">0 reviews</div>
+                <div class="review-stars" id="reviews-stars"></div>
+            </div>
+        </div>
+        <div id="reviews-list"></div>
+        <div id="reviews-loading" style="text-align:center;padding:2rem;color:var(--text3);">
+            Loading reviews…
+        </div>
+    </div>
+
 </main>
 
 <!-- ── PORTFOLIO MODAL ── -->
@@ -876,7 +945,7 @@
     <div class="modal">
         <div class="modal-head">
             <h3 id="pf-modal-title">Add Portfolio Item</h3>
-            <button class="modal-close" onclick="closePfModal()">×</button>
+            <button class="modal-close" aria-label="Close" onclick="closePfModal()">×</button>
         </div>
 
         <div class="form-group">
@@ -944,10 +1013,28 @@
        BOOT
     ══════════════════════════════════════════════ */
     async function loadProfile() {
+        // ── Check if viewing someone else's profile ──
+        const viewUserId = new URLSearchParams(window.location.search).get('id');
+        const isOwnProfile = !viewUserId;
+
         try {
-            const res      = await api.get('/api/v1/profile');
+            let res;
+            if (isOwnProfile) {
+                res = await api.get('/api/v1/profile');
+            } else {
+                res = await api.get(`/api/v1/profile/${viewUserId}`);
+            }
             currentProfile = await res.json();
             populateForm(currentProfile);
+
+            // Hide edit controls for other users' profiles
+            if (!isOwnProfile) {
+                document.getElementById('tab-edit').style.display     = 'none';
+                document.getElementById('tab-settings').style.display = 'none';
+                document.querySelector('.avatar-upload-btn').style.display = 'none';
+                document.querySelector('.save-row').style.display     = 'none';
+                switchTab('portfolio');
+            }
         } catch(e) {
             console.error('Failed to load profile:', e);
             showToast('Failed to load profile', 'error');
@@ -1007,6 +1094,7 @@
             document.getElementById('freelancer-section').style.display = 'block';
             document.getElementById('hourly-rate').value  = p.hourlyRate  || '';
             document.getElementById('availability').value = p.availabilityStatus || '';
+            document.getElementById('portfolioUrl').value = p.portfolioUrl || '';
 
             skills = Array.isArray(p.skills)
                 ? p.skills.filter(Boolean)
@@ -1149,16 +1237,15 @@ async function confirmDeleteAccount() {
        TABS
     ══════════════════════════════════════════════ */
     function switchTab(tab) {
-        ['edit','portfolio','settings'].forEach(t => {
+        ['edit','portfolio','settings','reviews'].forEach(t => {
             document.getElementById('panel-' + t).classList.remove('active');
             document.getElementById('tab-'   + t).classList.remove('active');
         });
         document.getElementById('panel-' + tab).classList.add('active');
         document.getElementById('tab-'   + tab).classList.add('active');
 
-        if (tab === 'portfolio' && !pfLoaded) {
-            loadPortfolio();
-        }
+        if (tab === 'portfolio' && !pfLoaded) loadPortfolio();
+        if (tab === 'reviews'   && !reviewsLoaded) loadReviews();
     }
 
     /* ══════════════════════════════════════════════
@@ -1211,6 +1298,7 @@ async function confirmDeleteAccount() {
             skills:             skills.join(','),
             hourlyRate:         document.getElementById('hourly-rate').value
                                     ? Number(document.getElementById('hourly-rate').value) : null,
+            portfolioUrl: document.getElementById('portfolioUrl').value.trim(),
             availabilityStatus: document.getElementById('availability').value || null
         };
 
@@ -1241,32 +1329,63 @@ async function confirmDeleteAccount() {
        AVATAR UPLOAD
     ══════════════════════════════════════════════ */
     async function uploadAvatar(input) {
-        const file = input.files[0];
-        if (!file) return;
+    const file = input.files[0];
+    if (!file) return;
 
-        const formData = new FormData();
-        formData.append('file', file);
+    const uploadBtn = document.querySelector('.avatar-upload-btn');
+    uploadBtn.style.opacity = '0.5';
+    uploadBtn.style.pointerEvents = 'none';
+    showToast('Uploading photo…', 'success');
 
-        showToast('Uploading photo…', 'success');
+    const formData = new FormData();
+    formData.append('file', file);
 
-        try {
-            const token = localStorage.getItem('sb_jwt');
-            const res   = await fetch('/api/v1/profile/avatar', {
-                method:  'POST',
-                headers: { Authorization: 'Bearer ' + token },
-                body:    formData
-            });
-            const data = await res.json();
-            if (res.ok) {
-                populateForm(data);
-                showToast('Photo updated!', 'success');
+    try {
+        const token = localStorage.getItem('sb_jwt');
+        const res   = await fetch('/api/v1/profile/avatar', {
+            method:  'POST',
+            headers: { Authorization: 'Bearer ' + token },
+            body:    formData
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+            // ✅ try every possible field name the backend might use
+            const url = data.avatarUrl || data.avatar
+                      || data.profilePicture || data.imageUrl || data.url;
+
+            if (url) {
+                // save for all other pages to read
+                localStorage.setItem('sb_avatar', url);
+
+                // update the hero avatar on this page immediately
+                const display = document.getElementById('avatar-display');
+                if (display) display.innerHTML = `<img src="${url}" alt="Avatar">`;
+
+                // update navbar avatar if it exists on this page
+                const navAv = document.getElementById('user-av');
+                if (navAv) {
+                    navAv.innerHTML = `<img src="${url}"
+                        style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Image">`;
+                }
             } else {
-                showToast(data.message || 'Upload failed', 'error');
+                // url missing — log the full response so we can see the real field name
+                console.warn('Avatar upload succeeded but no URL in response:', data);
             }
-        } catch(e) {
-            showToast('Upload failed. Try again.', 'error');
+
+            populateForm(data);
+            showToast('Photo updated!', 'success');
+        } else {
+            showToast(data.message || 'Upload failed', 'error');
         }
+    } catch(e) {
+        console.error('Avatar upload error:', e);
+        showToast('Upload failed. Try again.', 'error');
+    } finally {
+        uploadBtn.style.opacity = '1';
+        uploadBtn.style.pointerEvents = 'auto';
     }
+}
 
     /* ══════════════════════════════════════════════
        PORTFOLIO
@@ -1447,6 +1566,105 @@ async function confirmDeleteAccount() {
             }
         } catch(e) {
             showToast('Network error', 'error');
+        }
+    }
+
+    /* ══════════════════════════════════════════════
+   REVIEWS
+══════════════════════════════════════════════ */
+    let reviewsLoaded = false;
+
+    async function loadReviews() {
+        reviewsLoaded = true;
+        const listEl    = document.getElementById('reviews-list');
+        const loadingEl = document.getElementById('reviews-loading');
+        const summaryEl = document.getElementById('reviews-summary');
+
+        if (!currentProfile || !currentProfile.id) {
+            loadingEl.textContent = 'Could not load reviews.';
+            return;
+        }
+
+        const userId = currentProfile.id;
+
+        try {
+            // Load summary and reviews in parallel
+            const [sumRes, revRes] = await Promise.all([
+                api.get(`/api/v1/reviews/user/${userId}/summary`),
+                api.get(`/api/v1/reviews/user/${userId}?page=0&size=20`)
+            ]);
+
+            // Summary
+            if (sumRes.ok) {
+                const s = await sumRes.json();
+                if (s.reviewCount > 0) {
+                    document.getElementById('reviews-avg').textContent  = s.averageRating.toFixed(1);
+                    document.getElementById('reviews-count-text').textContent =
+                        `${s.reviewCount} review${s.reviewCount !== 1 ? 's' : ''}`;
+                    document.getElementById('reviews-stars').textContent =
+                        '★'.repeat(Math.round(s.averageRating)) +
+                        '☆'.repeat(5 - Math.round(s.averageRating));
+                    summaryEl.style.display = 'flex';
+
+                    // Update tab badge
+                    const badge = document.getElementById('reviews-count-badge');
+                    badge.textContent   = s.reviewCount;
+                    badge.style.display = 'inline';
+                }
+            }
+
+            // Reviews list
+            if (revRes.ok) {
+                const page    = await revRes.json();
+                const reviews = page.content || [];
+                loadingEl.style.display = 'none';
+
+                if (reviews.length === 0) {
+                    listEl.innerHTML = `
+                    <div class="reviews-empty">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.5" style="opacity:0.3;margin-bottom:0.75rem;">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        <p style="font-weight:600;margin-bottom:0.3rem;">No reviews yet</p>
+                        <p style="font-size:0.82rem;">Complete projects to start receiving reviews</p>
+                    </div>`;
+                    return;
+                }
+
+                const colors = [
+                    'linear-gradient(135deg,#00C9A7,#005f50)',
+                    'linear-gradient(135deg,#7B61FF,#4a35cc)',
+                    'linear-gradient(135deg,#F5A623,#b37500)',
+                    'linear-gradient(135deg,#FF6B8A,#c2185b)'
+                ];
+
+                listEl.innerHTML = reviews.map((r, i) => `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-author">
+                            <div class="review-av" style="background:${colors[i % colors.length]}">
+                                ${r.reviewerName ? r.reviewerName[0].toUpperCase() : '?'}
+                            </div>
+                            <div>
+                                <div class="review-name">${escHtml(r.reviewerName || 'Anonymous')}</div>
+                                <div class="review-date">${r.createdAt
+                    ? new Date(r.createdAt).toLocaleDateString('en-US',
+                        {year:'numeric',month:'short',day:'numeric'})
+                    : ''}</div>
+                            </div>
+                        </div>
+                        <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                    </div>
+                    ${r.comment
+                    ? `<div class="review-comment">${escHtml(r.comment)}</div>`
+                    : '<div class="review-comment" style="color:var(--text3);font-style:italic;">No comment left.</div>'}
+                </div>
+            `).join('');
+            }
+        } catch(e) {
+            loadingEl.textContent = 'Failed to load reviews.';
+            console.error('Reviews error:', e);
         }
     }
 

@@ -1,0 +1,504 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - link "SkillBridge" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e4]:
+      - link "Login" [ref=e5] [cursor=pointer]:
+        - /url: /login.html
+        - button "Login" [ref=e6]
+      - link "Get Started" [ref=e7] [cursor=pointer]:
+        - /url: /register.html
+        - button "Get Started" [ref=e8]
+  - generic [ref=e12]:
+    - generic [ref=e13]: AI-Powered Talent Matching — Now Live
+    - heading "Bridge the Gap Between Talent & Opportunity" [level=1] [ref=e15]:
+      - text: Bridge the Gap Between
+      - text: Talent & Opportunity
+    - paragraph [ref=e16]: SkillBridge connects world-class freelancers with ambitious clients. Our AI scores every match instantly — so you spend time building, not browsing.
+    - generic [ref=e17]:
+      - link "Start Hiring Free →" [ref=e18] [cursor=pointer]:
+        - /url: /register.html
+      - link "Join as Freelancer" [ref=e19] [cursor=pointer]:
+        - /url: /register.html?role=freelancer
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - generic [ref=e22]: R
+        - generic [ref=e23]: A
+        - generic [ref=e24]: S
+        - generic [ref=e25]: M
+        - generic [ref=e26]: +
+      - generic [ref=e27]:
+        - strong [ref=e28]: 8 members already
+        - text: of professionals already on SkillBridge
+  - generic [ref=e30]:
+    - generic [ref=e31]:
+      - img [ref=e33]
+      - generic [ref=e38]: "4"
+      - generic [ref=e39]: Registered Freelancers
+      - generic [ref=e40]:
+        - img [ref=e41]
+        - generic [ref=e43]: +18% this month
+    - generic [ref=e44]:
+      - img [ref=e46]
+      - generic [ref=e49]: "3"
+      - generic [ref=e50]: Jobs Posted
+      - generic [ref=e51]:
+        - img [ref=e52]
+        - generic [ref=e54]: +34% this week
+    - generic [ref=e55]:
+      - img [ref=e57]
+      - generic [ref=e61]: "0"
+      - generic [ref=e62]: Projects Completed
+      - generic [ref=e63]:
+        - img [ref=e64]
+        - generic [ref=e66]: +22% this month
+    - generic [ref=e67]:
+      - img [ref=e69]
+      - generic [ref=e71]: 4.9★
+      - generic [ref=e72]: Average Rating
+      - generic [ref=e73]:
+        - img [ref=e74]
+        - generic [ref=e76]: Top rated platform
+  - generic [ref=e77]:
+    - generic [ref=e78]:
+      - generic [ref=e79]: Browse Categories
+      - heading "Explore Popular Skills" [level=2] [ref=e80]
+      - paragraph [ref=e81]: From code to creativity — every skill category you need, powered by AI matching.
+    - generic [ref=e82]:
+      - generic [ref=e84] [cursor=pointer]:
+        - generic [ref=e85]:
+          - img [ref=e88]:
+            - generic [ref=e99]: "01"
+            - generic [ref=e100]: "02"
+            - generic [ref=e101]: "03"
+            - generic [ref=e102]: "04"
+            - generic [ref=e103]: "05"
+            - generic [ref=e104]: "06"
+            - generic [ref=e105]: "07"
+            - generic [ref=e106]: "08"
+            - generic [ref=e107]: "09"
+            - generic [ref=e139]: TERMINAL
+            - generic [ref=e140]: $ npm run
+            - generic [ref=e141]: build
+            - generic [ref=e142]: ✓ compiled
+            - generic [ref=e143]: in 1.2s
+            - generic [ref=e144]: → dist/
+            - generic [ref=e145]: $
+          - generic [ref=e146]:
+            - generic [ref=e147]:
+              - generic [ref=e148]: IT & Software
+              - generic [ref=e149]: 2 open jobs
+            - generic [ref=e150]: Most Popular
+        - generic [ref=e151]:
+          - img [ref=e153]
+          - generic [ref=e156]: IT & Software
+          - generic [ref=e157]: Web, mobile, cloud, AI/ML and everything in between. The largest and most active category on SkillBridge.
+          - generic [ref=e158]:
+            - generic [ref=e159]:
+              - generic [ref=e160]: "247"
+              - generic [ref=e161]: Open Jobs
+            - generic [ref=e162]:
+              - generic [ref=e163]: $85
+              - generic [ref=e164]: Avg/hr
+            - generic [ref=e165]:
+              - generic [ref=e166]: 4.9★
+              - generic [ref=e167]: Rating
+          - generic [ref=e168]:
+            - generic [ref=e169]: React
+            - generic [ref=e170]: Spring Boot
+            - generic [ref=e171]: Python
+            - generic [ref=e172]: AWS
+            - generic [ref=e173]: AI/ML
+            - generic [ref=e174]: DevOps
+          - link "Browse Jobs" [ref=e175]:
+            - /url: /login.html
+            - text: Browse Jobs
+            - img [ref=e176]
+      - generic [ref=e179] [cursor=pointer]:
+        - generic [ref=e180]:
+          - img [ref=e183]:
+            - generic [ref=e192]: A
+            - generic [ref=e211]: ISO 400
+            - generic [ref=e212]: f/1.8 1/500
+          - generic [ref=e215]:
+            - generic [ref=e216]:
+              - generic [ref=e217]: Photography
+              - generic [ref=e218]: 94 open jobs
+            - generic [ref=e219]: Creative
+        - generic [ref=e220]:
+          - img [ref=e222]
+          - generic [ref=e225]: Photography
+          - generic [ref=e226]: Product shoots, portraits, events and editing. Capture every moment with professional precision.
+          - generic [ref=e227]:
+            - generic [ref=e228]:
+              - generic [ref=e229]: "94"
+              - generic [ref=e230]: Open Jobs
+            - generic [ref=e231]:
+              - generic [ref=e232]: $62
+              - generic [ref=e233]: Avg/hr
+            - generic [ref=e234]:
+              - generic [ref=e235]: 4.8★
+              - generic [ref=e236]: Rating
+          - generic [ref=e237]:
+            - generic [ref=e238]: Product
+            - generic [ref=e239]: Portrait
+            - generic [ref=e240]: Events
+            - generic [ref=e241]: Drone
+            - generic [ref=e242]: Retouching
+            - generic [ref=e243]: Lightroom
+          - link "Browse Jobs" [ref=e244]:
+            - /url: /login.html
+            - text: Browse Jobs
+            - img [ref=e245]
+      - generic [ref=e248] [cursor=pointer]:
+        - generic [ref=e249]:
+          - img [ref=e252]:
+            - generic [ref=e260]: 1,247 wds
+            - generic [ref=e282]: NOTES
+          - generic [ref=e291]:
+            - generic [ref=e292]:
+              - generic [ref=e293]: Writing & Content
+              - generic [ref=e294]: 156 open jobs
+            - generic [ref=e295]: High Demand
+        - generic [ref=e296]:
+          - img [ref=e298]
+          - generic [ref=e300]: Writing & Content
+          - generic [ref=e301]: Blog posts, copywriting, SEO content, and brand storytelling that converts readers into customers.
+          - generic [ref=e302]:
+            - generic [ref=e303]:
+              - generic [ref=e304]: "156"
+              - generic [ref=e305]: Open Jobs
+            - generic [ref=e306]:
+              - generic [ref=e307]: $48
+              - generic [ref=e308]: Avg/hr
+            - generic [ref=e309]:
+              - generic [ref=e310]: 4.7★
+              - generic [ref=e311]: Rating
+          - generic [ref=e312]:
+            - generic [ref=e313]: Copywriting
+            - generic [ref=e314]: SEO
+            - generic [ref=e315]: Blog
+            - generic [ref=e316]: UX Writing
+            - generic [ref=e317]: Technical
+            - generic [ref=e318]: Ghostwriting
+          - link "Browse Jobs" [ref=e319]:
+            - /url: /login.html
+            - text: Browse Jobs
+            - img [ref=e320]
+      - generic [ref=e323] [cursor=pointer]:
+        - generic [ref=e324]:
+          - img [ref=e327]:
+            - generic [ref=e331]: ANALYTICS OVERVIEW
+            - generic [ref=e334]: LIVE
+            - generic [ref=e336]: REACH
+            - generic [ref=e337]: 2.4M
+            - generic [ref=e339]: CLICKS
+            - generic [ref=e340]: 84K
+            - generic [ref=e342]: CVR
+            - generic [ref=e343]: 3.8%
+            - generic [ref=e345]: ROI
+            - generic [ref=e346]: +247%
+            - generic [ref=e347]: 100k
+            - generic [ref=e348]: 50k
+            - generic [ref=e349]: "0"
+            - generic [ref=e371]: ↑ 247% ROI
+            - generic [ref=e372]: Jan
+            - generic [ref=e373]: Feb
+            - generic [ref=e374]: Mar
+            - generic [ref=e375]: Apr
+            - generic [ref=e376]: May
+            - generic [ref=e377]: Jun
+            - generic [ref=e380]: f
+            - generic [ref=e382]: ig
+            - generic [ref=e384]: 𝕏
+            - generic [ref=e386]: YT
+            - generic [ref=e388]: 4 channels · 2.4M total reach
+          - generic [ref=e389]:
+            - generic [ref=e390]:
+              - generic [ref=e391]: Digital Marketing
+              - generic [ref=e392]: 1 open jobs
+            - generic [ref=e393]: Fast Growing
+        - generic [ref=e394]:
+          - img [ref=e396]
+          - generic [ref=e398]: Digital Marketing
+          - generic [ref=e399]: SEO, paid ads, social media and growth strategies that actually move the needle and drive real ROI.
+          - generic [ref=e400]:
+            - generic [ref=e401]:
+              - generic [ref=e402]: "129"
+              - generic [ref=e403]: Open Jobs
+            - generic [ref=e404]:
+              - generic [ref=e405]: $55
+              - generic [ref=e406]: Avg/hr
+            - generic [ref=e407]:
+              - generic [ref=e408]: 4.8★
+              - generic [ref=e409]: Rating
+          - generic [ref=e410]:
+            - generic [ref=e411]: SEO/SEM
+            - generic [ref=e412]: Social Media
+            - generic [ref=e413]: PPC Ads
+            - generic [ref=e414]: Email
+            - generic [ref=e415]: Analytics
+            - generic [ref=e416]: Growth
+          - link "Browse Jobs" [ref=e417]:
+            - /url: /login.html
+            - text: Browse Jobs
+            - img [ref=e418]
+      - generic [ref=e421] [cursor=pointer]:
+        - generic [ref=e422]:
+          - img [ref=e425]:
+            - generic [ref=e437]: SCENE 04 · TAKE 2
+            - generic [ref=e439]: REC
+            - generic [ref=e447]: 00:01:24:08
+            - generic [ref=e449]: ASSETS
+            - generic [ref=e477]: 01:24
+          - generic [ref=e478]:
+            - generic [ref=e479]:
+              - generic [ref=e480]: Video & Animation
+              - generic [ref=e481]: 118 open jobs
+            - generic [ref=e482]: Trending
+        - generic [ref=e483]:
+          - img [ref=e485]
+          - generic [ref=e488]: Video & Animation
+          - generic [ref=e489]: Explainer videos, motion graphics, reels and cinematic edits that tell your story and captivate audiences.
+          - generic [ref=e490]:
+            - generic [ref=e491]:
+              - generic [ref=e492]: "118"
+              - generic [ref=e493]: Open Jobs
+            - generic [ref=e494]:
+              - generic [ref=e495]: $70
+              - generic [ref=e496]: Avg/hr
+            - generic [ref=e497]:
+              - generic [ref=e498]: 4.8★
+              - generic [ref=e499]: Rating
+          - generic [ref=e500]:
+            - generic [ref=e501]: Motion Graphics
+            - generic [ref=e502]: Editing
+            - generic [ref=e503]: 3D Anim
+            - generic [ref=e504]: Reels
+            - generic [ref=e505]: VFX
+            - generic [ref=e506]: After Effects
+          - link "Browse Jobs" [ref=e507]:
+            - /url: /login.html
+            - text: Browse Jobs
+            - img [ref=e508]
+      - generic [ref=e511] [cursor=pointer]:
+        - generic [ref=e512]:
+          - img [ref=e515]:
+            - generic [ref=e522]: SKILLBRIDGE LEARN · ADVANCED REACT
+            - generic [ref=e533]: ★
+            - generic [ref=e534]: A+
+            - generic [ref=e536]: ✦
+            - generic [ref=e538]: ⬡
+            - generic [ref=e553]: Course Progress
+            - generic [ref=e556]: 70%
+          - generic [ref=e559]:
+            - generic [ref=e560]:
+              - generic [ref=e561]: Education & Tutoring
+              - generic [ref=e562]: 112 open jobs
+            - generic [ref=e563]: Top Rated
+        - generic [ref=e564]:
+          - img [ref=e566]
+          - generic [ref=e569]: Education & Tutoring
+          - generic [ref=e570]: Online tutors, course creators, language coaches and academic mentors ready to teach anything.
+          - generic [ref=e571]:
+            - generic [ref=e572]:
+              - generic [ref=e573]: "112"
+              - generic [ref=e574]: Open Jobs
+            - generic [ref=e575]:
+              - generic [ref=e576]: $42
+              - generic [ref=e577]: Avg/hr
+            - generic [ref=e578]:
+              - generic [ref=e579]: 5.0★
+              - generic [ref=e580]: Rating
+          - generic [ref=e581]:
+            - generic [ref=e582]: Math
+            - generic [ref=e583]: Languages
+            - generic [ref=e584]: Coding
+            - generic [ref=e585]: Exam Prep
+            - generic [ref=e586]: Music
+            - generic [ref=e587]: Science
+          - link "Browse Jobs" [ref=e588]:
+            - /url: /login.html
+            - text: Browse Jobs
+            - img [ref=e589]
+  - generic [ref=e591]:
+    - generic [ref=e592]:
+      - generic [ref=e593]: Process
+      - heading "How SkillBridge Works" [level=2] [ref=e594]
+      - paragraph [ref=e595]: From posting a job to receiving world-class work — in just four steps.
+    - generic [ref=e596]:
+      - generic [ref=e597]:
+        - generic [ref=e598]: "01"
+        - img [ref=e600]
+        - generic [ref=e603]: Post Your Job
+        - generic [ref=e604]: Describe your project, set your budget and required skills. Takes less than 3 minutes.
+      - generic [ref=e606]:
+        - generic [ref=e607]: "02"
+        - img [ref=e609]
+        - generic [ref=e611]: AI Matches Talent
+        - generic [ref=e612]: Our AI engine scores every proposal instantly — so the best candidates rise to the top automatically.
+      - generic [ref=e614]:
+        - generic [ref=e615]: "03"
+        - img [ref=e617]
+        - generic [ref=e622]: Hire with Confidence
+        - generic [ref=e623]: Review AI-ranked proposals, chat with candidates, and hire the perfect match in hours — not days.
+      - generic [ref=e625]:
+        - generic [ref=e626]: "04"
+        - img [ref=e628]
+        - generic [ref=e631]: Get Great Work Done
+        - generic [ref=e632]: Collaborate in real-time, share files, and mark milestones. Release payment only when you're satisfied.
+  - generic [ref=e633]:
+    - generic [ref=e634]:
+      - generic [ref=e635]: Top Talent
+      - heading "Featured Freelancers" [level=2] [ref=e636]
+      - paragraph [ref=e637]: Real professionals. Ratings only shown once earned. Join to see the full directory.
+    - generic [ref=e639]:
+      - img [ref=e640]
+      - text: Freelancer profiles appear here once members join and complete their profiles.
+      - link "Be the first to join SkillBridge →" [ref=e642] [cursor=pointer]:
+        - /url: /register.html
+  - generic [ref=e643]:
+    - generic [ref=e644]:
+      - generic [ref=e645]: Top Services
+      - heading "Featured Services" [level=2] [ref=e646]
+      - paragraph [ref=e647]: Browse services offered by verified freelancers. Every price is real. Every review is earned.
+    - generic [ref=e649]:
+      - img [ref=e650]
+      - text: Services will appear here once freelancers start listing their offerings.
+      - link "List your service now →" [ref=e654] [cursor=pointer]:
+        - /url: /register.html?role=freelancer
+  - generic [ref=e656]:
+    - generic [ref=e658]:
+      - img [ref=e660]
+      - heading "AI-Powered Matching — Not Just Filtering" [level=3] [ref=e667]
+      - paragraph [ref=e668]: Most platforms let you sort by price or rating. SkillBridge's AI reads job requirements and freelancer skills, then scores every application using a hybrid Jaccard + TF-IDF algorithm — so the best fit floats to the top automatically.
+      - generic [ref=e670]:
+        - generic [ref=e671]:
+          - generic [ref=e672]: 94%
+          - generic [ref=e673]: Match Accuracy
+        - generic [ref=e674]:
+          - generic [ref=e675]: 3x
+          - generic [ref=e676]: Faster Hiring
+        - generic [ref=e677]:
+          - generic [ref=e678]: 80%
+          - generic [ref=e679]: Less Screening
+    - generic [ref=e680]:
+      - generic [ref=e681]: Why SkillBridge
+      - heading "Built for Real Work, Not Just Browsing" [level=2] [ref=e682]:
+        - text: Built for Real Work,
+        - text: Not Just Browsing
+      - generic [ref=e683]:
+        - generic [ref=e684]:
+          - img [ref=e686]
+          - generic [ref=e688]:
+            - generic [ref=e689]: Instant AI Score on Every Proposal
+            - generic [ref=e690]: The moment a freelancer applies, our AI scores their match against your job requirements. No waiting. No manual filtering.
+        - generic [ref=e691]:
+          - img [ref=e693]
+          - generic [ref=e696]:
+            - generic [ref=e697]: Secure Payments & Milestone Protection
+            - generic [ref=e698]: Funds are only released when you approve the work. Built-in dispute resolution keeps both parties protected.
+        - generic [ref=e699]:
+          - img [ref=e701]
+          - generic [ref=e703]:
+            - generic [ref=e704]: Real-Time Project Chat
+            - generic [ref=e705]: Message your freelancer, share files, and track progress — all inside SkillBridge. No external tools needed.
+        - generic [ref=e706]:
+          - img [ref=e708]
+          - generic [ref=e711]:
+            - generic [ref=e712]: Every Skill. Every Industry.
+            - generic [ref=e713]: Not just developers. Writers, designers, marketers, educators, photographers — SkillBridge covers every profession.
+  - generic [ref=e714]:
+    - generic [ref=e715]:
+      - generic [ref=e716]: Reviews
+      - heading "What Our Community Says" [level=2] [ref=e717]
+      - paragraph [ref=e718]: Only real reviews from verified users — no fake testimonials, ever.
+    - generic [ref=e720]:
+      - img [ref=e721]
+      - text: Testimonials will appear here once members complete projects and leave reviews.
+      - text: Every review you see on SkillBridge is from a verified, completed project.
+      - link "Join and be part of the story →" [ref=e723] [cursor=pointer]:
+        - /url: /register.html
+  - generic [ref=e725]:
+    - generic [ref=e726]: Get Started Today
+    - heading "Your Next Great Opportunity Awaits" [level=2] [ref=e727]:
+      - text: Your Next Great
+      - text: Opportunity Awaits
+    - paragraph [ref=e728]: Join SkillBridge free. Post your first job in minutes, or list your skills and start earning today.
+    - generic [ref=e729]:
+      - link "Post a Job — It's Free" [ref=e730] [cursor=pointer]:
+        - /url: /register.html
+        - button "Post a Job — It's Free" [ref=e731]
+      - link "Join as Freelancer →" [ref=e732] [cursor=pointer]:
+        - /url: /register.html?role=freelancer
+        - button "Join as Freelancer →" [ref=e733]
+  - contentinfo [ref=e734]:
+    - generic [ref=e735]:
+      - generic [ref=e736]:
+        - generic [ref=e737]: SkillBridge
+        - paragraph [ref=e738]: AI-powered freelance marketplace connecting world-class talent with ambitious clients — across every industry.
+        - generic [ref=e739]:
+          - link "Twitter / X" [ref=e740] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e741]
+          - link "LinkedIn" [ref=e743] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e744]
+          - link "GitHub" [ref=e746] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e747]
+          - link "Instagram" [ref=e749] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e750]
+      - generic [ref=e752]:
+        - heading "Platform" [level=4] [ref=e753]
+        - link "Browse Jobs" [ref=e754] [cursor=pointer]:
+          - /url: /login.html
+        - link "Become a Freelancer" [ref=e755] [cursor=pointer]:
+          - /url: /register.html?role=freelancer
+        - link "Post a Job" [ref=e756] [cursor=pointer]:
+          - /url: /register.html
+        - link "How It Works" [ref=e757] [cursor=pointer]:
+          - /url: "#how-it-works"
+      - generic [ref=e758]:
+        - heading "Categories" [level=4] [ref=e759]
+        - link "IT & Software" [ref=e760] [cursor=pointer]:
+          - /url: /login.html
+        - link "Photography" [ref=e761] [cursor=pointer]:
+          - /url: /login.html
+        - link "Writing & Content" [ref=e762] [cursor=pointer]:
+          - /url: /login.html
+        - link "Digital Marketing" [ref=e763] [cursor=pointer]:
+          - /url: /login.html
+        - link "Video & Animation" [ref=e764] [cursor=pointer]:
+          - /url: /login.html
+        - link "Education" [ref=e765] [cursor=pointer]:
+          - /url: /login.html
+      - generic [ref=e766]:
+        - heading "Company" [level=4] [ref=e767]
+        - link "About Us" [ref=e768] [cursor=pointer]:
+          - /url: "#"
+        - link "Blog" [ref=e769] [cursor=pointer]:
+          - /url: "#"
+        - link "Careers" [ref=e770] [cursor=pointer]:
+          - /url: "#"
+        - link "Contact" [ref=e771] [cursor=pointer]:
+          - /url: "#"
+        - link "Privacy Policy" [ref=e772] [cursor=pointer]:
+          - /url: /privacy.html
+        - link "Terms of Service" [ref=e773] [cursor=pointer]:
+          - /url: /terms.html
+    - generic [ref=e774]:
+      - paragraph [ref=e775]: © 2026 SkillBridge. All rights reserved.
+      - generic [ref=e776]:
+        - link "Privacy Policy" [ref=e777] [cursor=pointer]:
+          - /url: /privacy.html
+        - generic [ref=e778]: ·
+        - link "Terms of Service" [ref=e779] [cursor=pointer]:
+          - /url: /terms.html
+        - link "Cookies" [ref=e780] [cursor=pointer]:
+          - /url: "#"
+```

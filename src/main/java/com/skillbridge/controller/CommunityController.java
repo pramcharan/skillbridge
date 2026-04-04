@@ -1,6 +1,6 @@
 package com.skillbridge.controller;
 
-import com.skillbridge.dto.*;
+
 import com.skillbridge.dto.request.CommunityMessageRequest;
 import com.skillbridge.dto.response.CommunityMessageResponse;
 import com.skillbridge.dto.response.PresenceResponse;

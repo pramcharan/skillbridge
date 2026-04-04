@@ -1,5 +1,6 @@
 package com.skillbridge.dto.response;
 
+import com.skillbridge.dto.request.JobAttachmentDTO;
 import com.skillbridge.entity.enums.JobCategory;
 import com.skillbridge.entity.enums.JobStatus;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class JobDetailResponse {
     private Instant      deadline;
     private Instant      autoExpireAt;
     private List<String> requiredSkills;
+    private List<JobAttachmentDTO> attachments;
     private Integer      proposalCount;
     private Long         clientId;
     private String       clientName;
