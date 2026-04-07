@@ -22,6 +22,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="/js/theme.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -43,6 +44,11 @@
           --error:    #FF6B8A;
           --success:  #00C9A7;
           --radius:   12px;
+        }
+        [data-theme="light"] {
+          --bg:#F8FAFC; --bg2:#F1F5F9; --card:#FFFFFF; --card2:#F8FAFC;
+          --text:#0F172A; --text2:#475569; --text3:#64748B;
+          --border:#E2E8F0; --border2:#CBD5E1;
         }
         body {
           font-family: 'DM Sans', sans-serif;
@@ -68,6 +74,7 @@
           background-size: 50px 50px;
           opacity: 0.18;
           mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 75%);
+          -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 75%);
         }
 
         /* ── Navbar ─────────────────────────────────────────── */
@@ -76,13 +83,13 @@
           display: flex; align-items: center; justify-content: space-between;
           padding: 0 5%; height: 64px;
           border-bottom: 1px solid var(--border);
-          background: rgba(6,13,26,0.8);
+          background: var(--bg);
           backdrop-filter: blur(16px);
         }
         .nav-logo {
           font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.35rem;
           background: linear-gradient(135deg, var(--teal), var(--gold));
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
           letter-spacing: -0.02em;
         }
         .nav-link {
@@ -123,7 +130,7 @@
         }
         .lp-title .accent {
           background: linear-gradient(135deg, var(--teal), var(--gold));
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
         }
         .lp-sub { font-size: 0.95rem; color: var(--text2); line-height: 1.7; margin-bottom: 2rem; }
         .lp-features { display: flex; flex-direction: column; gap: 0.85rem; }
@@ -323,7 +330,7 @@
 .nav-logo {
   font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.35rem;
   background: linear-gradient(135deg, var(--teal), var(--gold));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
   letter-spacing: -0.02em;
   text-decoration: none; /* ← ADD */
 }
@@ -340,8 +347,13 @@
 <!-- Navbar -->
 <nav>
     <a href="/" class="nav-logo">SkillBridge</a>
-    <div class="nav-link">
-        Don't have an account? <a href="/register.html">Sign up free →</a>
+    <div style="display:flex;align-items:center;gap:1.5rem;">
+        <button class="notif-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme" style="width:32px; height:32px; padding:6px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border2); border-radius:8px; background:transparent; cursor:pointer; color:var(--text2);">
+            <span class="theme-toggle-icon"></span>
+        </button>
+        <div class="nav-link">
+            Don't have an account? <a href="/register.html">Sign up free →</a>
+        </div>
     </div>
 </nav>
 
@@ -503,7 +515,7 @@
                 return;
             }
 
-            saveAuth(data.token, data.role);
+            saveAuth(data.token, data.role, data.name, data.userId);
             showSuccess('Signed in! Redirecting…');
 
             setTimeout(() => {

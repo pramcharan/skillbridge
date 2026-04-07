@@ -9,6 +9,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%23F5A623'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='14' fill='white'%3ESB%3C/text%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <script src="/js/theme.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -17,6 +18,11 @@
             --rose: #FF6B8A; --blue: #4A90E2;
             --text: #E8F0FE; --text2: #8BA3C7; --text3: #5A7090;
             --border: #1A2D4A; --border2: #243650;
+        }
+        [data-theme="light"] {
+            --bg: #F8FAFC; --bg2: #F1F5F9; --card: #FFFFFF; --card2: #F8FAFC;
+            --text: #0F172A; --text2: #475569; --text3: #64748B;
+            --border: #E2E8F0; --border2: #CBD5E1;
         }
         body {
             font-family: 'DM Sans', sans-serif;
@@ -31,7 +37,7 @@
         /* ── NAV ──────────────────────────────────────────── */
         nav {
             height: 60px;
-            background: rgba(6,13,26,.98);
+            background: var(--bg);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -46,7 +52,7 @@
             font-weight: 800;
             font-size: 1.2rem;
             background: linear-gradient(135deg, var(--teal), var(--gold));
-            -webkit-background-clip: text;
+            -webkit-background-clip: text; background-clip: text;
             -webkit-text-fill-color: transparent;
             text-decoration: none;
         }
@@ -539,6 +545,64 @@
 
         @media (max-width: 900px) { .right-panel { display: none; } }
         @media (max-width: 640px) { .sidebar { display: none; } }
+
+        /* 🌞 LIGHT MODE — COMMUNITY INPUT */
+        [data-theme="light"] .input-area {
+            background: #ffffff;
+            border-top: 1px solid #E2E8F0;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+        }
+
+        [data-theme="light"] .tb-btn {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            color: #64748B;
+        }
+
+        [data-theme="light"] .tb-btn:hover {
+            color: var(--teal);
+            border-color: var(--teal);
+            background: rgba(0,201,167,0.08);
+        }
+
+        [data-theme="light"] .msg-input {
+            background: #F8FAFC;
+            border: 1px solid #CBD5E1;
+            color: #0F172A;
+        }
+
+        [data-theme="light"] .msg-input:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(0,201,167,0.15);
+        }
+
+        [data-theme="light"] .attach-btn {
+            background: #F8FAFC;
+            border: 1px solid #CBD5E1;
+            color: #475569;
+        }
+
+        [data-theme="light"] .attach-btn:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        [data-theme="light"] .send-btn {
+            background: linear-gradient(135deg, var(--teal), var(--teal-dk));
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(0,201,167,0.25);
+        }
+
+        /* FIX TOP HEADER (LIGHT MODE) */
+        [data-theme="light"] .room-header {
+            background: #ffffff;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        [data-theme="light"] .pinned-bar {
+            background: #FFF7ED;
+            border-bottom: 1px solid #FED7AA;
+        }
     </style>
 </head>
 <body>
@@ -553,6 +617,9 @@
         <a href="/community.html" class="active">Community</a>
     </div>
     <div class="nav-right">
+        <button class="notif-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme" style="padding: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border2); border-radius: 8px;">
+            <span class="theme-toggle-icon"></span>
+        </button>
         <div class="ws-pill">
             <div class="ws-dot" id="ws-dot"></div>
             <span id="ws-text">Connecting…</span>
@@ -926,7 +993,7 @@
 
         const replyBlock = msg.replyToContent ? `
             <div class="reply-quote">
-                <strong>${escapeHtml(msg.replyToSenderName || 'Someone')}</strong>
+                <strong>${escapeHtml(msg.replyToSender || 'Someone')}</strong>
                 ${escapeHtml(msg.replyToContent).substring(0, 80)}${msg.replyToContent.length > 80 ? '…' : ''}
             </div>` : '';
 
@@ -1024,7 +1091,7 @@
         stompClient.send('/app/community.send', {}, JSON.stringify({
             room: currentRoom,
             content,
-            replyTo: replyingTo || null
+            replyTo: replyingTo?.id || replyingTo
         }));
 
         // Optimistic render
@@ -1036,7 +1103,8 @@
             senderRole: currentUser.role,
             content,
             createdAt: new Date().toISOString(),
-            replyToContent: replyingTo ? document.getElementById('reply-bar-text').textContent : null,
+            replyToContent: replyingTo?.text || null,
+            replyToSender:  replyingTo?.sender || null,
             reactions: {}
         });
 
@@ -1060,7 +1128,7 @@
 
     // ── Reply ─────────────────────────────────────────────────────
     function setReply(msgId, text, senderName) {
-        replyingTo = msgId;
+        replyingTo = { id: msgId, text, sender: senderName };
         const label = `Replying to ${senderName}: ${text.length > 55 ? text.substring(0,55)+'…' : text}`;
         document.getElementById('reply-bar-text').textContent = label;
         document.getElementById('reply-bar').classList.add('show');

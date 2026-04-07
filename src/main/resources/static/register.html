@@ -21,6 +21,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <script src="/js/theme.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -29,6 +30,11 @@
           --teal: #00C9A7; --teal-dk: #00A389; --gold: #F5A623; --purple: #7B61FF;
           --rose: #FF6B8A; --text: #E8F0FE; --text2: #8BA3C7; --text3: #4A6080;
           --border: #1A2D4A; --border2: #243650; --radius: 12px;
+        }
+        [data-theme="light"] {
+          --bg: #F8FAFC; --bg2: #F1F5F9; --card: #FFFFFF; --card2: #F8FAFC;
+          --text: #0F172A; --text2: #475569; --text3: #64748B;
+          --border: #E2E8F0; --border2: #CBD5E1;
         }
 
         body {
@@ -63,12 +69,12 @@
           display: flex; align-items: center; justify-content: space-between;
           padding: 0 5%; height: 64px;
           border-bottom: 1px solid var(--border);
-          background: rgba(6,13,26,0.85); backdrop-filter: blur(16px);
+          background: var(--bg); backdrop-filter: blur(16px);
         }
         .nav-logo {
           font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.35rem;
           background: linear-gradient(135deg, var(--teal), var(--gold));
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
           text-decoration: none;
         }
         .nav-cta { font-size: 0.85rem; color: var(--text2); }
@@ -107,7 +113,7 @@
           font-family: 'Syne', sans-serif; font-weight: 800;
           font-size: 1.65rem; letter-spacing: -0.03em;
           background: linear-gradient(135deg, #E8F0FE 0%, #8BA3C7 100%);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
           margin-bottom: 0.35rem;
         }
         .card-sub { font-size: 0.88rem; color: var(--text2); margin-bottom: 1rem; }
@@ -413,7 +419,12 @@
 
 <nav>
     <a href="/" class="nav-logo">SkillBridge</a>
-    <div class="nav-cta">Already have an account? <a href="/login.html">Sign in</a></div>
+    <div style="display:flex;align-items:center;gap:1.5rem;">
+        <button class="notif-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme" style="width:32px; height:32px; padding:6px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border2); border-radius:8px; background:transparent; cursor:pointer; color:var(--text2);">
+            <span class="theme-toggle-icon"></span>
+        </button>
+        <div class="nav-cta">Already have an account? <a href="/login.html">Sign in</a></div>
+    </div>
 </nav>
 
 <main>

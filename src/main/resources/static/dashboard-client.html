@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/theme.js"></script>
     <style>
         /* Page-specific styles only */
         /* — job row hover accent (not in shared CSS) — */
@@ -64,6 +65,9 @@
         <a href="/profile.html"     class="nav-link">Profile</a>
     </nav>
     <div class="nav-actions">
+        <button class="notif-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme">
+            <span class="theme-toggle-icon"></span>
+        </button>
         <button class="notif-btn" id="notif-btn" onclick="openNotifications()" aria-label="Notifications" title="Notifications">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
@@ -142,9 +146,9 @@
     </div>
 </div>
 
-<script src="/js/utils.js"></script>
-<script src="/js/auth.js"></script>
-<script src="/js/api.js"></script>
+<script src="/js/utils.js?v=1.1"></script>
+<script src="/js/auth.js?v=1.1"></script>
+<script src="/js/api.js?v=1.1"></script>
 <!-- Active nav link -->
 <script>
     document.querySelectorAll('.nav-link').forEach(a => {
@@ -152,15 +156,35 @@
     });
 </script>
 <script>
+    /* ── Inline Fallback: getName() ─────────────────────────── */
+    if (typeof getName !== 'function') {
+        window.getName = function() {
+            return localStorage.getItem('sb_user_name') || 'Client';
+        };
+        console.warn('getName fallback used — auth.js may be cached or missing.');
+    }
+
     requireAuth('CLIENT');
 
+    /* ── Helper: sync name pre-load to avoid flash ──────────── */
+    console.log('Pre-loading username...');
+    document.getElementById('user-name').textContent = getName() || 'Client';
+
     async function loadDashboard() {
-      try {
+        console.log('loadDashboard() started');
+        try {
+            console.log('Fetching profile, stats, and notifications...');
         const [profileRes, statsRes, notifRes] = await Promise.all([
           api.get('/api/v1/profile'),
           api.get('/api/v1/dashboard/client/stats'),
           api.get('/api/v1/notifications/unread-count')
         ]);
+
+        console.log('API responses received. Statuses:', profileRes.status, statsRes.status, notifRes.status);
+        
+        if (!profileRes.ok || !statsRes.ok) {
+            console.error('API Error:', profileRes.status, statsRes.status);
+        }
 
         const profile = await profileRes.json();
         const stats   = await statsRes.json();
@@ -245,7 +269,7 @@ if (savedAvatar) {
           return `
             <div class="job-row">
               <div>
-                <div class="jr-title">${escHtml(j.title)}</div>
+                <div class="jr-title line-clamp-1" title="${escHtml(j.title)}">${escHtml(j.title)}</div>
                 <div class="jr-meta">
                   ${j.category} ·
                   <strong style="color:var(--teal);">${j.proposalCount||0}</strong>

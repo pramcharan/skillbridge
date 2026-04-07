@@ -34,8 +34,9 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
 
+        String email = request.getEmail().toLowerCase().trim();
         // 1. Duplicate email check
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(email)) {
             throw new DuplicateResourceException(
                     "An account with this email already exists.");
         }
@@ -54,7 +55,7 @@ public class AuthService {
         // 3. Create user
         User user = new User();
         user.setName(request.getName().trim());
-        user.setEmail(request.getEmail().toLowerCase().trim());
+        user.setEmail(email);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole(role);
         user.setIsActive(true);

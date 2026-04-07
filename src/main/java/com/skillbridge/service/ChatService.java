@@ -24,11 +24,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatService {
 
-    private final ChatMessageRepository  chatMessageRepository;
-    private final ProjectRepository      projectRepository;
-    private final UserRepository         userRepository;
-    private final NotificationService    notificationService;
-    private final SimpMessagingTemplate  messagingTemplate;
+    private final ChatMessageRepository chatMessageRepository;
+    private final ProjectRepository     projectRepository;
+    private final UserRepository        userRepository;
+    private final NotificationService   notificationService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // ── GET chat history ──────────────────────────────────────────────
     @Transactional
@@ -37,7 +37,6 @@ public class ChatService {
         Project project = findProject(projectId);
         validateAccess(project, user);
 
-        // Mark messages as read
         chatMessageRepository.markAllAsRead(projectId, user.getId());
 
         return chatMessageRepository.findByProjectId(projectId)
@@ -46,11 +45,13 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-    // ── SEND message via REST (fallback if WebSocket fails) ───────────
+    // ── SEND message via REST ─────────────────────────────────────────
+    // FIX 1: added replyToId parameter — replaces the broken "request" reference
     @Transactional
     public ChatMessageResponse sendMessage(Long projectId,
                                            String content,
-                                           String senderEmail) {
+                                           String senderEmail,
+                                           Long replyToId) {
         User    sender  = findByEmail(senderEmail);
         Project project = findProject(projectId);
         validateAccess(project, sender);
@@ -61,20 +62,23 @@ public class ChatService {
         message.setContent(content.trim());
         message.setIsRead(false);
 
+        // FIX 1: use the replyToId parameter directly, not "request.getReplyTo()"
+        if (replyToId != null) {
+            chatMessageRepository.findById(replyToId)
+                    .ifPresent(message::setReplyTo);
+        }
+
         ChatMessage saved = chatMessageRepository.save(message);
 
-        // Update project lastMessageAt
         project.setLastMessageAt(saved.getCreatedAt());
         projectRepository.save(project);
 
         ChatMessageResponse response = toResponse(saved, sender.getId());
 
-        // Push via WebSocket to project room
         messagingTemplate.convertAndSend(
                 "/topic/project." + projectId,
                 response);
 
-        // Notify the other party
         User recipient = sender.getId().equals(project.getClient().getId())
                 ? project.getFreelancer()
                 : project.getClient();
@@ -83,7 +87,7 @@ public class ChatService {
                 recipient,
                 NotificationType.NEW_MESSAGE,
                 "New message from " + sender.getName(),
-                content.length() > 80 ? content.substring(0,80)+"…" : content,
+                content.length() > 80 ? content.substring(0, 80) + "…" : content,
                 "/project.html?id=" + projectId
         );
 
@@ -91,19 +95,38 @@ public class ChatService {
         return response;
     }
 
+    // Overload for callers that don't pass replyToId (backward compatibility)
+    @Transactional
+    public ChatMessageResponse sendMessage(Long projectId,
+                                           String content,
+                                           String senderEmail) {
+        return sendMessage(projectId, content, senderEmail, null);
+    }
+
     // ── WebSocket message handler ─────────────────────────────────────
     @Transactional
     public void handleWebSocketMessage(Long projectId,
                                        String content,
-                                       String senderEmail) {
+                                       String senderEmail,
+                                       Long replyToId) {
         try {
-            sendMessage(projectId, content, senderEmail);
+            sendMessage(projectId, content, senderEmail, replyToId);
         } catch (Exception e) {
             log.error("WebSocket message handling failed: {}", e.getMessage());
         }
     }
 
+    // Overload for backward compatibility
+    @Transactional
+    public void handleWebSocketMessage(Long projectId,
+                                       String content,
+                                       String senderEmail) {
+        handleWebSocketMessage(projectId, content, senderEmail, null);
+    }
+
     // ── Mapper ────────────────────────────────────────────────────────
+    // FIX 2 + FIX 3: renamed "msg" → "m" and "response" → "r"
+    // to match the actual parameter and local variable names
     private ChatMessageResponse toResponse(ChatMessage m, Long currentUserId) {
         ChatMessageResponse r = new ChatMessageResponse();
         r.setId(m.getId());
@@ -118,14 +141,37 @@ public class ChatService {
             r.setSenderName(m.getSender().getName());
             r.setSenderAvatar(m.getSender().getAvatarUrl());
         }
+
+        // FIX 2 + FIX 3: use "m" and "r" not "msg" and "response"
+        if (m.getReplyTo() != null) {
+            r.setReplyToId(m.getReplyTo().getId());
+            try {
+                String replyContent = m.getReplyTo().getContent();
+                r.setReplyToContent(
+                        replyContent != null && replyContent.length() > 80
+                                ? replyContent.substring(0, 80) + "…"
+                                : replyContent
+                );
+                r.setReplyToSender(
+                        m.getReplyTo().getSender() != null
+                                ? m.getReplyTo().getSender().getName()
+                                : "Unknown"
+                );
+            } catch (Exception e) {
+                // replyTo lazy proxy failed — skip silently
+            }
+        }
+
         return r;
     }
 
+    // ── Helpers ───────────────────────────────────────────────────────
     private void validateAccess(Project project, User user) {
         boolean isClient     = project.getClient().getId().equals(user.getId());
         boolean isFreelancer = project.getFreelancer().getId().equals(user.getId());
         if (!isClient && !isFreelancer) {
-            throw new AccessDeniedException("You don't have access to this project.");
+            throw new AccessDeniedException(
+                    "You don't have access to this project.");
         }
     }
 

@@ -61,4 +61,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     long countByStatusAndCreatedAtBetween(
             ProjectStatus status, Instant start, Instant end);
 
+    List<Project> findByJobId(Long jobId);
+
 }

@@ -102,6 +102,13 @@ public class CommunityService {
             notifyMentions(mentions, sender, req.getRoom(), msg.getContent());
         }
 
+        if (req.getReplyTo() != null) {
+            CommunityMessage replyMsg = messageRepository.findById(req.getReplyTo())
+                    .orElseThrow(() -> new ResourceNotFoundException("Reply message not found"));
+
+            msg.setReplyTo(replyMsg);
+        }
+
         CommunityMessage saved = messageRepository.save(msg);
 
         // Update presence
@@ -335,6 +342,12 @@ public class CommunityService {
         r.setSenderAvatar(msg.getSender().getAvatarUrl());
         r.setSenderRole(msg.getSender().getRole().name());
         r.setContent(msg.getContent());
+        if (msg.getReplyTo() != null) {
+            r.setReplyToId(msg.getReplyTo().getId());
+            r.setReplyToContent(msg.getReplyTo().getContent());
+            r.setReplyToSender(msg.getReplyTo().getSender().getName());
+        }
+
         r.setPinned(msg.isPinned());
         r.setFile(msg.isFile());
         r.setFileUrl(msg.getFileUrl());

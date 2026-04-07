@@ -15,8 +15,10 @@ import com.skillbridge.entity.enums.Role;
 import com.skillbridge.exception.ForbiddenException;
 import com.skillbridge.exception.ResourceNotFoundException;
 import com.skillbridge.repository.JobRepository;
+import com.skillbridge.repository.ProjectRepository;
 import com.skillbridge.repository.ProposalRepository;
 import com.skillbridge.repository.UserRepository;
+import com.skillbridge.entity.Project;
 import com.skillbridge.service.ai.AiScoringOrchestrator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,7 @@ public class JobService {
     private final JobRepository      jobRepository;
     private final UserRepository     userRepository;
     private final ProposalRepository proposalRepository;
+    private final ProjectRepository  projectRepository;
     private final JobMapper          jobMapper;
     private final AiScoringOrchestrator aiScoringOrchestrator;
 
@@ -207,17 +210,27 @@ public class JobService {
 
     // ── DELETE JOB ────────────────────────────────────────────────────
     @Transactional
-    public void deleteJob(Long jobId, String clientEmail) {
+    public void deleteJob(Long jobId, String email) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Job not found with id: " + jobId));
 
-        if (!job.getClient().getEmail().equals(clientEmail)) {
+        // Security Check: Only owner or ADMIN can delete
+        User currentUser = findUserByEmail(email);
+        if (!job.getClient().getEmail().equals(email) && currentUser.getRole() != com.skillbridge.entity.enums.Role.ADMIN) {
             throw new AccessDeniedException("You can only delete your own jobs.");
         }
 
+        // 1. Delete associated projects first (avoids FK constraint fails)
+        List<Project> projects = projectRepository.findByJobId(jobId);
+        if (!projects.isEmpty()) {
+            projectRepository.deleteAll(projects);
+            log.info("Job Service: deleted {} projects associated with job {}", projects.size(), jobId);
+        }
+
+        // 2. Now safe to delete the job
         jobRepository.delete(job);
-        log.info("Job deleted: {} by {}", jobId, clientEmail);
+        log.info("Job deleted: {} by {}", jobId, email);
     }
 
     // ── SIMILAR JOBS ──────────────────────────────────────────────────

@@ -9,6 +9,7 @@
     <meta name="theme-color" content="#00C9A7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <script src="/js/theme.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,12 +23,17 @@
             --text:#E8F0FE;--text2:#8BA3C7;--text3:#5A7090;
             --border:#1A2D4A;--border2:#243650;
         }
+        [data-theme="light"] {
+          --bg:#F8FAFC; --bg2:#F1F5F9; --card:#FFFFFF; --card2:#F8FAFC;
+          --text:#0F172A; --text2:#475569; --text3:#64748B;
+          --border:#E2E8F0; --border2:#CBD5E1;
+        }
         body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;overflow:auto}
 
         /* ── NAV ─────────────────────────────────────────────── */
-        nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:60px;background:rgba(6,13,26,.98);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;flex-shrink:0;backdrop-filter:blur(12px)}
+        nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:60px;background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;flex-shrink:0;backdrop-filter:blur(12px)}
         .nav-left{display:flex;align-items:center;gap:1rem}
-        .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;background:linear-gradient(135deg,var(--teal),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+        .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;background:linear-gradient(135deg,var(--teal),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
         .nav-sep{width:1px;height:20px;background:var(--border)}
         .nav-proj-name{font-size:.85rem;font-weight:600;color:var(--text2);max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .nav-right{display:flex;align-items:center;gap:.75rem}
@@ -60,6 +66,9 @@
         .s-completed .status-dot{background:var(--gold)}
         .s-cancelled{background:rgba(255,107,138,.1);color:var(--rose);border:1px solid rgba(255,107,138,.2)}
         .s-cancelled .status-dot{background:var(--rose)}
+        .s-disputed{background:rgba(255,107,138,.12);color:var(--rose);border:1px solid rgba(255,107,138,.25)}
+        .s-disputed .status-dot{background:var(--rose);box-shadow:0 0 5px var(--rose);animation:rpulse 2s ease-in-out infinite}
+        @keyframes rpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
         @keyframes dpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
         .proj-id{font-size:.68rem;color:var(--text3);font-weight:600}
         .proj-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;line-height:1.4;margin-bottom:.35rem}
@@ -103,9 +112,11 @@
         .status-banner{text-align:center;padding:.9rem 1rem;border-radius:10px;display:flex;align-items:center;gap:.65rem}
         .status-banner.completed{background:rgba(0,201,167,.05);border:1px solid rgba(0,201,167,.15)}
         .status-banner.cancelled{background:rgba(255,107,138,.05);border:1px solid rgba(255,107,138,.15)}
+        .status-banner.disputed{background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.2)}
         .status-banner-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
         .status-banner.completed .status-banner-icon{background:rgba(0,201,167,.12);color:var(--teal)}
         .status-banner.cancelled .status-banner-icon{background:rgba(255,107,138,.12);color:var(--rose)}
+        .status-banner.disputed .status-banner-icon{background:rgba(255,107,138,.15);color:var(--rose)}
         .status-banner-text{text-align:left}
         .status-banner-title{font-size:.85rem;font-weight:700}
         .status-banner.completed .status-banner-title{color:var(--teal)}
@@ -309,6 +320,118 @@
         strong{font-weight:700}
         em{font-style:italic}
 
+        /* 🌞 LIGHT MODE — CHAT INPUT REDESIGN */
+        [data-theme="light"] .chat-input-area {
+            background: #ffffff;
+            border-top: 1px solid #E2E8F0;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+        }
+
+        [data-theme="light"] .input-toolbar .tb-btn {
+            border: 1px solid #E2E8F0;
+            color: #64748B;
+            background: #F8FAFC;
+        }
+
+        [data-theme="light"] .input-toolbar .tb-btn:hover {
+            color: var(--teal);
+            border-color: var(--teal);
+            background: rgba(0,201,167,0.08);
+        }
+
+        [data-theme="light"] .chat-input {
+            background: #F8FAFC;
+            border: 1px solid #CBD5E1;
+            color: #0F172A;
+        }
+
+        [data-theme="light"] .chat-input:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(0,201,167,0.15);
+        }
+
+        [data-theme="light"] .attach-btn {
+            background: #F8FAFC;
+            border: 1px solid #CBD5E1;
+            color: #475569;
+        }
+
+        [data-theme="light"] .attach-btn:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        [data-theme="light"] .btn-send {
+            background: linear-gradient(135deg, var(--teal), var(--teal-dk));
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(0,201,167,0.25);
+        }
+
+        /* FIX PROJECT HEADER (LIGHT MODE) */
+        [data-theme="light"] .chat-header {
+            background: #ffffff;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        [data-theme="light"] .tab-bar {
+            background: #ffffff;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        /* ── Reply bar (preview above input) ── */
+        .reply-bar {
+            display:none; align-items:center; gap:0.75rem;
+            padding:0.55rem 1rem; margin-bottom:0.35rem;
+            background:rgba(0,201,167,0.06);
+            border:1px solid rgba(0,201,167,0.18);
+            border-radius:10px; font-size:0.82rem;
+        }
+        .reply-bar.active { display:flex; }
+        .reply-bar-content { flex:1; min-width:0; }
+        .reply-bar-label {
+            font-size:0.73rem; font-weight:700;
+            color:var(--teal); margin-bottom:0.15rem;
+            text-transform:uppercase; letter-spacing:0.05em;
+        }
+        .reply-bar-text {
+            color:var(--text2); white-space:nowrap;
+            overflow:hidden; text-overflow:ellipsis;
+        }
+        .reply-bar-close {
+            background:none; border:none; cursor:pointer;
+            color:var(--text3); font-size:1.1rem; padding:0;
+            line-height:1; transition:color 0.15s; flex-shrink:0;
+        }
+        .reply-bar-close:hover { color:var(--rose); }
+
+        /* ── Reply quote (inside message bubble) ── */
+        .reply-quote {
+            display:flex; flex-direction:column; gap:0.1rem;
+            padding:0.45rem 0.7rem; margin-bottom:0.5rem;
+            background:rgba(0,0,0,0.2);
+            border-left:3px solid var(--teal);
+            border-radius:0 8px 8px 0;
+            cursor:pointer; transition:background 0.15s;
+            max-width:100%;
+        }
+        .reply-quote:hover { background:rgba(0,201,167,0.08); }
+        .reply-quote-sender {
+            font-size:0.72rem; font-weight:700; color:var(--teal);
+        }
+        .reply-quote-text {
+            font-size:0.8rem; color:var(--text2); line-height:1.4;
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+        }
+
+        /* ── Reply button on hover ── */
+        .msg-reply-btn {
+            background:none; border:none; cursor:pointer;
+            color:var(--text3); padding:0.2rem 0.35rem;
+            border-radius:5px; font-size:0.78rem;
+            transition:all 0.15s; display:flex; align-items:center; gap:0.2rem;
+        }
+        .msg-reply-btn:hover { color:var(--teal); background:rgba(0,201,167,0.08); }
+
         @media(max-width:768px){.workspace{grid-template-columns:1fr}.sidebar{display:none}}
     </style>
 </head>
@@ -326,6 +449,9 @@
             <a href="/my-projects.html">My Projects</a>
             <a href="/community.html">Community</a>
         </div>
+        <button class="notif-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme" style="width:32px; height:32px; padding:6px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border2); border-radius:8px; background:transparent; cursor:pointer; color:var(--text2);">
+            <span class="theme-toggle-icon"></span>
+        </button>
         <div class="user-av" id="user-av"
              onclick="window.location.href='/profile.html'"
              title="View Profile"
@@ -508,6 +634,18 @@
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                     </button>
                     <div class="char-cnt" id="char-cnt"></div>
+                </div>
+
+                <!-- Reply preview bar -->
+                <div class="reply-bar" id="reply-bar">
+                    <div class="reply-bar-content">
+                        <div class="reply-bar-label">
+                            Replying to <span id="reply-bar-sender"></span>
+                        </div>
+                        <div class="reply-bar-text" id="reply-bar-text"></div>
+                    </div>
+                    <button class="reply-bar-close" onclick="clearReply()"
+                            aria-label="Cancel reply">×</button>
                 </div>
 
                 <div class="input-row">
@@ -705,7 +843,7 @@
         document.getElementById('fl-name-modal').textContent = p.freelancerName || 'the freelancer';
         document.getElementById('started-date').textContent = fmtDate(p.createdAt);
         document.getElementById('chat-sub').textContent = (p.clientName || '--') + ' · ' + (p.freelancerName || '--');
-        const sm = { 'ACTIVE': 's-active', 'COMPLETED': 's-completed', 'CANCELLED': 's-cancelled' };
+        const sm = { 'ACTIVE': 's-active', 'COMPLETED': 's-completed', 'CANCELLED': 's-cancelled', 'DISPUTED': 's-disputed' };
         const b = document.getElementById('status-badge');
         b.innerHTML = '<span class="status-dot"></span>' + p.status;
         b.className = 'status-pill ' + (sm[p.status] || 's-active');
@@ -755,6 +893,34 @@
         }
     });
 
+    /* ══════════════════════════════════════════════
+   REPLY STATE
+══════════════════════════════════════════════ */
+    let replyToId   = null;
+    let replyToText = '';
+    let replyToSender = '';
+
+    function setReply(msgId, text, senderName) {
+        replyToId     = msgId;
+        replyToText   = text;
+        replyToSender = senderName;
+
+        document.getElementById('reply-bar-sender').textContent = senderName;
+        document.getElementById('reply-bar-text').textContent   =
+            text.length > 100 ? text.substring(0, 100) + '…' : text;
+        document.getElementById('reply-bar').classList.add('active');
+
+        // Focus input
+        document.getElementById('chat-input').focus();
+    }
+
+    function clearReply() {
+        replyToId     = null;
+        replyToText   = '';
+        replyToSender = '';
+        document.getElementById('reply-bar').classList.remove('active');
+    }
+
     function formatMsg(text) {
         text = escH(text);
         text = text.replace(/(https?:\/\/[^\s]+)/g,
@@ -793,6 +959,19 @@
                         <div class="status-banner-sub">Great work on this project</div>
                     </div>
                 </div>`;
+        } else if (p.status === 'DISPUTED') {
+            el.innerHTML = `
+                <div class="status-banner disputed">
+                    <div class="status-banner-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
+                    <div class="status-banner-text">
+                        <div class="status-banner-title" style="color:var(--rose)">Project Under Dispute</div>
+                        <div class="status-banner-sub">Actions are locked until resolution</div>
+                    </div>
+                </div>
+                <button class="btn-cancel-proj" style="margin-top:.5rem" onclick="window.location.href='/disputes.html'">View Dispute Status</button>
+            `;
         } else {
             el.innerHTML = `
                 <div class="status-banner cancelled">
@@ -852,17 +1031,52 @@
         const ini = (m.senderName || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
         const t = new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const c = m.isFile ? renderFile(m) : formatMsg(m.content);
+
+        const replyQuote = m.replyToContent
+            ? `<div class="reply-quote"
+               onclick="jumpToMessage(${m.replyToId})"
+               title="Jump to original message">
+               <div class="reply-quote-sender">${escH(m.replyToSender || 'Unknown')}</div>
+               <div class="reply-quote-text">${escH(m.replyToContent)}</div>
+           </div>`
+            : '';
+
+        // Safe content preview for reply button (strips newlines, escapes quotes)
+        const safeContent = escH(m.content || '').replace(/\n/g, ' ').replace(/'/g, "\\'").substring(0, 120);
+        const safeSender  = escH(m.senderName || 'Unknown').replace(/'/g, "\\'");
+
+        const replyBtn = m.isFile ? '' : `
+        <button class="msg-reply-btn"
+                onclick="setReply(${m.id}, '${safeContent}', '${safeSender}')"
+                aria-label="Reply to message">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2.5">
+                <polyline points="9 17 4 12 9 7"/>
+                <path d="M20 18v-2a4 4 0 0 0-4-4H4"/>
+            </svg>
+            Reply
+        </button>`;
+
+        // NOTE: return must be on the same line as the template literal
         return `<div class="msg-row${m.mine ? ' mine' : ''}${grouped ? ' grouped' : ''}"${m.id ? ` id="msg_${m.id}"` : ''}>
-            <div class="m-av">${ini}</div>
-            <div class="m-wrap">
-                ${!m.mine && !grouped ? `<div class="m-name">${escH(m.senderName || '')}</div>` : ''}
-                <div class="m-bubble">${c}</div>
-                <div class="m-meta">
-                    <span class="m-time">${t}</span>
-                    ${m.mine && m.isRead ? `<span class="m-seen"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Seen</span>` : ''}
-                </div>
+        <div class="m-av">${ini}</div>
+        <div class="m-wrap">
+            ${!m.mine && !grouped ? `<div class="m-name">${escH(m.senderName || '')}</div>` : ''}
+            <div class="m-bubble">
+                ${replyQuote}
+                ${c}
             </div>
-        </div>`;
+            <div class="m-meta">
+                <span class="m-time">${t}</span>
+                ${m.mine && m.isRead ? `<span class="m-seen">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>Seen</span>` : ''}
+                ${replyBtn}
+            </div>
+        </div>
+    </div>`;
     }
 
     function renderFile(m) {
@@ -937,11 +1151,40 @@
         const input = document.getElementById('chat-input'), c = input.value.trim();
         if (!c && !selFile) return;
         if (selFile) { await uploadFile(); return; }
+
         input.value = ''; handleInputChange(input);
-        appendMsg({ content: c, mine: true, senderName: me?.name || 'You', senderId: me?.id, createdAt: new Date().toISOString(), isRead: false });
+
+        // Capture reply state then clear it
+        const outgoingReplyId = replyToId;
+        const outgoingReplyText   = replyToText;
+        const outgoingReplySender = replyToSender;
+        clearReply();
+
+        // Optimistic append — show immediately in own chat
+        appendMsg({
+            content: c, mine: true,
+            senderName: me?.name || 'You',
+            senderId: me?.id,
+            createdAt: new Date().toISOString(),
+            isRead: false,
+            // include reply preview so it shows immediately
+            replyToId:      outgoingReplyId || null,
+            replyToContent: outgoingReplyText   || null,
+            replyToSender:  outgoingReplySender || null
+        });
+
         try {
-            if (connected && stomp) stomp.send('/app/chat.' + projectId, {}, JSON.stringify({ content: c }));
-            else await api.post('/api/v1/projects/' + projectId + '/messages', { content: c });
+            if (connected && stomp) {
+                stomp.send('/app/chat.' + projectId, {}, JSON.stringify({
+                    content: c,
+                    replyTo: outgoingReplyId || null   // ← sends replyTo to backend
+                }));
+            } else {
+                await api.post('/api/v1/projects/' + projectId + '/messages', {
+                    content: c,
+                    replyTo: outgoingReplyId || null
+                });
+            }
         } catch (e) { console.error(e); }
     }
 
@@ -1218,6 +1461,17 @@
         const t = document.getElementById('toast');
         t.textContent = msg; t.className = 'toast ' + type + ' show';
         setTimeout(() => t.classList.remove('show'), 3200);
+    }
+
+    function jumpToMessage(msgId) {
+        if (!msgId) return;
+        const el = document.getElementById('msg_' + msgId);
+        if (!el) { toast('Original message not visible', 'error'); return; }
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Flash highlight
+        el.style.transition = 'background 0.2s';
+        el.style.background = 'rgba(0,201,167,0.12)';
+        setTimeout(() => { el.style.background = ''; }, 1800);
     }
 
     init();

@@ -36,6 +36,10 @@ public class ChatMessage {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_to_id")
+    private ChatMessage replyTo;
+
     // Comma-separated user IDs mentioned with @
     private String mentionedUserIds;
 

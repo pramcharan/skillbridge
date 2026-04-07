@@ -1,10 +1,7 @@
 package com.skillbridge.service;
 
 import com.skillbridge.dto.response.*;
-import com.skillbridge.entity.ChatMessage;
-import com.skillbridge.entity.CommunityMessage;
-import com.skillbridge.entity.Job;
-import com.skillbridge.entity.User;
+import com.skillbridge.entity.*;
 import com.skillbridge.entity.enums.JobStatus;
 import com.skillbridge.entity.enums.ProjectStatus;
 import com.skillbridge.entity.enums.ProposalStatus;
@@ -152,10 +149,18 @@ public class AdminService {
     // ── DELETE JOB ────────────────────────────────────────────────────
     @Transactional
     public void deleteJob(Long id) {
-        if (!jobRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Job not found: " + id);
+        Job job = jobRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found: " + id));
+
+        // 1. Delete associated projects first (they reference proposals)
+        List<Project> projects = projectRepository.findByJobId(id);
+        if (!projects.isEmpty()) {
+            projectRepository.deleteAll(projects);
+            log.info("Admin: deleted {} projects associated with job {}", projects.size(), id);
         }
-        jobRepository.deleteById(id);
+
+        // 2. Now safe to delete the job (cascades to proposals and savedBy)
+        jobRepository.delete(job);
         log.info("Admin: job {} deleted", id);
     }
 
@@ -395,5 +400,44 @@ public class AdminService {
                         "createdAt", m.getCreatedAt().toString()
                 ))
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<AdminActivityResponse> getPlatformActivity() {
+        List<AdminActivityResponse> activities = new ArrayList<>();
+        Pageable top5 = PageRequest.of(0, 5, Sort.by("createdAt").descending());
+        
+        userRepository.findAllForAdmin(top5).forEach(u -> 
+            activities.add(new AdminActivityResponse(
+                "<strong>" + u.getName() + "</strong> registered as " + u.getRole(),
+                formatTimeAgo(u.getCreatedAt()), "teal", u.getCreatedAt()
+            ))
+        );
+        
+        jobRepository.findAllForAdmin(top5).forEach(j ->
+            activities.add(new AdminActivityResponse(
+                "<strong>" + j.getClient().getName() + "</strong> posted Job — " + j.getTitle(),
+                formatTimeAgo(j.getCreatedAt()), "gold", j.getCreatedAt()
+            ))
+        );
+        
+        proposalRepository.findAll(top5).forEach(p ->
+            activities.add(new AdminActivityResponse(
+                "New proposal submitted on <strong>" + p.getJob().getTitle() + "</strong>",
+                formatTimeAgo(p.getCreatedAt()), "purple", p.getCreatedAt()
+            ))
+        );
+
+        activities.sort((a, b) -> b.getTimestamp().compareTo(a.getTimestamp()));
+        return activities.stream().limit(5).toList();
+    }
+
+    private String formatTimeAgo(Instant instant) {
+        if (instant == null) return "Unknown";
+        long seconds = java.time.Duration.between(instant, Instant.now()).getSeconds();
+        if (seconds < 60) return seconds + " seconds ago";
+        if (seconds < 3600) return (seconds / 60) + " minutes ago";
+        if (seconds < 86400) return (seconds / 3600) + " hours ago";
+        return (seconds / 86400) + " days ago";
     }
 }

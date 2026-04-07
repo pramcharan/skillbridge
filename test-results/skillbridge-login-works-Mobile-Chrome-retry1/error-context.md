@@ -1,0 +1,56 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - navigation [ref=e2]:
+    - link "SkillBridge" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e4]:
+      - button "Toggle Theme" [ref=e5] [cursor=pointer]:
+        - generic "Switch to Light Mode" [ref=e6]:
+          - img [ref=e7]
+      - generic [ref=e9]:
+        - text: Don't have an account?
+        - link "Sign up free →" [ref=e10] [cursor=pointer]:
+          - /url: /register.html
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - heading "Sign In" [level=1] [ref=e13]
+      - paragraph [ref=e14]: Enter your credentials to access your account
+      - generic [ref=e15]:
+        - generic [ref=e16]: Email Address
+        - textbox "Email Address" [ref=e17]:
+          - /placeholder: you@example.com
+          - text: your_email@gmail.com
+      - generic [ref=e18]:
+        - generic [ref=e19]: Password
+        - textbox "Password" [active] [ref=e20]:
+          - /placeholder: ••••••••
+          - text: your_password
+      - link "Forgot password?" [ref=e22] [cursor=pointer]:
+        - /url: /forgot-password.html
+      - button "Sign In" [ref=e23] [cursor=pointer]:
+        - generic [ref=e24]: Sign In
+      - generic [ref=e26]: or continue with
+      - generic [ref=e27]:
+        - link "Continue with Google" [ref=e28] [cursor=pointer]:
+          - /url: /oauth2/authorization/google
+          - img [ref=e30]
+          - text: Continue with Google
+        - link "Continue with GitHub" [ref=e35] [cursor=pointer]:
+          - /url: /oauth2/authorization/github
+          - img [ref=e37]
+          - text: Continue with GitHub
+      - generic [ref=e39]:
+        - text: Don't have an account?
+        - link "Create one free →" [ref=e40] [cursor=pointer]:
+          - /url: /register.html
+  - generic [ref=e41]:
+    - paragraph [ref=e42]: © 2026 SkillBridge
+    - paragraph [ref=e43]:
+      - link "Privacy Policy" [ref=e44] [cursor=pointer]:
+        - /url: /privacy.html
+      - text: ·
+      - link "Terms of Service" [ref=e45] [cursor=pointer]:
+        - /url: /terms.html
+```

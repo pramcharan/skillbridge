@@ -11,6 +11,9 @@ public class ChatMessageResponse {
     private String  senderName;
     private String  senderAvatar;
     private String  content;
+    private Long replyToId;
+    private String replyToContent;
+    private String replyToSender;
     private Boolean isRead;
     private Instant createdAt;
     private boolean mine; // true if sent by current user

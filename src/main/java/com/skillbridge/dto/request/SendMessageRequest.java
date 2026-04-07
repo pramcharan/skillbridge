@@ -10,4 +10,5 @@ public class SendMessageRequest {
     @NotBlank(message = "Message cannot be empty")
     @Size(max = 2000, message = "Message too long")
     private String content;
+    private Long replyTo;
 }

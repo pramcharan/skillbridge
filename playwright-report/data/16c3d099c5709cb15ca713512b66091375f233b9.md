@@ -1,0 +1,76 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - navigation [ref=e2]:
+    - link "SkillBridge" [ref=e3] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e4]:
+      - button "Toggle Theme" [ref=e5] [cursor=pointer]:
+        - generic "Switch to Light Mode" [ref=e6]:
+          - img [ref=e7]
+      - generic [ref=e9]:
+        - text: Don't have an account?
+        - link "Sign up free →" [ref=e10] [cursor=pointer]:
+          - /url: /register.html
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - generic [ref=e13]: Trusted by professionals worldwide
+      - heading "Welcome back to SkillBridge" [level=2] [ref=e15]:
+        - text: Welcome
+        - text: back to
+        - text: SkillBridge
+      - paragraph [ref=e16]: The AI-powered marketplace where talent meets opportunity — across every industry.
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - img [ref=e20]
+          - text: AI scores every match instantly
+        - generic [ref=e22]:
+          - img [ref=e24]
+          - text: Real-time project chat & file sharing
+        - generic [ref=e26]:
+          - img [ref=e28]
+          - text: Secure payments — release only when satisfied
+        - generic [ref=e30]:
+          - img [ref=e32]
+          - text: Every skill. Every industry. One platform.
+    - generic [ref=e34]:
+      - heading "Sign In" [level=1] [ref=e35]
+      - paragraph [ref=e36]: Enter your credentials to access your account
+      - generic [ref=e37]:
+        - generic [ref=e38]: Email Address
+        - textbox "Email Address" [active] [ref=e39]:
+          - /placeholder: you@example.com
+          - text: ramlakshman
+      - generic [ref=e40]:
+        - generic [ref=e41]: Password
+        - textbox "Password" [ref=e42]:
+          - /placeholder: ••••••••
+          - text: your_password
+      - link "Forgot password?" [ref=e44] [cursor=pointer]:
+        - /url: /forgot-password.html
+      - button "Sign In" [ref=e45] [cursor=pointer]:
+        - generic [ref=e46]: Sign In
+      - generic [ref=e48]: or continue with
+      - generic [ref=e49]:
+        - link "Continue with Google" [ref=e50] [cursor=pointer]:
+          - /url: /oauth2/authorization/google
+          - img [ref=e52]
+          - text: Continue with Google
+        - link "Continue with GitHub" [ref=e57] [cursor=pointer]:
+          - /url: /oauth2/authorization/github
+          - img [ref=e59]
+          - text: Continue with GitHub
+      - generic [ref=e61]:
+        - text: Don't have an account?
+        - link "Create one free →" [ref=e62] [cursor=pointer]:
+          - /url: /register.html
+  - generic [ref=e63]:
+    - paragraph [ref=e64]: © 2026 SkillBridge
+    - paragraph [ref=e65]:
+      - link "Privacy Policy" [ref=e66] [cursor=pointer]:
+        - /url: /privacy.html
+      - text: ·
+      - link "Terms of Service" [ref=e67] [cursor=pointer]:
+        - /url: /terms.html
+```

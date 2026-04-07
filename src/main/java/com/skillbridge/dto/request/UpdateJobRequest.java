@@ -2,6 +2,7 @@ package com.skillbridge.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.skillbridge.entity.enums.JobStatus;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
@@ -11,6 +12,7 @@ public class UpdateJobRequest {
     private String    description;
     private String category;
     private String    requiredSkills;
+    @Positive(message = "Budget must be a positive number")
     private Double    budget;
     private JobStatus status;
     private String deadline;

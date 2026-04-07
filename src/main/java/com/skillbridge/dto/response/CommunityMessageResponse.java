@@ -14,6 +14,9 @@ public class CommunityMessageResponse {
     private String            senderAvatar;
     private String            senderRole;
     private String            content;
+    private Long   replyToId;
+    private String replyToContent;
+    private String replyToSender;
     private boolean           pinned;
     private boolean           isFile;
     private String            fileUrl;

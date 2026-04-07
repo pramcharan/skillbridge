@@ -91,6 +91,11 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getAiHealthData());
     }
 
+    @GetMapping("/activity")
+    public ResponseEntity<List<AdminActivityResponse>> getActivity() {
+        return ResponseEntity.ok(adminService.getPlatformActivity());
+    }
+
     // ── Project chat ──────────────────────────────────────────────
 
     @GetMapping("/chats/project/{projectId}")

@@ -32,6 +32,10 @@ public class CommunityMessage {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_to_id")
+    private CommunityMessage replyTo;
+
     private boolean pinned     = false;
     private boolean isFile     = false;
     private String  fileUrl;

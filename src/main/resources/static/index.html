@@ -7,6 +7,7 @@
     <title>SkillBridge — Find World-Class Talent</title>
     <meta name="description" content="SkillBridge connects top Indian freelancers with clients. AI-powered proposal scoring, real-time chat, and verified reviews.">
     <meta name="theme-color" content="#00C9A7">
+    <script src="/js/theme.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
@@ -16,10 +17,11 @@
         ═══════════════════════════════════════════════════════════════ */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-        --green: #00C96E;
---sky:   #38bdf8;
---r:     14px;   /* same as --radius */
+          --green: #00C96E;
+          --sky:   #38bdf8;
+          --r:     14px;   /* same as --radius */
           --bg:        #060D1A;
+          --bg-rgb:    6, 13, 26;
           --bg2:       #0B1425;
           --bg3:       #0F1D35;
           --card:      #0D1829;
@@ -41,6 +43,23 @@
           --shadow:    0 8px 32px rgba(0,0,0,0.4);
           --shadow-teal: 0 8px 30px rgba(0,201,167,0.2);
         }
+
+        [data-theme="light"] {
+          --bg:        #F8FAFC;
+          --bg-rgb:    248, 250, 252;
+          --bg2:       #F1F5F9;
+          --bg3:       #E2E8F0;
+          --card:      #FFFFFF;
+          --card2:     #F8FAFC;
+          --text:      #0F172A;
+          --text2:     #475569;
+          --text3:     #64748B;
+          --border:    #E2E8F0;
+          --border2:   #CBD5E1;
+          --shadow:    0 4px 12px rgba(0,0,0,0.05);
+          --shadow-teal: 0 8px 30px rgba(0,201,167,0.1);
+        }
+
         html { scroll-behavior: smooth; }
         body {
           font-family: 'DM Sans', sans-serif;
@@ -66,7 +85,7 @@
           position: fixed; top: 0; left: 0; right: 0; z-index: 100;
           display: flex; align-items: center; justify-content: space-between;
           padding: 0 5%; height: 68px;
-          background: rgba(6,13,26,0.85);
+          background: rgba(var(--bg-rgb), 0.85);
           backdrop-filter: blur(20px);
           border-bottom: 1px solid var(--border);
           transition: all 0.3s;
@@ -76,7 +95,7 @@
           font-family: 'Syne', sans-serif;
           font-weight: 800; font-size: 1.4rem;
           background: linear-gradient(135deg, var(--teal), var(--gold));
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
           letter-spacing: -0.02em;
         }
         .nav-links { display: flex; align-items: center; gap: 2rem; }
@@ -126,7 +145,7 @@
           opacity: 0.25;
           mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
         }
-        .hero-content { position: relative; z-index: 1; max-width: 680px; }
+        .hero-content { position: relative; z-index: 2; max-width: 680px; }
         .hero-badge {
           display: inline-flex; align-items: center; gap: 0.5rem;
           padding: 0.4rem 1rem; border-radius: 99px;
@@ -145,7 +164,7 @@
         }
         .hero-title .accent {
           background: linear-gradient(135deg, var(--teal) 0%, var(--gold) 100%);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
         }
         .hero-sub {
           font-size: 1.1rem; color: var(--text2); max-width: 520px;
@@ -302,7 +321,7 @@
     font-family: 'Syne', sans-serif; font-weight: 800;
     font-size: clamp(2rem, 3.5vw, 2.8rem);
     background: linear-gradient(135deg, var(--teal), var(--gold));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     line-height: 1; margin-bottom: 0.4rem;
 }
 .stat-label { font-size: 0.88rem; color: var(--text2); font-weight: 500; margin-bottom: 0.5rem; }
@@ -449,7 +468,7 @@
           font-family: 'Syne', sans-serif; font-weight: 800;
           font-size: 3.5rem; line-height: 1;
           background: linear-gradient(135deg, var(--teal), transparent);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
           margin-bottom: 1rem; opacity: 0.6;
         }
         .step-icon {
@@ -601,7 +620,7 @@
         .wfs-num {
           font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.8rem;
           background: linear-gradient(135deg, var(--gold), var(--rose));
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
         }
         .wfs-label { font-size: 0.8rem; color: var(--text2); margin-top: 0.1rem; }
         .features-list { display: flex; flex-direction: column; gap: 1.5rem; }
@@ -706,7 +725,7 @@
         .footer-brand .logo {
           font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem;
           background: linear-gradient(135deg, var(--teal), var(--gold));
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
           margin-bottom: 0.75rem;
         }
         .footer-brand p { font-size: 0.88rem; color: var(--text3); line-height: 1.7; max-width: 280px; margin-bottom: 1.25rem; }
@@ -906,6 +925,9 @@
         <a href="#featured-services">Services</a>
     </div>
     <div class="nav-cta">
+        <button class="btn-outline" onclick="toggleTheme()" title="Toggle Theme" style="width:40px; padding:0; display:flex; align-items:center; justify-content:center;">
+             <span class="theme-toggle-icon"></span>
+        </button>
         <a href="/login.html"><button class="btn-outline">Login</button></a>
         <a href="/register.html"><button class="btn-primary">Get Started</button></a>
     </div>
@@ -2064,7 +2086,7 @@
     <div class="cta-glow"></div>
     <div class="cta-content reveal">
         <div class="section-label" style="display:block;margin-bottom:1rem;">Get Started Today</div>
-        <h2 class="cta-title">Your Next Great<br><span style="background:linear-gradient(135deg,var(--teal),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Opportunity Awaits</span></h2>
+        <h2 class="cta-title">Your Next Great<br><span style="background:linear-gradient(135deg,var(--teal),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Opportunity Awaits</span></h2>
         <p class="cta-sub">Join SkillBridge free. Post your first job in minutes, or list your skills and start earning today.</p>
         <div class="cta-actions">
             <a href="/register.html"><button class="btn-cta-main">Post a Job — It's Free</button></a>

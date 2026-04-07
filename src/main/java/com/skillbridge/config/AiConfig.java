@@ -30,4 +30,21 @@ public class AiConfig {
 
     @Value("${app.ai.openai.api-key:not-set}")
     private String openAiApiKey;
+
+    //OpenRouter
+
+    @Value("${app.ai.openrouter.base-url}")
+    private String openrouterBaseUrl;
+
+    @Value("${app.ai.openrouter.api-key}")
+    private String openrouterApiKey;
+
+//    @Value("${app.ai.openrouter.model}")
+//    private String openrouterModel;
+
+    @Value("${app.ai.openrouter.primary-model}")
+    private String openrouterPrimaryModel;
+
+    @Value("${app.ai.openrouter.backup-model}")
+    private String openrouterBackupModel;
 }

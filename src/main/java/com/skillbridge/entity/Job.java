@@ -34,7 +34,7 @@ public class Job {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(length = 50, nullable = false)
     private JobCategory category;
 
     @Enumerated(EnumType.STRING)
@@ -71,4 +71,7 @@ public class Job {
 
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SavedJob> savedBy;
+
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FileAttachment> attachments;
 }

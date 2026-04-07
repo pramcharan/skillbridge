@@ -1,15 +1,23 @@
 // auth.js — JWT storage, auth guard, logout
+console.log('SkillBridge Auth v1.1 Loaded');
 // Include this file on EVERY protected HTML page
 
 const TOKEN_KEY = 'sb_jwt';
 const ROLE_KEY  = 'sb_role';
 const USER_KEY  = 'sb_user';
+const NAME_KEY  = 'sb_user_name';
 
 /** Save auth data after login */
-function saveAuth(token, role, userId) {
+function saveAuth(token, role, name, userId) {
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(ROLE_KEY,  role);
+  if (name)   localStorage.setItem(NAME_KEY, name);
   if (userId) localStorage.setItem(USER_KEY, userId);
+}
+
+/** Get stored user name */
+function getName() {
+  return localStorage.getItem(NAME_KEY);
 }
 
 /** Get stored JWT token */
@@ -45,6 +53,24 @@ function requireAuth(requiredRole = null) {
       return false;
     }
   }
+
+  // Secure asynchronous check against backend to prevent privilege escalation via localStorage spoofing
+  fetch('/api/v1/profile', {
+      headers: { 'Authorization': 'Bearer ' + token }
+  }).then(res => {
+      if (!res.ok) { logout(); }
+      return res.json();
+  }).then(data => {
+      if (requiredRole && data.role !== requiredRole) {
+          window.location.href = '/login.html';
+      } else if (data.role && data.role !== getRole()) {
+          // Sync role locally if changed remotely
+          localStorage.setItem(ROLE_KEY, data.role);
+      }
+  }).catch(() => {
+      window.location.href = '/login.html';
+  });
+
   return true;
 }
 

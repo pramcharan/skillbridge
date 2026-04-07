@@ -49,6 +49,7 @@ public class AiScoringOrchestrator {
         // Step 2 — enrich with AI explanation
         try {
             AiExplanationService aiService = aiExplanationFactory.getProvider();
+            log.info("AI Provider Selected: {}", aiService.getProviderName());
             log.info("Enriching match explanation with {}", aiService.getProviderName());
 
             // Update request with base result for context
@@ -57,8 +58,11 @@ public class AiScoringOrchestrator {
             request.setMatchedSkills(getMatchedSkills(freelancer, job));
             request.setMissingSkills(getMissingSkills(freelancer, job));
 
+            log.info("Calling AI for enrichment...");
+
             String enrichedExplanation = aiService.enrichExplanation(request);
 
+            log.info("AI Response: {}", enrichedExplanation);
             if (enrichedExplanation != null && !enrichedExplanation.isBlank()) {
                 AiMatchResult enrichedResult = AiMatchResult.builder()
                         .finalScore(baseResult.getFinalScore())
@@ -72,8 +76,11 @@ public class AiScoringOrchestrator {
                 if (onComplete != null) onComplete.accept(enrichedResult);
                 return CompletableFuture.completedFuture(enrichedResult);
             }
+            else {
+                log.warn("AI returned NULL or EMPTY → Falling back to algorithm");
+            }
         } catch (Exception e) {
-            log.error("AI enrichment failed: {}", e.getMessage());
+            log.error("AI enrichment failed: {}", e.getMessage(), e);
         }
 
         // Fallback to base result if AI fails

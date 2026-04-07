@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/theme.js"></script>
     <style>
         /* ── Page-specific overrides only ─────────────────────────── */
 
@@ -219,6 +220,9 @@
 
     <!-- Nav actions -->
     <div class="nav-actions">
+        <button class="notif-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme">
+            <span class="theme-toggle-icon"></span>
+        </button>
         <!-- Notification bell -->
         <button class="notif-btn" id="notif-btn" onclick="window.location.href='/notifications.html'" aria-label="View notifications" title="Notifications">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -344,12 +348,20 @@
 </main>
 
 <!-- ── SCRIPTS ──────────────────────────────────────────────── -->
-<script src="/js/utils.js"></script>
-<script src="/js/auth.js"></script>
-<script src="/js/api.js"></script>
+<script src="/js/utils.js?v=1.1"></script>
+<script src="/js/auth.js?v=1.1"></script>
+<script src="/js/api.js?v=1.1"></script>
 
 <script>
     'use strict';
+
+    /* ── Inline Fallback: getName() ─────────────────────────── */
+    if (typeof getName !== 'function') {
+        window.getName = function() {
+            return localStorage.getItem('sb_user_name') || 'Freelancer';
+        };
+        console.warn('getName fallback used — auth.js may be cached or missing.');
+    }
 
     requireAuth('FREELANCER');
 
@@ -360,14 +372,26 @@
         }
     });
 
+    /* ── Helper: sync name pre-load to avoid flash ──────────── */
+    console.log('Pre-loading username...');
+    document.getElementById('user-name').textContent = getName() || 'Freelancer';
+
     /* ── Load full dashboard ────────────────────────────────── */
     async function loadDashboard() {
+        console.log('loadDashboard() started');
         try {
+            console.log('Fetching profile, stats, and notifications...');
             const [profileRes, statsRes, notifRes] = await Promise.all([
                 api.get('/api/v1/profile'),
                 api.get('/api/v1/dashboard/freelancer/stats'),
                 api.get('/api/v1/notifications/unread-count'),
             ]);
+
+            console.log('API responses received. Statuses:', profileRes.status, statsRes.status, notifRes.status);
+            
+            if (!profileRes.ok || !statsRes.ok) {
+                console.error('API Error:', profileRes.status, statsRes.status);
+            }
 
             const profile = await profileRes.json();
             const stats   = await statsRes.json();
@@ -432,7 +456,7 @@
             if (!profile.hourlyRate) tips.push('Set your hourly rate');
             if (!profile.avatarUrl)  tips.push('Upload a photo');
             document.getElementById('completion-tips').innerHTML =
-                tips.map(t => `<span class="tip-chip" title="${t}">+ ${t}</span>`).join('');
+                tips.map(t => `<a href="/profile.html" class="tip-chip" title="${t}" style="text-decoration:none; display:inline-block;">+ ${t}</a>`).join('');
 
         } catch (e) {
             console.error('Dashboard profile/stats error:', e);
@@ -468,7 +492,7 @@
             grid.innerHTML = jobs.map(j => `
         <div class="card card-interactive" style="padding:20px;">
           <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:8px;">
-            <div style="font-family:'Syne',sans-serif; font-weight:700; font-size:var(--text-base); flex:1; min-width:0;">
+            <div class="line-clamp-1" title="${escHtml(j.title)}" style="font-family:'Syne',sans-serif; font-weight:700; font-size:var(--text-base); flex:1; min-width:0;">
               ${escHtml(j.title)}
             </div>
             ${j.aiPreviewBadge ? `<span class="badge badge-${j.aiPreviewBadge === 'GREEN' ? 'success' : j.aiPreviewBadge === 'AMBER' ? 'warning' : 'danger'}" style="flex-shrink:0;">
@@ -534,7 +558,7 @@
                 return `
           <div class="proposal-row">
             <div style="flex:1; min-width:0;">
-              <div class="pr-title">${escHtml(p.jobTitle || 'Job')}</div>
+              <div class="pr-title line-clamp-1" title="${escHtml(p.jobTitle || 'Job')}">${escHtml(p.jobTitle || 'Job')}</div>
               <div class="pr-meta">
                 ${escHtml(p.jobCategory || '')}
                 ${p.expectedRate ? ` · $${p.expectedRate}/hr` : ''}

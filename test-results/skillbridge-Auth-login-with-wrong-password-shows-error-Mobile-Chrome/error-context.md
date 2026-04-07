@@ -6,47 +6,51 @@
     - link "SkillBridge" [ref=e3] [cursor=pointer]:
       - /url: /
     - generic [ref=e4]:
-      - text: Don't have an account?
-      - link "Sign up free →" [ref=e5] [cursor=pointer]:
-        - /url: /register.html
-  - main [ref=e6]:
-    - generic [ref=e7]:
-      - heading "Sign In" [level=1] [ref=e8]
-      - paragraph [ref=e9]: Enter your credentials to access your account
-      - generic [ref=e10]:
-        - generic [ref=e11]: Email Address
-        - textbox "Email Address" [ref=e12]:
+      - button "Toggle Theme" [ref=e5] [cursor=pointer]:
+        - generic "Switch to Light Mode" [ref=e6]:
+          - img [ref=e7]
+      - generic [ref=e9]:
+        - text: Don't have an account?
+        - link "Sign up free →" [ref=e10] [cursor=pointer]:
+          - /url: /register.html
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - heading "Sign In" [level=1] [ref=e13]
+      - paragraph [ref=e14]: Enter your credentials to access your account
+      - generic [ref=e15]:
+        - generic [ref=e16]: Email Address
+        - textbox "Email Address" [ref=e17]:
           - /placeholder: you@example.com
-          - text: ram@playwright.com
-      - generic [ref=e13]:
-        - generic [ref=e14]: Password
-        - textbox "Password" [active] [ref=e15]:
+          - text: ramlakshman.polepalli@gmail.com
+      - generic [ref=e18]:
+        - generic [ref=e19]: Password
+        - textbox "Password" [active] [ref=e20]:
           - /placeholder: ••••••••
           - text: wrongpassword123
-      - link "Forgot password?" [ref=e17] [cursor=pointer]:
+      - link "Forgot password?" [ref=e22] [cursor=pointer]:
         - /url: /forgot-password.html
-      - button "Sign In" [ref=e18] [cursor=pointer]:
-        - generic [ref=e19]: Sign In
-      - generic [ref=e21]: or continue with
-      - generic [ref=e22]:
-        - link "Continue with Google" [ref=e23] [cursor=pointer]:
+      - button "Sign In" [ref=e23] [cursor=pointer]:
+        - generic [ref=e24]: Sign In
+      - generic [ref=e26]: or continue with
+      - generic [ref=e27]:
+        - link "Continue with Google" [ref=e28] [cursor=pointer]:
           - /url: /oauth2/authorization/google
-          - img [ref=e25]
+          - img [ref=e30]
           - text: Continue with Google
-        - link "Continue with GitHub" [ref=e30] [cursor=pointer]:
+        - link "Continue with GitHub" [ref=e35] [cursor=pointer]:
           - /url: /oauth2/authorization/github
-          - img [ref=e32]
+          - img [ref=e37]
           - text: Continue with GitHub
-      - generic [ref=e34]:
+      - generic [ref=e39]:
         - text: Don't have an account?
-        - link "Create one free →" [ref=e35] [cursor=pointer]:
+        - link "Create one free →" [ref=e40] [cursor=pointer]:
           - /url: /register.html
-  - generic [ref=e36]:
-    - paragraph [ref=e37]: © 2026 SkillBridge
-    - paragraph [ref=e38]:
-      - link "Privacy Policy" [ref=e39] [cursor=pointer]:
+  - generic [ref=e41]:
+    - paragraph [ref=e42]: © 2026 SkillBridge
+    - paragraph [ref=e43]:
+      - link "Privacy Policy" [ref=e44] [cursor=pointer]:
         - /url: /privacy.html
       - text: ·
-      - link "Terms of Service" [ref=e40] [cursor=pointer]:
+      - link "Terms of Service" [ref=e45] [cursor=pointer]:
         - /url: /terms.html
 ```

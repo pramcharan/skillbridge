@@ -48,6 +48,12 @@ public class DisputeService {
                     "You are not a participant in this project.");
         }
 
+        if (project.getStatus() == ProjectStatus.COMPLETED ||
+                project.getStatus() == ProjectStatus.CANCELLED) {
+            throw new BadRequestException(
+                    "Cannot raise a dispute for a completed or cancelled project.");
+        }
+
         // Only one open dispute per project per user
         disputeRepository.findByProjectIdAndReporterId(
                         project.getId(), reporter.getId())
@@ -85,6 +91,10 @@ public class DisputeService {
         ticket.setStatus(DisputeStatus.OPEN);
 
         DisputeTicket saved = disputeRepository.save(ticket);
+
+        // Update project status to DISPUTED
+        project.setStatus(ProjectStatus.DISPUTED);
+        projectRepository.save(project);
 
         // Notify respondent
         notificationService.send(
@@ -172,6 +182,11 @@ public class DisputeService {
         ticket.setResolvedAt(Instant.now());
 
         DisputeTicket saved = disputeRepository.save(ticket);
+
+        // Restore project status
+        Project project = ticket.getProject();
+        project.setStatus(ProjectStatus.IN_PROGRESS);
+        projectRepository.save(project);
 
         String resolutionText = switch (resolution) {
             case FAVOUR_REPORTER   -> "in favour of " + ticket.getReporter().getName();

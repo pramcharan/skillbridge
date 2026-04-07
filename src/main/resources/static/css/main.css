@@ -12,6 +12,7 @@ html { scroll-behavior: smooth; }
 :root {
     /* Backgrounds */
     --bg-base:      #060D1A;
+    --bg-base-rgb:  6, 13, 26;
     --bg-raised:    #0B1425;
     --bg-overlay:   #0D1829;
     --bg-muted:     #111F38;
@@ -42,16 +43,16 @@ html { scroll-behavior: smooth; }
     --border-card: #243650;
 
     /* Type scale */
-    --text-xs:   0.6875rem;   /* 11px */
-    --text-sm:   0.75rem;     /* 12px */
-    --text-base: 0.875rem;    /* 14px */
-    --text-md:   1rem;        /* 16px */
-    --text-lg:   1.125rem;    /* 18px */
-    --text-xl:   1.25rem;     /* 20px */
-    --text-2xl:  1.5rem;      /* 24px */
-    --text-3xl:  2rem;        /* 32px */
+    --text-xs:   0.6875rem;
+    --text-sm:   0.75rem;
+    --text-base: 0.875rem;
+    --text-md:   1rem;
+    --text-lg:   1.125rem;
+    --text-xl:   1.25rem;
+    --text-2xl:  1.5rem;
+    --text-3xl:  2rem;
 
-    /* Spacing (8px grid) */
+    /* Spacing */
     --sp-1:  4px;
     --sp-2:  8px;
     --sp-3:  12px;
@@ -82,6 +83,30 @@ html { scroll-behavior: smooth; }
     --t-slow: 300ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+[data-theme="light"] {
+    --bg-base:      #F8FAFC;
+    --bg-base-rgb:  248, 250, 252;
+    --bg-raised:    #FFFFFF;
+    --bg-overlay:   #FFFFFF;
+    --bg-muted:     #F1F5F9;
+
+    --text-primary:   #0F172A;
+    --text-secondary: #475569;
+    --text-muted:     #64748B;
+    --text-disabled:  #94A3B8;
+
+    --border:      #E2E8F0;
+    --border-card: #CBD5E1;
+
+    --shadow-sm:       0 1px 2px rgba(0,0,0,0.05);
+    --shadow-card:     0 4px 6px -1px rgba(0,0,0,0.1);
+    --shadow-elevated: 0 10px 15px -3px rgba(0,0,0,0.1);
+    --shadow-modal:    0 20px 25px -5px rgba(0,0,0,0.1);
+    
+    /* Tweak brand colors slightly for better contrast on white if needed */
+    --teal-dark:    #008D74;
+}
+
 /* ────────────────────────── BASE ─────────────────────────────── */
 body {
     font-family: 'DM Sans', sans-serif;
@@ -103,7 +128,7 @@ img { display: block; max-width: 100%; }
     justify-content: space-between;
     height: 64px;
     padding: 0 40px;
-    background: rgba(6, 13, 26, 0.90);
+    background: rgba(var(--bg-base-rgb), 0.90);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
@@ -248,7 +273,7 @@ img { display: block; max-width: 100%; }
 .nav-drawer-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(6, 13, 26, 0.75);
+    background: rgba(var(--bg-base-rgb), 0.75);
     backdrop-filter: blur(4px);
 }
 .nav-drawer-panel {

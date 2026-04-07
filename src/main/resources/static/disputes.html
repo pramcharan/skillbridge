@@ -8,24 +8,30 @@
     <meta name="theme-color" content="#00C9A7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="/js/theme.js"></script>
     <style>
         *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
         :root {
-          --bg:#060D1A; --card:#0D1829; --card2:#111f38;
-          --teal:#00C9A7; --gold:#F5A623; --rose:#FF6B8A;
+          --bg:#060D1A; --bg2:#0B1425; --card:#0D1829; --card2:#111f38;
+          --teal:#00C9A7; --teal-dk: #00A389; --gold:#F5A623; --rose:#FF6B8A;
           --text:#E8F0FE; --text2:#8BA3C7; --text3:#5A7090;
           --border:#1A2D4A; --border2:#243650;
         }
+        [data-theme="light"] {
+          --bg:#F8FAFC; --bg2:#F1F5F9; --card:#FFFFFF; --card2:#F8FAFC;
+          --text:#0F172A; --text2:#475569; --text3:#64748B;
+          --border:#E2E8F0; --border2:#CBD5E1;
+        }
         body { font-family:'DM Sans',sans-serif; background:var(--bg);
           color:var(--text); min-height:100vh; }
-        nav { height:56px; background:var(--card);
+        nav { height:56px; background:var(--bg);
               border-bottom:1px solid var(--border);
               display:flex; align-items:center;
               padding:0 1.5rem; gap:1rem; position:sticky; top:0; z-index:10; }
         .nav-logo { font-family:'Syne',sans-serif; font-weight:800;
           font-size:1.15rem;
           background:linear-gradient(135deg,var(--teal),var(--gold));
-          -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+          -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
         .nav-links { margin-left:auto; display:flex; gap:1rem; }
         .nav-links a { font-size:0.85rem; color:var(--text2);
           text-decoration:none; transition:color 0.2s; }
@@ -110,7 +116,7 @@
           color:var(--text2); margin-bottom:0.35rem; }
         input, textarea, select {
           width:100%; padding:0.75rem 1rem; border-radius:10px;
-          background:#0B1425; border:1px solid var(--border2);
+          background:var(--bg2); border:1px solid var(--border2);
           color:var(--text); font-family:'DM Sans',sans-serif;
           font-size:0.88rem; outline:none; transition:border-color 0.2s;
         }
@@ -191,6 +197,9 @@
         <a href="/community.html">Community</a>
         <a href="/profile.html">Profile</a>
     </div>
+    <button class="notif-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme" style="width: 32px; height: 32px; padding: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border2); border-radius: 8px; background: transparent; cursor: pointer; color: var(--text2);">
+        <span class="theme-toggle-icon"></span>
+    </button>
 </nav>
 
 <div class="page">
