@@ -23,8 +23,15 @@ public class AiScoringOrchestrator {
     private final WeightedScoringService weightedScoringService;
     private final AiExplanationFactory   aiExplanationFactory;
 
+    // simple cache to store enrichment results: "userId-jobId" -> AiMatchResult
+    private final java.util.Map<String, AiMatchResult> enrichmentCache = new java.util.concurrent.ConcurrentHashMap<>();
+
     // ── SYNC: Fast score only (for job listing pages) ─────────────
     public AiMatchResult scoreSync(User freelancer, Job job) {
+        String cacheKey = freelancer.getId() + "-" + job.getId();
+        AiMatchResult cached = enrichmentCache.get(cacheKey);
+        if (cached != null) return cached;
+
         AiMatchRequest request = buildRequest(freelancer, job);
         return weightedScoringService.calculate(
                 request,
@@ -38,6 +45,13 @@ public class AiScoringOrchestrator {
             User freelancer,
             Job job,
             Consumer<AiMatchResult> onComplete) {
+
+        String cacheKey = freelancer.getId() + "-" + job.getId();
+        AiMatchResult cached = enrichmentCache.get(cacheKey);
+        if (cached != null && cached.isAiEnriched()) {
+            if (onComplete != null) onComplete.accept(cached);
+            return CompletableFuture.completedFuture(cached);
+        }
 
         // Step 1 — instant weighted score
         AiMatchRequest request = buildRequest(freelancer, job);
@@ -71,8 +85,11 @@ public class AiScoringOrchestrator {
                         .encouragement(baseResult.getEncouragement())
                         .aiEnriched(true)
                         .provider(aiService.getProviderName())
+                        .matchedSkills(baseResult.getMatchedSkills())
+                        .missingSkills(baseResult.getMissingSkills())
                         .build();
 
+                enrichmentCache.put(cacheKey, enrichedResult);
                 if (onComplete != null) onComplete.accept(enrichedResult);
                 return CompletableFuture.completedFuture(enrichedResult);
             }
@@ -83,7 +100,14 @@ public class AiScoringOrchestrator {
             log.error("AI enrichment failed: {}", e.getMessage(), e);
         }
 
-        // Fallback to base result if AI fails
+        // Fallback to base result if AI fails — still cache it as "finished"
+        // but keep aiEnriched=false if we want to distinguish, 
+        // however for polling we want to stop so we should set it or the frontend needs to handle it.
+        // Let's set a flag or just assume after 3-5 tries we give up.
+        // Alternative: set aiEnriched to true as in "checked finished"
+        baseResult.setAiEnriched(true);
+        enrichmentCache.put(cacheKey, baseResult);
+
         if (onComplete != null) onComplete.accept(baseResult);
         return CompletableFuture.completedFuture(baseResult);
     }

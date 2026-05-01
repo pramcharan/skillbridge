@@ -49,7 +49,7 @@ public class RevisionService {
         if (!isClient && !isFreelancer)
             throw new RuntimeException("Not a project participant");
 
-        if (project.getStatus() != ProjectStatus.ACTIVE)
+        if (project.getStatus() != ProjectStatus.IN_PROGRESS)
             throw new RuntimeException("Revisions can only be raised on active projects");
 
         long openCount = revisionRepository

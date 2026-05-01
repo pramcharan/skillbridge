@@ -29,6 +29,7 @@ public class JobDetailResponse {
     private Double       aiPreviewScore;
     private String       aiPreviewBadge;
     private String       aiPreviewReason;
+    private Boolean      aiEnriched;
     private List<String> matchedSkills;
     private List<String> missingSkills;
     private Boolean      alreadyApplied;

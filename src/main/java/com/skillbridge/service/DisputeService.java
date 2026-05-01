@@ -133,7 +133,8 @@ public class DisputeService {
             throw new BadRequestException(
                     "Only the respondent can reply to this dispute.");
         }
-        if (ticket.getStatus() == DisputeStatus.RESOLVED_COMPLETE ||
+        if (ticket.getStatus() == DisputeStatus.RESOLVED ||
+                ticket.getStatus() == DisputeStatus.RESOLVED_COMPLETE ||
                 ticket.getStatus() == DisputeStatus.CLOSED) {
             throw new BadRequestException(
                     "This dispute is already closed.");
@@ -168,14 +169,15 @@ public class DisputeService {
         }
 
         DisputeTicket ticket = getTicket(disputeId);
-        if (ticket.getStatus() == DisputeStatus.RESOLVED_COMPLETE) {
+        if (ticket.getStatus() == DisputeStatus.RESOLVED ||
+                ticket.getStatus() == DisputeStatus.RESOLVED_COMPLETE) {
             throw new BadRequestException("Dispute already resolved.");
         }
 
         DisputeResolution resolution =
                 DisputeResolution.valueOf(req.getResolution());
 
-        ticket.setStatus(DisputeStatus.RESOLVED_COMPLETE);
+        ticket.setStatus(DisputeStatus.RESOLVED);
         ticket.setResolution(resolution);
         ticket.setAdminNotes(req.getAdminNotes());
         ticket.setResolvedBy(admin);

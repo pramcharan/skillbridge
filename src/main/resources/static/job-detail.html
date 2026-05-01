@@ -169,6 +169,7 @@
           font-size:0.84rem; color:var(--text2); line-height:1.65; margin-top:0.85rem;
           padding:0.85rem 1rem; background:rgba(0,0,0,0.2); border-radius:10px;
           border-left:3px solid rgba(0,201,167,0.25);
+          white-space: pre-wrap;
         }
         .ai-enriching {
           display:flex; align-items:center; gap:0.4rem;
@@ -392,17 +393,34 @@
             ]);
             const profile = await profileRes.json();
             jobData = await jobRes.json();
-const av = document.getElementById('user-av');
-const savedAvatar = localStorage.getItem('sb_avatar') || profile.avatarUrl;
-if (savedAvatar) {
-    av.innerHTML = `<img src="${savedAvatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
-    if (profile.avatarUrl) localStorage.setItem('sb_avatar', profile.avatarUrl);
-} else {
-    av.textContent = (profile.name||'?')[0].toUpperCase();
-}
+            
+            const av = document.getElementById('user-av');
+            const savedAvatar = localStorage.getItem('sb_avatar') || profile.avatarUrl;
+            if (savedAvatar) {
+                av.innerHTML = `<img src="${savedAvatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                if (profile.avatarUrl) localStorage.setItem('sb_avatar', profile.avatarUrl);
+            } else {
+                av.textContent = (profile.name||'?')[0].toUpperCase();
+            }
             document.title = `${jobData.title} — SkillBridge`;
             renderPage(jobData, profile);
             loadSimilarJobs();
+
+            // Auto-refresh if AI is still enriching
+            if (jobData.aiPreviewScore != null && !jobData.aiEnriched && !enrichmentPollInterval) {
+                enrichmentPollInterval = setInterval(async () => {
+                   try {
+                       const res = await api.get(`/api/v1/jobs/${jobId}`);
+                       const updated = await res.json();
+                       if (updated.aiEnriched) {
+                           clearInterval(enrichmentPollInterval);
+                           enrichmentPollInterval = null;
+                           jobData = updated;
+                           renderPage(jobData, profile);
+                       }
+                   } catch(e) {}
+                }, 3000);
+            }
         } catch(e) {
             document.getElementById('main-content').innerHTML =
                 `<div class="loading">Failed to load job. <a href="/jobs.html" style="color:var(--teal)">Go back</a></div>`;
@@ -626,10 +644,10 @@ if (savedAvatar) {
           </div>
         </div>`;
 
-        setTimeout(() => {
+        if (job.aiEnriched) {
             const el = document.getElementById('ai-enriching');
             if (el) el.style.display = 'none';
-        }, 15000);
+        }
     }
 
     function updateCharCount() {

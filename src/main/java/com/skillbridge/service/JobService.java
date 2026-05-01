@@ -144,11 +144,16 @@ public class JobService {
         User freelancer = userRepository.findByEmail(freelancerEmail).orElse(null);
         if (freelancer == null) return response;
 
+        // Check if already applied
+        boolean applied = proposalRepository.existsByJobIdAndFreelancerId(jobId, freelancer.getId());
+        response.setAlreadyApplied(applied);
+
         // Step 1 — instant weighted score (shown immediately)
         AiMatchResult baseScore = aiScoringOrchestrator.scoreSync(freelancer, job);
         response.setAiPreviewScore(baseScore.getFinalScore());
         response.setAiPreviewBadge(baseScore.getBadge());
         response.setAiPreviewReason(baseScore.getExplanation());
+        response.setAiEnriched(baseScore.isAiEnriched());
         response.setMatchedSkills(baseScore.getMatchedSkills() != null
                 ? baseScore.getMatchedSkills() : List.of());
         response.setMissingSkills(baseScore.getMissingSkills() != null
@@ -215,17 +220,21 @@ public class JobService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Job not found with id: " + jobId));
 
-        // Security Check: Only owner or ADMIN can delete
-        User currentUser = findUserByEmail(email);
-        if (!job.getClient().getEmail().equals(email) && currentUser.getRole() != com.skillbridge.entity.enums.Role.ADMIN) {
-            throw new AccessDeniedException("You can only delete your own jobs.");
+        // Security check: owner can delete directly; non-owners must be admins.
+        if (!job.getClient().getEmail().equals(email)) {
+            User currentUser = userRepository.findByEmail(email).orElse(null);
+            if (currentUser == null || currentUser.getRole() != Role.ADMIN) {
+                throw new AccessDeniedException("You can only delete your own jobs.");
+            }
         }
 
         // 1. Delete associated projects first (avoids FK constraint fails)
-        List<Project> projects = projectRepository.findByJobId(jobId);
-        if (!projects.isEmpty()) {
-            projectRepository.deleteAll(projects);
-            log.info("Job Service: deleted {} projects associated with job {}", projects.size(), jobId);
+        if (projectRepository != null) {
+            List<Project> projects = projectRepository.findByJobId(jobId);
+            if (!projects.isEmpty()) {
+                projectRepository.deleteAll(projects);
+                log.info("Job Service: deleted {} projects associated with job {}", projects.size(), jobId);
+            }
         }
 
         // 2. Now safe to delete the job

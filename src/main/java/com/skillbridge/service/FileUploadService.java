@@ -64,6 +64,20 @@ public class FileUploadService {
         return (String) result.get("secure_url");
     }
 
+    public String uploadPortfolioFile(MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty())
+            throw new IllegalArgumentException("No file provided.");
+        
+        Map<?, ?> result = cloudinary.uploader().upload(
+                file.getBytes(),
+                ObjectUtils.asMap(
+                        "folder",          "skillbridge/portfolios",
+                        "resource_type",   "auto"
+                )
+        );
+        return (String) result.get("secure_url");
+    }
+
     public Map<String, String> uploadJobAttachment(MultipartFile file, Long jobId) {
         if (file.getSize() > 10 * 1024 * 1024)
             throw new RuntimeException("File too large. Max 10MB.");

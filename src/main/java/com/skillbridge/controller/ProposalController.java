@@ -4,7 +4,7 @@ import com.skillbridge.dto.request.SubmitProposalRequest;
 import com.skillbridge.dto.request.UpdateProposalStatusRequest;
 import com.skillbridge.dto.response.ProposalResponse;
 import com.skillbridge.dto.response.ProposalSummaryResponse;
-import com.skillbridge.service.FileStorageService;
+import com.skillbridge.service.FileUploadService;
 import com.skillbridge.service.ProposalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import java.util.Map;
 public class ProposalController {
 
     private final ProposalService proposalService;
-    private final FileStorageService fileStorageService;
+    private final FileUploadService fileUploadService;
 
     // ── SUBMIT proposal (FREELANCER) ──────────────────────────────────
     @PostMapping
@@ -69,7 +69,7 @@ public class ProposalController {
             @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal String email) {
         try {
-            String url = fileStorageService.storePortfolioFile(file);
+            String url = fileUploadService.uploadPortfolioFile(file);
             return ResponseEntity.ok(Map.of("url", url));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
