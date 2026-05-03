@@ -805,9 +805,9 @@
 
                 <div class="form-row-2">
                     <div class="form-group">
-                        <label>Hourly Rate (USD) <span class="req">*</span></label>
+                        <label>Hourly Rate (INR) <span class="req">*</span></label>
                         <div class="input-prefix-wrap">
-                            <span class="input-prefix">$</span>
+                            <span class="input-prefix">₹</span>
                             <input type="number" class="form-control" id="hourlyRate"
                                    placeholder="45" min="5" max="999" step="1">
                         </div>
@@ -923,11 +923,11 @@
                     <label>Typical Budget Range</label>
                     <select class="form-control" id="budgetRange">
                         <option value="">Select a range…</option>
-                        <option value="MICRO">Under $500 per project</option>
-                        <option value="SMALL">$500 – $2,000</option>
-                        <option value="MEDIUM">$2,000 – $10,000</option>
-                        <option value="LARGE">$10,000 – $50,000</option>
-                        <option value="ENTERPRISE">$50,000+</option>
+                        <option value="MICRO">Under ₹500 per project</option>
+                        <option value="SMALL">₹500 – ₹2,000</option>
+                        <option value="MEDIUM">₹2,000 – ₹10,000</option>
+                        <option value="LARGE">₹10,000 – ₹50,000</option>
+                        <option value="ENTERPRISE">₹50,000+</option>
                     </select>
                 </div>
 
@@ -1174,7 +1174,7 @@
         valid = false;
       }
       if (!rate || rate < 5) {
-        showError('hourlyRate', 'Enter a valid hourly rate (min $5)');
+        showError('hourlyRate', 'Enter a valid hourly rate (min ₹5)');
         valid = false;
       }
       if (valid) {
@@ -1214,7 +1214,7 @@
       if (state.role === 'FREELANCER') {
         items.push(
           { label: 'Skills',       val: state.skills.slice(0,5).join(', ') + (state.skills.length > 5 ? '…' : '') },
-          { label: 'Hourly Rate',  val: '$' + state.hourlyRate + ' / hr' },
+          { label: 'Hourly Rate',  val: '₹' + state.hourlyRate + ' / hr' },
           { label: 'Availability', val: state.availability.replace('_',' ') },
         );
       } else {

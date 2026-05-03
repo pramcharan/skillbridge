@@ -125,7 +125,7 @@ Pluggable AI provider system via `AiExplanationFactory`:
 | File | Purpose |
 |------|---------|
 | `application.properties` | Main config — DB, AI providers, file upload, caching |
-| `application-secrets.properties` | OAuth creds, mail, JWT secret, API keys (not committed) |
+| Environment Variables | OAuth creds, mail, JWT secret, API keys (provided via `.env` or system env) |
 | `docker-compose.yml` | MySQL container |
 | `WebConfig.java` | Resource handlers, CORS (allows localhost:5500 for Live Server) |
 | `SecurityConfig.java` | Spring Security, JWT filter, OAuth2 login |

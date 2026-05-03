@@ -44,3 +44,7 @@ node_modules/
 target/
 build/
 dist/
+
+# Playwright Test Output
+playwright-report/
+test-results/

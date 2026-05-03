@@ -558,7 +558,7 @@
               <div class="detail-row">
                 <span class="label">${I.dollar} Budget</span>
                 <span class="value" style="color:var(--gold);font-family:'Syne',sans-serif;font-size:1.05rem;">
-                  ${job.budget ? '$' + job.budget.toLocaleString() : 'Negotiable'}
+                  ${job.budget ? '₹' + job.budget.toLocaleString('en-IN') : 'Negotiable'}
                 </span>
               </div>
               <div class="detail-row">
@@ -592,9 +592,9 @@
               </div>
               <div id="apply-form-content">
                 <div class="form-group">
-                  <label>${I.dollar2} Your Expected Rate ($/hr) *</label>
+                  <label>${I.dollar2} Your Expected Rate (₹/hr) *</label>
                   <div class="rate-wrap">
-                    <span class="rate-curr">$</span>
+                    <span class="rate-curr">₹</span>
                     <input type="number" id="expected-rate" class="form-control" placeholder="e.g. 45" min="1">
                   </div>
                 </div>
@@ -770,7 +770,7 @@
                 ${jobs.map(j => `
                     <a href="/job-detail.html?id=${j.id}" class="similar-card">
                         <div class="similar-title">${escHtml(j.title)}</div>
-                        <div class="similar-meta">${j.category} &nbsp;·&nbsp; ${j.budget ? '$' + j.budget.toLocaleString() : 'Negotiable'}</div>
+                        <div class="similar-meta">${j.category} &nbsp;·&nbsp; ${j.budget ? '₹' + j.budget.toLocaleString('en-IN') : 'Negotiable'}</div>
                     </a>`).join('')}`;
         } catch(e) { /* silent */ }
     }

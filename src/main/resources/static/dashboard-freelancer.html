@@ -506,7 +506,7 @@
             ${(j.requiredSkills || []).slice(0, 3).map(s => `<span class="skill-tag">${escHtml(s)}</span>`).join('')}
           </div>
           <div style="display:flex; align-items:center; justify-content:space-between;">
-            <span class="job-card-budget">${j.budget ? '$' + Number(j.budget).toLocaleString() : 'Negotiable'}</span>
+            <span class="job-card-budget">${j.budget ? '₹' + Number(j.budget).toLocaleString('en-IN') : 'Negotiable'}</span>
             <a href="/job-detail.html?id=${j.id}" class="jc-apply">
               View
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -561,7 +561,7 @@
               <div class="pr-title line-clamp-1" title="${escHtml(p.jobTitle || 'Job')}">${escHtml(p.jobTitle || 'Job')}</div>
               <div class="pr-meta">
                 ${escHtml(p.jobCategory || '')}
-                ${p.expectedRate ? ` · $${p.expectedRate}/hr` : ''}
+                ${p.expectedRate ? ` · ₹${p.expectedRate}/hr` : ''}
                 · Applied ${formatDate(p.createdAt)}
               </div>
             </div>

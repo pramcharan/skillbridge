@@ -11,11 +11,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+import org.springframework.beans.factory.annotation.Value;
 @Configuration
 @EnableAsync
 @EnableScheduling
 public class AppConfig {
+
+    @Value("${app.cors.allowed-origins:http://localhost:8080,http://localhost:5500,http://127.0.0.1:5500}")
+    private String[] allowedOrigins;
 
     // ── ObjectMapper bean for JSON serialization ──────────────────
     @Bean
@@ -39,11 +42,8 @@ public class AppConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins(
-                                "http://localhost:8080",
-                                "http://localhost:5500",
-                                "http://127.0.0.1:5500")
-                        .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
+                        .allowedOrigins(allowedOrigins)
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }

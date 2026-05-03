@@ -5,10 +5,10 @@
 
 /* ────────────────────── FORMAT HELPERS ─────────────────────── */
 
-/** Format number as currency: 1500 → "$1,500" */
+/** Format number as currency: 1500 → "₹1,500" */
 function formatCurrency(amount) {
   if (!amount && amount !== 0) return 'N/A';
-  return '$' + Number(amount).toLocaleString();
+  return '₹' + Number(amount).toLocaleString('en-IN');
 }
 
 /** Format ISO date string: "Apr 15, 2026" */

@@ -272,16 +272,62 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<script src="/js/auth.js"></script>
 <script src="/js/api.js"></script>
 <script>
     let disputes    = [];
     let currentUser = null;
 
+    // #region agent log
+    function __sbDbg(hypothesisId, message, data) {
+        try {
+            fetch('http://127.0.0.1:7672/ingest/3b48038d-d5d0-45e5-b8b7-d37643c64470', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '537e05' },
+                body: JSON.stringify({
+                    sessionId: '537e05',
+                    runId: 'pre-fix',
+                    hypothesisId,
+                    location: 'disputes.html:dbg',
+                    message,
+                    data,
+                    timestamp: Date.now()
+                })
+            }).catch(() => {});
+        } catch (_) {}
+    }
+    // #endregion
+
     async function init() {
+        if (typeof requireAuth === 'function' && !requireAuth(null)) return;
+        // #region agent log
+        __sbDbg('A_file_or_missing_auth', 'init_start', {
+            href: window.location.href,
+            protocol: window.location.protocol,
+            hasApi: typeof api !== 'undefined',
+            hasGetToken: typeof getToken !== 'undefined',
+            hasJwtLocalStorage: !!localStorage.getItem('sb_jwt')
+        });
+        // #endregion
+
         try {
             const res   = await api.get('/api/v1/profile');
+            // #region agent log
+            __sbDbg('B_profile_unauthorized', 'profile_fetch', {
+                status: res?.status,
+                ok: res?.ok,
+                redirected: res?.redirected,
+                url: res?.url
+            });
+            // #endregion
             currentUser = await res.json();
         } catch(e) {
+            // #region agent log
+            __sbDbg('C_profile_fetch_exception', 'profile_exception', {
+                name: e?.name,
+                message: e?.message
+            });
+            // #endregion
             window.location.href = '/login.html';
             return;
         }
@@ -299,9 +345,23 @@
     async function loadDisputes() {
         try {
             const res  = await api.get('/api/v1/disputes/me');
+            // #region agent log
+            __sbDbg('D_disputes_me_unauthorized', 'disputes_me_fetch', {
+                status: res?.status,
+                ok: res?.ok,
+                redirected: res?.redirected,
+                url: res?.url
+            });
+            // #endregion
             disputes   = await res.json();
             renderList();
         } catch(e) {
+            // #region agent log
+            __sbDbg('E_disputes_me_exception', 'disputes_me_exception', {
+                name: e?.name,
+                message: e?.message
+            });
+            // #endregion
             showToast('Failed to load disputes', 'error');
         }
     }

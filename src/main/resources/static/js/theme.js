@@ -9,6 +9,170 @@
 })();
 
 /**
+ * Injects a shared responsive layer across all pages.
+ * Most pages ship with inline styles, so this central override
+ * keeps mobile/tablet behavior consistent without duplicating fixes.
+ */
+function injectGlobalResponsiveStyles() {
+    if (document.getElementById('sb-responsive-patch')) {
+        return;
+    }
+
+    const style = document.createElement('style');
+    style.id = 'sb-responsive-patch';
+    style.textContent = `
+        html, body {
+            max-width: 100%;
+            overflow-x: clip;
+        }
+
+        img, svg, video, canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            min-width: 640px;
+        }
+
+        @media (max-width: 1024px) {
+            nav, .navbar {
+                padding-left: 16px !important;
+                padding-right: 16px !important;
+            }
+
+            main, .page-main, .page-layout {
+                padding-left: 16px !important;
+                padding-right: 16px !important;
+            }
+
+            .hero-visual {
+                position: static !important;
+                transform: none !important;
+                width: 100% !important;
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .page-layout,
+            .dashboard-layout,
+            .content-grid,
+            .split-layout,
+            .two-col,
+            .form-row {
+                grid-template-columns: 1fr !important;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+
+            .job-row {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
+
+            .job-row > div:last-child {
+                width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav, .navbar {
+                height: auto !important;
+                min-height: 56px;
+                flex-wrap: wrap;
+                gap: 10px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .nav-links {
+                display: none !important;
+            }
+
+            .nav-actions,
+            nav > div {
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .welcome-banner,
+            .section-hdr,
+            .toolbar,
+            .results-bar,
+            .search-bar,
+            .jc-top {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
+
+            .btn,
+            .btn-hero,
+            .submit-btn,
+            .btn-search {
+                max-width: 100%;
+            }
+
+            .modal-box {
+                max-width: 100% !important;
+                width: calc(100vw - 24px) !important;
+                padding: 16px !important;
+            }
+
+            #toast-container,
+            .toast {
+                right: 12px !important;
+                left: 12px !important;
+                bottom: 12px !important;
+                max-width: none !important;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .stats-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .form-card,
+            .card,
+            .job-card {
+                padding: 14px !important;
+            }
+
+            .hero-title {
+                font-size: clamp(2rem, 11vw, 2.6rem) !important;
+                line-height: 1.12;
+            }
+
+            .hero-sub {
+                font-size: 0.96rem !important;
+            }
+        }
+    `;
+
+    document.head.appendChild(style);
+}
+
+/**
  * Toggles the global theme and persists it to localStorage.
  */
 function toggleTheme() {
@@ -52,4 +216,5 @@ window.addEventListener('storage', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
     updateThemeIcons(currentTheme);
+    injectGlobalResponsiveStyles();
 });

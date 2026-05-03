@@ -386,7 +386,7 @@
 
         <div class="filter-card">
             <div class="filter-title">
-                Budget Range (USD)
+                Budget Range (INR)
                 <button onclick="clearBudget()">Clear</button>
             </div>
             <div class="budget-inputs">
@@ -394,10 +394,10 @@
                 <input type="number" class="budget-input" id="max-budget" placeholder="Max">
             </div>
             <div style="display:flex;flex-direction:column;gap:0.35rem;margin-top:0.75rem;">
-                <button onclick="setBudgetPreset(0,500)"  class="cat-option" style="border-radius:8px;">Under $500</button>
-                <button onclick="setBudgetPreset(500,2000)"  class="cat-option" style="border-radius:8px;">$500 – $2,000</button>
-                <button onclick="setBudgetPreset(2000,10000)" class="cat-option" style="border-radius:8px;">$2,000 – $10,000</button>
-                <button onclick="setBudgetPreset(10000,null)"  class="cat-option" style="border-radius:8px;">$10,000+</button>
+                <button onclick="setBudgetPreset(0,500)"  class="cat-option" style="border-radius:8px;">Under ₹500</button>
+                <button onclick="setBudgetPreset(500,2000)"  class="cat-option" style="border-radius:8px;">₹500 – ₹2,000</button>
+                <button onclick="setBudgetPreset(2000,10000)" class="cat-option" style="border-radius:8px;">₹2,000 – ₹10,000</button>
+                <button onclick="setBudgetPreset(10000,null)"  class="cat-option" style="border-radius:8px;">₹10,000+</button>
             </div>
         </div>
 
@@ -668,7 +668,7 @@ function clearBudget() {
                    </div>`
                 : ''}
             <div class="jc-footer">
-                <span class="jc-budget">${j.budget?'$'+Number(j.budget).toLocaleString():'Negotiable'}</span>
+                <span class="jc-budget">${j.budget?'₹'+Number(j.budget).toLocaleString('en-IN'):'Negotiable'}</span>
                 <span class="jc-meta-item">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     ${formatDate(j.createdAt)}
@@ -726,12 +726,12 @@ function updateFilterTags(keyword, cat, min, max) {
     </span>`;
 
     if (min) html += `<span class="filter-tag">
-        Min $${min}
+        Min ₹${min}
         <button onclick="clearTag('min')" title="Remove">×</button>
     </span>`;
 
     if (max) html += `<span class="filter-tag">
-        Max $${max}
+        Max ₹${max}
         <button onclick="clearTag('max')" title="Remove">×</button>
     </span>`;
 

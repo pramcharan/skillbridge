@@ -11,7 +11,7 @@ import com.skillbridge.security.JwtAuthFilter;
 import com.skillbridge.security.JwtUtil;
 import com.skillbridge.security.OAuth2SuccessHandler;
 import com.skillbridge.security.UserDetailsServiceImpl;
-import com.skillbridge.service.FileStorageService;
+import com.skillbridge.service.FileUploadService;
 import com.skillbridge.service.ProposalService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
@@ -41,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProposalController.class)
+@ActiveProfiles("test")
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayName("ProposalController Tests")
 class ProposalControllerTest {
@@ -67,7 +69,7 @@ class ProposalControllerTest {
     private ProposalService proposalService;
 
     @MockitoBean
-    private FileStorageService fileStorageService;
+    private FileUploadService fileUploadService;
 
     private static final String BASE = "/api/v1/proposals";
 

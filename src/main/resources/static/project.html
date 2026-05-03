@@ -834,8 +834,8 @@
         document.getElementById('proj-id').textContent = '#' + p.id;
         document.getElementById('proj-title').textContent = p.title;
         document.getElementById('job-title-sub').textContent = p.jobTitle || '--';
-        document.getElementById('stat-rate').textContent = p.acceptedRate ? '$' + p.acceptedRate : '--';
-        document.getElementById('stat-budget').textContent = p.budget ? '$' + Number(p.budget).toLocaleString() : '--';
+        document.getElementById('stat-rate').textContent = p.acceptedRate ? '₹' + p.acceptedRate : '--';
+        document.getElementById('stat-budget').textContent = p.budget ? '₹' + Number(p.budget).toLocaleString('en-IN') : '--';
         document.getElementById('client-name').textContent = p.clientName || '--';
         document.getElementById('freelancer-name').textContent = p.freelancerName || '--';
         document.getElementById('client-av').textContent = (p.clientName || 'C')[0].toUpperCase();
