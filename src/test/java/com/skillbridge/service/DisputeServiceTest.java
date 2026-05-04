@@ -770,11 +770,11 @@ class DisputeServiceTest {
             when(disputeRepository.findAllForAdmin(PageRequest.of(0, 10)))
                     .thenReturn(new PageImpl<>(List.of(openDispute, second)));
 
-            List<DisputeResponse> result = disputeService.getAllDisputes(0, 10);
+            org.springframework.data.domain.Page<DisputeResponse> result = disputeService.getAllDisputes(0, 10);
 
-            assertThat(result).hasSize(2);
-            assertThat(result.get(0).getId()).isEqualTo(300L);
-            assertThat(result.get(1).getId()).isEqualTo(301L);
+            assertThat(result.getContent()).hasSize(2);
+            assertThat(result.getContent().get(0).getId()).isEqualTo(300L);
+            assertThat(result.getContent().get(1).getId()).isEqualTo(301L);
         }
 
         @Test
@@ -786,12 +786,12 @@ class DisputeServiceTest {
             when(disputeRepository.findAllForAdmin(PageRequest.of(0, 10)))
                     .thenReturn(new PageImpl<>(List.of(openDispute)));
 
-            List<DisputeResponse> result = disputeService.getAllDisputes(0, 10);
+            org.springframework.data.domain.Page<DisputeResponse> result = disputeService.getAllDisputes(0, 10);
 
-            assertThat(result).hasSize(1);
-            assertThat(result.get(0).getEvidenceUrls())
+            assertThat(result.getContent()).hasSize(1);
+            assertThat(result.getContent().get(0).getEvidenceUrls())
                     .containsExactly("https://a.com/1.png", "https://a.com/2.png");
-            assertThat(result.get(0).getRespondentEvidenceUrls())
+            assertThat(result.getContent().get(0).getRespondentEvidenceUrls())
                     .containsExactly("https://b.com/1.png");
         }
     }

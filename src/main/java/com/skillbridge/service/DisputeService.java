@@ -244,11 +244,10 @@ public class DisputeService {
 
     // ── Admin — get all disputes ───────────────────────────────────────
     @Transactional(readOnly = true)
-    public List<DisputeResponse> getAllDisputes(int page, int size) {
+    public org.springframework.data.domain.Page<DisputeResponse> getAllDisputes(int page, int size) {
         return disputeRepository.findAllForAdmin(
                         PageRequest.of(page, size))
-                .stream().map(this::toResponse)
-                .collect(Collectors.toList());
+                .map(this::toResponse);
     }
 
     // ── Helpers ────────────────────────────────────────────────────────

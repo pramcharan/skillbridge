@@ -73,7 +73,9 @@ public class SecurityConfig {
                                 "/api/v1/stats/public",
                                 "/api/v1/stats/categories",
                                 "/api/v1/stats/top-freelancers",
-                                "/api/v1/stats/reviews"
+                                "/api/v1/stats/reviews",
+                                "/actuator/health",
+                                "/actuator/info"
                         ).permitAll()
 
                         // ── OAuth2 + WebSocket ────────────────────────────────────────

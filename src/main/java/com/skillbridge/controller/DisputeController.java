@@ -57,6 +57,7 @@ public class DisputeController {
 
     // POST /api/v1/disputes/{id}/resolve  — admin resolves
     @PostMapping("/{id}/resolve")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DisputeResponse> resolve(
             @PathVariable Long id,
             @RequestBody DisputeResolveRequest req,
@@ -67,7 +68,8 @@ public class DisputeController {
 
     // GET /api/v1/disputes/admin/all  — admin view
     @GetMapping("/admin/all")
-    public ResponseEntity<List<DisputeResponse>> adminAll(
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<org.springframework.data.domain.Page<DisputeResponse>> adminAll(
             @RequestParam(defaultValue = "0")  int page,
             @RequestParam(defaultValue = "20") int size,
             @AuthenticationPrincipal String email) {
