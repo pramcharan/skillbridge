@@ -16,5 +16,6 @@ COPY --from=build /app/target/skillbridge-0.0.1-SNAPSHOT.jar app.jar
 # Expose the application port
 EXPOSE 8080
 
-# Run the jar file
-ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
+# Run the jar file with memory constraints for Render free tier (512MB RAM)
+# We use -Xmx384m to leave room for the OS and JRE overhead.
+ENTRYPOINT ["java", "-Xmx384m", "-jar", "app.jar", "--spring.profiles.active=prod", "--server.port=${PORT:8080}"]
