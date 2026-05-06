@@ -1189,10 +1189,10 @@
     /* ═══════════════════════════════════════════════
        STEP 3B: CLIENT VALIDATION
     ═══════════════════════════════════════════════ */
-    function validateStep3Client() {
+    async function validateStep3Client() {
       clearErrors();
       if (!state.hiringGoal) {
-        alert('Please select your primary hiring goal.');
+        await Modal.alert('Missing Info', 'Please select your primary hiring goal.');
         return;
       }
       state.budgetRange  = document.getElementById('budgetRange').value;
@@ -1313,12 +1313,12 @@ const response = await fetch('/api/v1/profile/onboarding', {
         document.getElementById('savingOverlay').classList.remove('active');
         btn.disabled = false;
         btn.innerText = "Go to My Dashboard";
-        alert('Something went wrong saving your profile. Please try again.');
+        await Modal.alert('Error', 'Something went wrong saving your profile. Please try again.');
       }
     }
 
-    function skipOnboarding() {
-      if (confirm('Skip setup? You can complete your profile later from the Profile page.')) {
+    async function skipOnboarding() {
+      if (await Modal.confirm('Skip Setup', 'Skip setup? You can complete your profile later from the Profile page.')) {
         window.location.href = '/jobs.html';
       }
     }
@@ -1410,10 +1410,10 @@ const response = await fetch('/api/v1/profile/onboarding', {
     /* ═══════════════════════════════════════════════
        AVATAR
     ═══════════════════════════════════════════════ */
-    document.getElementById('avatarInput').addEventListener('change', function(e) {
+    document.getElementById('avatarInput').addEventListener('change', async function(e) {
       const file = e.target.files[0];
       if (!file) return;
-      if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5MB'); return; }
+      if (file.size > 5 * 1024 * 1024) { await Modal.alert('File too large', 'Image must be under 5MB'); return; }
       state.avatarFile = file;
       const reader = new FileReader();
       reader.onload = function (ev) {

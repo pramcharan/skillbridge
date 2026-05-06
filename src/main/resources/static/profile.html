@@ -1179,7 +1179,7 @@ async function toggleLink(provider) {
     const isLinked = statusEl.textContent !== 'Not linked';
 
     if (isLinked) {
-        if (!confirm(`Unlink your ${provider} account?`)) return;
+        if (!await Modal.confirm('Unlink Account', `Unlink your ${provider} account?`, true, 'Unlink')) return;
         try {
             const res = await api.delete(`/api/v1/profile/me/link/${provider}`);
             if (res.ok) {
@@ -1191,8 +1191,7 @@ async function toggleLink(provider) {
             }
         } catch (e) { showToast('Network error', 'error'); }
     } else {
-        const providerEmail = prompt(
-            `Enter your ${provider} email address to link it:`);
+        const providerEmail = await Modal.prompt('Link Account', `Enter your ${provider} email address to link it:`);
         if (!providerEmail) return;
         try {
             const res = await api.post(
@@ -1213,13 +1212,13 @@ async function toggleLink(provider) {
    ACCOUNT DELETION
 ══════════════════════════════════════════════ */
 async function confirmDeleteAccount() {
-    const confirmed = confirm(
+    const confirmed = await Modal.confirm('Delete Account', 
         '⚠️ Delete your account?\n\n' +
         'Your data will be permanently anonymised. ' +
-        'This CANNOT be undone.');
+        'This CANNOT be undone.', true, 'Delete');
     if (!confirmed) return;
 
-    const typed = prompt('Type DELETE to confirm:');
+    const typed = await Modal.prompt('Confirm Deletion', 'Type DELETE to confirm:');
     if (typed !== 'DELETE') {
         showToast('Deletion cancelled', 'error');
         return;
@@ -1565,7 +1564,7 @@ async function confirmDeleteAccount() {
     }
 
     async function deletePfItem(id) {
-        if (!confirm('Delete this portfolio item? This cannot be undone.')) return;
+        if (!await Modal.confirm('Delete Item', 'Delete this portfolio item? This cannot be undone.', true, 'Delete')) return;
         try {
             const res = await api.delete(`/api/v1/portfolio/${id}`);
             if (res.ok) {

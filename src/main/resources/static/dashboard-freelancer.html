@@ -588,7 +588,7 @@
     /* ── Withdraw Proposal ──────────────────────────────────── */
     async function withdrawProposal(proposalId, e) {
         e.stopPropagation();
-        if (!confirm('Withdraw this proposal? This cannot be undone.')) return;
+        if (!await Modal.confirm('Withdraw Proposal', 'Withdraw this proposal? This cannot be undone.', true, 'Withdraw')) return;
         try {
             const res = await api.delete(`/api/v1/proposals/${proposalId}/withdraw`);
             if (res.ok) {

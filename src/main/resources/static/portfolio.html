@@ -431,7 +431,7 @@ const escHtml = s => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;')
     }
 
     async function deleteItem(id) {
-        if (!confirm('Delete this portfolio item? This cannot be undone.')) return;
+        if (!await Modal.confirm('Delete Item', 'Delete this portfolio item? This cannot be undone.', true, 'Delete')) return;
         try {
             const res = await api.delete(`/api/v1/portfolio/${id}`);
             if (res.ok) {

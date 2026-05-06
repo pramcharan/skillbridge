@@ -515,7 +515,7 @@ ${p.attachmentUrl
 
     async function updateStatus(proposalId, status) {
         const action = status === 'ACCEPTED' ? 'accept' : 'reject';
-        if (!confirm(`Are you sure you want to ${action} this proposal?`)) return;
+        if (!await Modal.confirm('Confirm Action', `Are you sure you want to ${action} this proposal?`, status !== 'ACCEPTED', action.charAt(0).toUpperCase() + action.slice(1))) return;
 
         try {
             const res = await api.patch(`/api/v1/proposals/${proposalId}/status`, { status });

@@ -994,7 +994,7 @@ tbody.innerHTML = `<tr><td colspan="7">
 
     async function setUserActive(id, active) {
         const action = active ? 'activate' : 'deactivate';
-        if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+        if (!await Modal.confirm('Confirm Action', `Are you sure you want to ${action} this user?`)) return;
         try {
             const endpoint = active
                 ? `/api/v1/admin/users/${id}/activate`
@@ -1010,7 +1010,7 @@ tbody.innerHTML = `<tr><td colspan="7">
     }
 
     async function promoteAdmin(id) {
-        if (!confirm('Promote this user to ADMIN? This cannot be easily undone.')) return;
+        if (!await Modal.confirm('Confirm Promotion', 'Promote this user to ADMIN? This cannot be easily undone.', true)) return;
         try {
             const res = await api.patch(`/api/v1/admin/users/${id}/promote`);
             if (res.ok) {
@@ -1083,7 +1083,7 @@ tbody.innerHTML = `<tr><td colspan="9">
     }
 
     async function closeJob(id) {
-        if (!confirm('Force close this job?')) return;
+        if (!await Modal.confirm('Close Job', 'Force close this job?', true)) return;
         try {
             const res = await api.patch(`/api/v1/admin/jobs/${id}/close`);
             if (res.ok) { showToast('Job closed', 'success'); loadJobs(jobPage); }
@@ -1091,7 +1091,7 @@ tbody.innerHTML = `<tr><td colspan="9">
     }
 
     async function deleteJob(id) {
-        if (!confirm('Permanently delete this job? This cannot be undone.')) return;
+        if (!await Modal.confirm('Delete Job', 'Permanently delete this job? This cannot be undone.', true, 'Delete')) return;
         try {
             const res = await api.delete(`/api/v1/admin/jobs/${id}`);
             if (res.ok) { showToast('Job deleted', 'success'); loadJobs(jobPage); }
@@ -1229,7 +1229,7 @@ function renderAdminMessages() {
 }
 
 async function adminDeleteMessage(messageId) {
-    if (!confirm('Permanently delete this message?')) return;
+    if (!await Modal.confirm('Delete Message', 'Permanently delete this message?', true, 'Delete')) return;
 
     let url;
     if (currentChatType === 'project') {

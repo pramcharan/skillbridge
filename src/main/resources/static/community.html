@@ -1321,8 +1321,8 @@
         input.setSelectionRange(s + start.length, s + start.length + sel.length);
     }
 
-    function insertLink() {
-        const url = prompt('Enter URL:');
+    async function insertLink() {
+        const url = await Modal.prompt('Insert Link', 'Enter URL:');
         if (!url) return;
         const input = document.getElementById('msg-input');
         const pos = input.selectionStart;
@@ -1330,8 +1330,8 @@
         input.focus();
     }
 
-    function insertMention() {
-        const name = prompt('Enter username:');
+    async function insertMention() {
+        const name = await Modal.prompt('Mention User', 'Enter username:');
         if (!name) return;
         const input = document.getElementById('msg-input');
         input.value += ` @${name} `;

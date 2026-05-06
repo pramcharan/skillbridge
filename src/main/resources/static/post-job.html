@@ -532,8 +532,8 @@ input[type="date"].form-control {
 
     document.getElementById('attachmentInput').addEventListener('change', async function() {
         const files = Array.from(this.files);
-        if (!currentJobId) { alert('Save the job first before attaching files.'); return; }
-        if (pendingAttachments.length + files.length > 5) { alert('Max 5 attachments.'); return; }
+        if (!currentJobId) { await Modal.alert('Save Required', 'Save the job first before attaching files.'); return; }
+        if (pendingAttachments.length + files.length > 5) { await Modal.alert('Limit Exceeded', 'Max 5 attachments.'); return; }
 
         const progress = document.getElementById('attachUploadProgress');
         progress.style.display = 'block';
